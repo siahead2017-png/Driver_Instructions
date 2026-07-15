@@ -1,0 +1,352 @@
+/* ---------- Токены ---------- */
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #eef1f6;
+  --text: #10151c;
+  --text-dim: #5b6673;
+  --border: #e2e7ee;
+  --accent: #1f6feb;
+  --accent-soft: #e7f0fe;
+  --shadow: 0 1px 2px rgba(16, 21, 28, .06), 0 4px 14px rgba(16, 21, 28, .06);
+
+  --t-pdf: #e5484d;
+  --t-doc: #1f6feb;
+  --t-sheet: #17a34a;
+  --t-slide: #d97706;
+  --t-video: #8b5cf6;
+  --t-link: #64748b;
+
+  --radius: 14px;
+  --gap: 12px;
+  --pad: 16px;
+  --header-h: 108px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-2: #1f262f;
+    --text: #e6edf3;
+    --text-dim: #8b97a6;
+    --border: #262d38;
+    --accent: #4d90fe;
+    --accent-soft: #16283f;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 4px 14px rgba(0, 0, 0, .3);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+}
+
+body.is-locked { overflow: hidden; }
+
+svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Шапка ---------- */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: calc(env(safe-area-inset-top) + 10px) var(--pad) 10px;
+}
+
+.app-header__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+}
+
+.app-header__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icon-btn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -10px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-btn:active { background: var(--surface-2); }
+
+/* ---------- Поиск ---------- */
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.search__icon,
+.search__clear {
+  position: absolute;
+  color: var(--text-dim);
+}
+
+.search__icon { left: 12px; pointer-events: none; }
+
+.search__input {
+  width: 100%;
+  height: 44px;
+  padding: 0 42px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 16px; /* < 16px вызывает зум на iOS */
+  outline: none;
+}
+
+.search__input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.search__input::-webkit-search-cancel-button { display: none; }
+
+.search__clear {
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.search__clear svg { width: 18px; height: 18px; }
+
+/* ---------- Каркас ---------- */
+.app-main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 4px var(--pad) 24px;
+}
+
+.section { margin-top: 22px; }
+
+.section__title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ---------- Плитки категорий ---------- */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap);
+}
+
+@media (min-width: 560px) {
+  .tiles { grid-template-columns: repeat(3, 1fr); }
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 118px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: inherit;
+  text-decoration: none;
+  transition: transform .12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tile:active { transform: scale(.975); }
+
+.tile__icon { font-size: 28px; line-height: 1.2; margin-bottom: auto; }
+.tile__title { font-weight: 600; letter-spacing: -.01em; }
+.tile__count { font-size: 13px; color: var(--text-dim); }
+
+/* ---------- Карточки инструкций ---------- */
+.list { display: flex; flex-direction: column; gap: 8px; }
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: inherit;
+  text-decoration: none;
+  transition: transform .12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card:active { transform: scale(.985); }
+
+.card__badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: var(--surface-2);
+  font-size: 20px;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+  color: var(--t-link);
+}
+
+.card__badge--pdf   { color: var(--t-pdf); }
+.card__badge--doc   { color: var(--t-doc); }
+.card__badge--sheet { color: var(--t-sheet); }
+.card__badge--slide { color: var(--t-slide); }
+.card__badge--video { color: var(--t-video); }
+
+.card__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+
+.card__title { font-weight: 600; letter-spacing: -.01em; }
+
+.card__desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card__meta { font-size: 12px; color: var(--text-dim); }
+
+.card__chevron { flex: none; width: 18px; color: var(--text-dim); }
+
+/* ---------- Пустые состояния ---------- */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 56px 24px;
+  text-align: center;
+}
+
+.empty__icon { font-size: 38px; }
+.empty__title { margin: 0; font-weight: 600; }
+.empty__text { margin: 0; color: var(--text-dim); font-size: 14px; }
+
+.btn {
+  margin-top: 12px;
+  padding: 12px 20px;
+  border-radius: 11px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ---------- Подвал ---------- */
+.app-footer {
+  padding: 0 var(--pad) calc(env(safe-area-inset-bottom) + 24px);
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ---------- Просмотр ---------- */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.viewer[hidden] { display: none; }
+
+.viewer__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(env(safe-area-inset-top) + 6px) 10px 6px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.viewer__bar .icon-btn { margin-left: 0; }
+
+.viewer__title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewer__body { position: relative; flex: 1; background: var(--surface-2); }
+
+.viewer__frame { width: 100%; height: 100%; border: 0; display: block; }
+
+.viewer__loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

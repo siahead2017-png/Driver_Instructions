@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "updated": "2026-07-15",
+  "categories": [
+    { "id": "start",  "title": "Начало работы",            "icon": "🚀", "order": 1 },
+    { "id": "safety", "title": "Безопасность",             "icon": "🦺", "order": 2 },
+    { "id": "tacho",  "title": "Тахограф и режим труда",   "icon": "⏱️", "order": 3 },
+    { "id": "docs",   "title": "Документы и оформление",   "icon": "📋", "order": 4 },
+    { "id": "truck",  "title": "Техника и обслуживание",   "icon": "🚛", "order": 5 },
+    { "id": "border", "title": "Границы и таможня",        "icon": "🛃", "order": 6 }
+  ],
+  "items": [
+    {
+      "id": "start-welcome",
+      "category": "start",
+      "title": "Памятка нового водителя",
+      "description": "С чего начать: контакты, порядок связи, первый рейс",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/ЗАМЕНИ_НА_ID_ФАЙЛА/view?usp=sharing",
+      "updated": "2026-06-01",
+      "tags": ["новичок", "памятка", "старт"]
+    },
+    {
+      "id": "start-video-intro",
+      "category": "start",
+      "title": "Видео: обзор рабочего процесса",
+      "description": "Как устроен рейс от заявки до выгрузки",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/ЗАМЕНИ_НА_ID_ВИДЕО/view?usp=sharing",
+      "updated": "2026-06-10",
+      "tags": ["видео", "обзор", "процесс"]
+    },
+    {
+      "id": "tacho-basics",
+      "category": "tacho",
+      "subtopic": "Основы",
+      "title": "Как пользоваться тахографом",
+      "description": "Вставка карты, переключение режимов, отметки",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/ЗАМЕНИ_НА_ID_ФАЙЛА/view?usp=sharing",
+      "updated": "2026-05-20",
+      "tags": ["тахограф", "карта водителя"]
+    },
+    {
+      "id": "tacho-rules",
+      "category": "tacho",
+      "subtopic": "Режим труда и отдыха",
+      "title": "Нормы вождения и отдыха",
+      "description": "9/10 часов, перерывы, недельный отдых — таблица",
+      "type": "doc",
+      "url": "https://docs.google.com/document/d/ЗАМЕНИ_НА_ID_ДОКУМЕНТА/edit?usp=sharing",
+      "updated": "2026-05-20",
+      "tags": ["режим", "отдых", "561"]
+    },
+    {
+      "id": "safety-loading",
+      "category": "safety",
+      "title": "Крепление груза",
+      "description": "Ремни, углы, распределение нагрузки по осям",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/ЗАМЕНИ_НА_ID_ФАЙЛА/view?usp=sharing",
+      "updated": "2026-04-15",
+      "tags": ["груз", "крепление", "ремни"]
+    },
+    {
+      "id": "docs-cmr",
+      "category": "docs",
+      "title": "Как заполнять CMR",
+      "description": "Пример заполнения по графам, частые ошибки",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/ЗАМЕНИ_НА_ID_ФАЙЛА/view?usp=sharing",
+      "updated": "2026-03-02",
+      "tags": ["cmr", "накладная", "документы"]
+    }
+  ]
+}
