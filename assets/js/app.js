@@ -40,9 +40,11 @@ async function load() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     data = await res.json();
     data.categories.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+    const n = data.items.length;
+    const count = `${n} ${plural(n, 'инструкция', 'инструкции', 'инструкций')}`;
     footerMeta.textContent = data.updated
-      ? `Обновлено ${fmtDate(data.updated)} · ${data.items.length} инструкций`
-      : `${data.items.length} инструкций`;
+      ? `Обновлено ${fmtDate(data.updated)} · ${count}`
+      : count;
     render();
   } catch (err) {
     view.innerHTML = `
@@ -147,14 +149,25 @@ function renderCategory(cat) {
   }
 
   // Группируем по подтеме; элементы без подтемы идут первыми, одной группой.
-  const groups = new Map();
+  const groups = new Map([['', []]]);
   for (const it of items) {
     const key = it.subtopic ?? '';
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(it);
   }
+  if (!groups.get('').length) groups.delete('');
 
-  view.innerHTML = [...groups]
+  // Порядок групп задаётся необязательным списком categories[].subtopics.
+  // Подтемы, которых там нет, идут следом в порядке появления.
+  const order = cat.subtopics ?? [];
+  const rank = (sub) => {
+    if (sub === '') return -1; // карточки без подтемы — всегда сверху
+    const i = order.indexOf(sub);
+    return i === -1 ? order.length : i;
+  };
+  const sorted = [...groups].sort((a, b) => rank(a[0]) - rank(b[0]));
+
+  view.innerHTML = sorted
     .map(([sub, list]) => `
       <section class="section">
         ${sub ? `<h2 class="section__title">${esc(sub)}</h2>` : ''}
