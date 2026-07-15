@@ -2,12 +2,15 @@
 // Всё в try/catch — в приватном режиме localStorage может бросать исключение.
 
 const KEY = 'di:recent';
-const LIMIT = 6;
+// Не больше трёх: иначе блок «Недавние» отжимает категории вниз экрана.
+const LIMIT = 3;
 
 export function getRecent() {
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? JSON.parse(raw) : [];
+    // Режем и при чтении: у тех, кто заходил раньше, в телефоне может
+    // лежать список длиннее нынешнего лимита.
+    return raw ? JSON.parse(raw).slice(0, LIMIT) : [];
   } catch {
     return [];
   }
