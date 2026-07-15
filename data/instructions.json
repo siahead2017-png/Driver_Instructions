@@ -2,20 +2,24 @@
   "version": 1,
   "updated": "2026-07-15",
   "categories": [
-    { "id": "tolls",  "title": "Оплата дорог и боксы",      "icon": "🛣️", "order": 1 },
-    { "id": "dtp",    "title": "ДТП",                        "icon": "🚨", "order": 2 },
-    { "id": "docs",   "title": "Документы и оформление",     "icon": "📋", "order": 3 },
-    { "id": "fuel",   "title": "Топливо",                    "icon": "⛽", "order": 4 },
-    { "id": "tacho",  "title": "ТАХО и режим труда",         "icon": "⏱️", "order": 5 },
-    { "id": "truck",  "title": "Работа с техникой",          "icon": "🚛", "order": 6 },
-    { "id": "rules",  "title": "Правила компании",           "icon": "📌", "order": 7 },
+    { "id": "tolls",   "title": "Оплата дорог и боксы",   "icon": "🛣️", "order": 1 },
+    { "id": "dtp",     "title": "ДТП",                     "icon": "🚨", "order": 2 },
+    { "id": "docs",    "title": "Документы и отчёты",      "icon": "📋", "order": 3 },
+    { "id": "fuel",    "title": "Топливо",                 "icon": "⛽", "order": 4 },
+    { "id": "tacho",   "title": "ТАХО и режим труда",      "icon": "⏱️", "order": 5 },
+    { "id": "truck",   "title": "Работа с техникой",       "icon": "🚛", "order": 6 },
+    { "id": "loading", "title": "Погрузка и разгрузка",    "icon": "📦", "order": 7 },
+    { "id": "safety",  "title": "Безопасность",            "icon": "🦺", "order": 8 },
+    { "id": "rules",   "title": "Правила компании",        "icon": "📌", "order": 9 },
     {
       "id": "video",
       "title": "Видео инструкции",
       "icon": "🎬",
-      "order": 8,
+      "order": 10,
       "subtopics": [
         "Работа с дорожными боксами",
+        "Бокс TELEPASS",
+        "Режим труда и отдыха",
         "Лайфхаки с телефоном",
         "Техника безопасности"
       ]
@@ -43,6 +47,180 @@
       "tags": ["памятка", "перед рейсом", "obu", "лицензии", "разрешения"]
     },
     {
+      "id": "tolls-eurovignette",
+      "category": "tolls",
+      "title": "Оплата дорог: EUROVIGNETTE",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1QgcDneKkqF48bE38hbKH0yn1NgfO3ybe/view?usp=drive_link",
+      "tags": ["eurovignette", "виньетка", "оплата дорог"]
+    },
+    {
+      "id": "tolls-baltics",
+      "category": "tolls",
+      "title": "Покупка дорог: Латвия, Литва, Эстония",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1Q4bUq-UIn08-7aeYsqSxEwAXV8J3iWXu/view?usp=drive_link",
+      "tags": ["латвия", "литва", "эстония", "балтия", "оплата дорог"]
+    },
+
+    {
+      "id": "dtp-actions",
+      "category": "dtp",
+      "title": "ДТП: действия водителя",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1rayBuxnNtAWt492XsOgqizdINLzyls5r/view?usp=drive_link",
+      "tags": ["дтп", "авария", "действия"]
+    },
+    {
+      "id": "dtp-act-sample",
+      "category": "dtp",
+      "title": "Образец согласованного акта",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1aT71uQ72FDueyUhSCsPJeZMU_HXbAWO-/view?usp=drive_link",
+      "tags": ["дтп", "акт", "образец", "европротокол"]
+    },
+
+    {
+      "id": "docs-cmr-work",
+      "category": "docs",
+      "title": "Работа по CMR",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1L-Jyf6-0XpQouRgaw2IJWqQBBbcREQZ7/view?usp=drive_link",
+      "tags": ["cmr", "накладная", "документы"]
+    },
+    {
+      "id": "docs-cmr-report",
+      "category": "docs",
+      "title": "CMR Loading/Unloading Report — образец",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/10hGsICPoF8A2CblK7WEd9WNJlJe3wEjL/view?usp=drive_link",
+      "tags": ["cmr", "report", "погрузка", "выгрузка", "образец", "paraugs"]
+    },
+    {
+      "id": "docs-report-sample",
+      "category": "docs",
+      "title": "Образец заполнения отчёта",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/12jb9VdieF3lZLz6y1czHTu46kXmrgQPC/view?usp=drive_link",
+      "tags": ["отчёт", "образец", "заполнение"]
+    },
+    {
+      "id": "docs-oil-report",
+      "category": "docs",
+      "title": "Отчёт по маслу",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1B0g1wFJoY-ew2kiOdncQxksszjxc5VZf/view?usp=drive_link",
+      "tags": ["масло", "отчёт"]
+    },
+    {
+      "id": "docs-bank-receipts",
+      "category": "docs",
+      "title": "Банк, чеки: если нету",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1z8Lt-v-w54hPC1a5xpQ1ay5nr8JMPWQB/view?usp=drive_link",
+      "tags": ["банк", "чеки", "документы", "отчётность"]
+    },
+    {
+      "id": "docs-company-details",
+      "category": "docs",
+      "title": "Реквизиты компаний",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1s3mlngKI2B-s2-iZo-gaxZ5gt2k_NUAu/view?usp=drive_link",
+      "tags": ["реквизиты", "компании", "данные"]
+    },
+
+    {
+      "id": "fuel-cards",
+      "category": "fuel",
+      "title": "Топливные карты",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/19SsIu_gGYLod4ITmktlYsqzlWRx1Nb0d/view?usp=drive_link",
+      "tags": ["топливо", "карты", "заправка"]
+    },
+    {
+      "id": "fuel-crt-card",
+      "category": "fuel",
+      "title": "CRT — топливная карта",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1yPNgSx1Cadp8FOWYpU6mgkEI2HrHzy2N/view?usp=drive_link",
+      "tags": ["crt", "топливо", "карта", "заправка"]
+    },
+    {
+      "id": "fuel-norms",
+      "category": "fuel",
+      "title": "Нормы расхода",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/111gEQZ7PmjdRg9yZMU4D8nuyBvKnqrZe/view?usp=drive_link",
+      "updated": "2026-07-01",
+      "tags": ["нормы", "расход", "топливо"]
+    },
+    {
+      "id": "fuel-tank-measure",
+      "category": "fuel",
+      "title": "Замеры топливных баков: Scania, DAF, Mercedes, MAN",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1g6ABNaaR96Wbjbg68wRUiCF1iCPql0Id/view?usp=drive_link",
+      "tags": ["замер", "баки", "scania", "daf", "mercedes", "man"]
+    },
+    {
+      "id": "fuel-tank-measure-950",
+      "category": "fuel",
+      "title": "Инструкция по замеру топливных баков 950L и 545L",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1JynYIaW9Cq_iUTSKdi4ksUSa_RCYENPp/view?usp=drive_link",
+      "tags": ["замер", "баки", "950", "545", "литров"]
+    },
+    {
+      "id": "fuel-tank-valve",
+      "category": "fuel",
+      "title": "Перекрытие трубки бака",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1Pjs4bk4SaZetWcIWUoZMpgOm0QIWhJtQ/view?usp=drive_link",
+      "tags": ["бак", "трубка", "перекрытие"]
+    },
+    {
+      "id": "fuel-breakdown-consumption",
+      "category": "fuel",
+      "title": "Поломка авто в рейсе: повышенный расход топлива",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1LVe8CxU3rpYH9CNs9z-Pu38avB63NEcZ/view?usp=drive_link",
+      "tags": ["поломка", "расход", "топливо", "рейс"]
+    },
+
+    {
+      "id": "tacho-regime",
+      "category": "tacho",
+      "title": "Режим труда и отдыха",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1nMg8aucyfHwV2tpwAAGJCFTKASR_m9hw/view?usp=drive_link",
+      "tags": ["режим", "труд", "отдых", "тахограф"]
+    },
+    {
+      "id": "tacho-pause-6h",
+      "category": "tacho",
+      "title": "Пауза после 6 часов непрерывной работы",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1UNm05fLU7eY4Y3rkM_5SUGGjWzeZyLaV/view?usp=drive_link",
+      "tags": ["пауза", "перерыв", "6 часов", "режим"]
+    },
+    {
+      "id": "tacho-double-crew",
+      "category": "tacho",
+      "title": "Практические примеры: режим труда и отдыха в двойном экипаже",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1UczhpY5-OhMhnvJHvnZ24l1-kaX4x1kf/view?usp=drive_link",
+      "tags": ["двойной экипаж", "примеры", "режим", "отдых"]
+    },
+    {
+      "id": "tacho-manual-input",
+      "category": "tacho",
+      "title": "Мануальный ввод",
+      "type": "image",
+      "url": "https://drive.google.com/file/d/18RmlUP-ptvqfV_R4wLcTRsF08q5TjUZj/view?usp=drive_link",
+      "tags": ["мануальный ввод", "тахограф", "карта водителя"]
+    },
+
+    {
       "id": "truck-photo",
       "category": "truck",
       "title": "Фотофиксация: приём техники",
@@ -53,6 +231,130 @@
       "tags": ["фотофиксация", "приём техники", "осмотр", "перецепка", "распоряжение"]
     },
     {
+      "id": "truck-inspection-order",
+      "category": "truck",
+      "title": "Распоряжение: осмотр",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/12er1J5CJwOvaJ-eT-4Z1DVdpasUqhyG9/view?usp=drive_link",
+      "tags": ["осмотр", "распоряжение", "rikojums"]
+    },
+    {
+      "id": "truck-dashcam",
+      "category": "truck",
+      "title": "Видеорегистраторы: инструкция",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1eUyPQ7k8irGBl-90j2BPEu7nY5RFUrY5/view?usp=drive_link",
+      "tags": ["видеорегистратор", "камера", "инструкция"]
+    },
+    {
+      "id": "truck-reefer",
+      "category": "truck",
+      "title": "Холодильные установки и принтеры на рефрижераторах",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1hU_pKyZJrROp4fwKsvrwoB7lPTN_-Tjs/view?usp=drive_link",
+      "tags": ["рефрижератор", "холодильник", "принтер", "температура"]
+    },
+    {
+      "id": "truck-daf-cabin",
+      "category": "truck",
+      "title": "DAF: информация для машин с удлинённой кабиной",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/11ce0vFvjYHBkS-eDMN8e2LMDViDHehh9/view?usp=drive_link",
+      "tags": ["daf", "кабина", "удлинённая"]
+    },
+
+    {
+      "id": "loading-during",
+      "category": "loading",
+      "title": "Во время погрузки и разгрузки",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1hXgSuGHW30XkfT6HD2YGaJ2JbZH_mQzJ/view?usp=drive_link",
+      "tags": ["погрузка", "разгрузка", "инструкция"]
+    },
+    {
+      "id": "loading-weight-control",
+      "category": "loading",
+      "title": "Контроль веса и расстановки груза на загрузке",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1fN-RdL8LhyRwkCbVHtfamz4MasodwJm6/view?usp=drive_link",
+      "tags": ["вес", "оси", "груз", "расстановка", "погрузка"]
+    },
+
+    {
+      "id": "safety-rules",
+      "category": "safety",
+      "title": "Правила безопасности",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1o7DVlFdS9WeSj4a-TnApBHZ8dJZx9IEw/view?usp=drive_link",
+      "tags": ["безопасность", "правила", "техника безопасности"]
+    },
+    {
+      "id": "safety-control-systems",
+      "category": "safety",
+      "title": "Системы контроля безопасности: распоряжение",
+      "type": "image",
+      "url": "https://drive.google.com/file/d/1dMhXpA7jPc_PAMfh7RNahKTuNwldk16u/view?usp=drive_link",
+      "tags": ["контроль", "безопасность", "распоряжение", "системы"]
+    },
+    {
+      "id": "safety-instructaz",
+      "category": "safety",
+      "title": "Внеплановый инструктаж (Head, 2023)",
+      "type": "slide",
+      "url": "https://docs.google.com/presentation/d/1E56ShVf3DSPJmnvcYnPpLeN2utvTd3uG/edit?usp=drive_link&rtpof=true&sd=true",
+      "tags": ["инструктаж", "внеплановый", "head", "презентация"]
+    },
+    {
+      "id": "safety-photo-radars",
+      "category": "safety",
+      "title": "Фоторадары: контроль",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1JxmIXQvrDQtWkK0ZWYpCP-MBN-1pCejT/view?usp=drive_link",
+      "tags": ["радары", "скорость", "контроль", "штрафы"]
+    },
+
+    {
+      "id": "rules-bribe",
+      "category": "rules",
+      "title": "Взятка = тюрьма",
+      "type": "doc",
+      "url": "https://docs.google.com/document/d/1XHDbf3ri7xNmlu5Q-ofTWvTkfW5XP0Z8ivlyDlW_cU8/edit?usp=drive_link",
+      "tags": ["взятка", "коррупция", "запрет", "тюрьма"]
+    },
+    {
+      "id": "rules-company-car",
+      "category": "rules",
+      "title": "Правила работы на легковом авто компании",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1BpXq59HDRRO8nDLAJ_U5JBPwikvl93BW/view?usp=drive_link",
+      "tags": ["легковое авто", "правила", "компания"]
+    },
+    {
+      "id": "rules-wash-poland",
+      "category": "rules",
+      "title": "Мойки в Польше",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1x_BoY58J1vgnPK0sBawf2wNua9bqvywG/view?usp=drive_link",
+      "tags": ["мойка", "польша"]
+    },
+    {
+      "id": "rules-nl-tunnel",
+      "category": "rules",
+      "title": "Нидерланды: запрет на туннель A24",
+      "type": "image",
+      "url": "https://drive.google.com/file/d/14mxPYBfdrGOWDrDVyuQKXJ-XqEkDgIbD/view?usp=drive_link",
+      "tags": ["нидерланды", "туннель", "a24", "запрет", "маршрут"]
+    },
+    {
+      "id": "rules-norway-internet",
+      "category": "rules",
+      "title": "Если в Норвегии не работает интернет",
+      "type": "doc",
+      "url": "https://docs.google.com/document/d/1XmyGeqz-eu5Hqiq7FbG9gRaJkiDz1_zNyu85ycEQRas/edit?usp=drive_link",
+      "tags": ["норвегия", "интернет", "связь", "телефон"]
+    },
+
+    {
       "id": "video-spain-transaction",
       "category": "video",
       "subtopic": "Работа с дорожными боксами",
@@ -62,6 +364,181 @@
       "url": "https://drive.google.com/file/d/1O2UQUojASMDE8Pwe9MQfgVWDHQPVcehi/view?usp=drive_link",
       "updated": "2026-07-01",
       "tags": ["испания", "транзакция", "бокс", "оплата", "ошибка"]
+    },
+    {
+      "id": "video-eva-countries",
+      "category": "video",
+      "subtopic": "Работа с дорожными боксами",
+      "title": "Как проверить, какие страны подключены в EVA",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/19mkaY_8dAnHG2eBFr2-mxmqqIV7-oKfl/view?usp=drive_link",
+      "tags": ["eva", "страны", "проверка", "бокс"]
+    },
+    {
+      "id": "video-eva-restart",
+      "category": "video",
+      "subtopic": "Работа с дорожными боксами",
+      "title": "Перезагрузка бокса EVA",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1COnY0LLKSxtr6OWLi1oGQxCC-XW9NVI9/view?usp=drive_link",
+      "tags": ["eva", "перезагрузка", "restart", "бокс"]
+    },
+    {
+      "id": "video-eva-restart-fuel",
+      "category": "video",
+      "subtopic": "Работа с дорожными боксами",
+      "title": "Как перезагрузить бокс EVA (для заправок)",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1KD71-1-rtwVE7XKm_oYOc3GlYGpgpWP0/view?usp=drive_link",
+      "tags": ["eva", "перезагрузка", "заправка", "бокс"]
+    },
+    {
+      "id": "video-smsvinjette",
+      "category": "video",
+      "subtopic": "Работа с дорожными боксами",
+      "title": "SMS-виньетка: памятка и ошибки",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1UC9vOhHJNXfWwNYNj1YXEKXVvZ9Y1dtN/view?usp=drive_link",
+      "tags": ["виньетка", "sms", "ошибки", "памятка"]
+    },
+
+    {
+      "id": "video-telepass-1",
+      "category": "video",
+      "subtopic": "Бокс TELEPASS",
+      "title": "TELEPASS: часть 1",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1oNJOO6p_b6ace8vEKLKAuWwK4_UjTY2a/view?usp=drive_link",
+      "tags": ["telepass", "бокс", "италия"]
+    },
+    {
+      "id": "video-telepass-2",
+      "category": "video",
+      "subtopic": "Бокс TELEPASS",
+      "title": "TELEPASS: часть 2",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1XRx2Rok6-Iy8sx_leNrSlQX72n-gQ8QS/view?usp=drive_link",
+      "tags": ["telepass", "бокс", "италия"]
+    },
+    {
+      "id": "video-telepass-3",
+      "category": "video",
+      "subtopic": "Бокс TELEPASS",
+      "title": "TELEPASS: часть 3",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1cjjFJ0MA6He69GasS65C77YECrHlmGt6/view?usp=drive_link",
+      "tags": ["telepass", "бокс", "италия"]
+    },
+    {
+      "id": "video-telepass-4",
+      "category": "video",
+      "subtopic": "Бокс TELEPASS",
+      "title": "TELEPASS: часть 4",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1Xhl5DImyoM6LNHFVcczZXWkaVdM04p6v/view?usp=drive_link",
+      "tags": ["telepass", "бокс", "италия"]
+    },
+
+    {
+      "id": "video-regime-1-day",
+      "category": "video",
+      "subtopic": "Режим труда и отдыха",
+      "title": "1. Сутки водителя",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/10Lpb7RuZaizMSsEsOE3UXFHbDQanL86C/view?usp=drive_link",
+      "tags": ["режим", "сутки", "отдых", "тахограф"]
+    },
+    {
+      "id": "video-regime-2-driving",
+      "category": "video",
+      "subtopic": "Режим труда и отдыха",
+      "title": "2. Ежедневное время вождения",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1A_umKLcf7L1eUbixJVy0olwrcOWB9BvX/view?usp=drive_link",
+      "tags": ["режим", "вождение", "9 часов", "10 часов"]
+    },
+    {
+      "id": "video-regime-3-breaks",
+      "category": "video",
+      "subtopic": "Режим труда и отдыха",
+      "title": "3. Перерывы во время вождения. Суточный отдых",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1cnG_L21mIt1NOxD2kp95CdYLoKKT1n_v/view?usp=drive_link",
+      "tags": ["перерыв", "суточный отдых", "режим"]
+    },
+    {
+      "id": "video-regime-4-ferry",
+      "category": "video",
+      "subtopic": "Режим труда и отдыха",
+      "title": "4. Отдых на паромах и поездах",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/15hOlXChbkGWhOuYnSkIFxgoU15D233pZ/view?usp=drive_link",
+      "tags": ["паром", "поезд", "отдых", "режим"]
+    },
+    {
+      "id": "video-regime-5-week",
+      "category": "video",
+      "subtopic": "Режим труда и отдыха",
+      "title": "5. Рабочая неделя: недельный и двухнедельный отдых",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1iwJMlrXAZ_NprifTh4h9SGTN0-ZkXYbf/view?usp=drive_link",
+      "tags": ["неделя", "недельный отдых", "двухнедельный", "режим"]
+    },
+    {
+      "id": "video-regime-6-weekly-breaks",
+      "category": "video",
+      "subtopic": "Режим труда и отдыха",
+      "title": "6. Перерывы во время работы и еженедельный отдых",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1oHgohUTzIRVaWUv5yEXHGsuUq5-fWubq/view?usp=drive_link",
+      "tags": ["перерыв", "еженедельный отдых", "режим"]
+    },
+
+    {
+      "id": "video-norway-operator",
+      "category": "video",
+      "subtopic": "Лайфхаки с телефоном",
+      "title": "Выбор оператора сети в Норвегии",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1HfRv_ncl4HZEz0G3CJ8gEItn_Gi18MVF/view?usp=drive_link",
+      "tags": ["норвегия", "оператор", "сеть", "телефон", "связь"]
+    },
+    {
+      "id": "video-circlek-login",
+      "category": "video",
+      "subtopic": "Лайфхаки с телефоном",
+      "title": "Circle K: вход",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/12mbxlySa2UFLS_vDlY8_ds9pHSvn-NXF/view?usp=drive_link",
+      "tags": ["circle k", "вход", "приложение", "заправка"]
+    },
+    {
+      "id": "video-google-play",
+      "category": "video",
+      "subtopic": "Лайфхаки с телефоном",
+      "title": "Проблема с Google Play",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/14Ulr3Ult5CHDcR0mcdQXFXtMiit43htS/view?usp=drive_link",
+      "tags": ["google play", "приложение", "телефон", "ошибка"]
+    },
+
+    {
+      "id": "video-cabin-exit",
+      "category": "video",
+      "subtopic": "Техника безопасности",
+      "title": "Как правильно выходить из кабины тягача",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1fcwT6ii_2dSa95dv1pZ-L3PuDY9_gAty/view?usp=drive_link",
+      "tags": ["кабина", "выход", "безопасность", "травма"]
+    },
+    {
+      "id": "video-cabin-enter",
+      "category": "video",
+      "subtopic": "Техника безопасности",
+      "title": "Как правильно залезать в кабину тягача",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1hv5_zSvqQbe5t9nQtAe6GucMDg8cVoD8/view?usp=drive_link",
+      "tags": ["кабина", "вход", "безопасность", "травма"]
     }
   ]
 }

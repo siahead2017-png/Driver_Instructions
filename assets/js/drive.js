@@ -41,12 +41,13 @@ export function toEmbedUrl(item) {
 }
 
 const TYPE_META = {
-  pdf:   { label: 'PDF',      icon: '📄' },
-  doc:   { label: 'Документ', icon: '📝' },
-  sheet: { label: 'Таблица',  icon: '📊' },
-  slide: { label: 'Слайды',   icon: '📽️' },
-  video: { label: 'Видео',    icon: '🎬' },
-  link:  { label: 'Ссылка',   icon: '🔗' },
+  pdf:   { label: 'PDF',       icon: '📄' },
+  doc:   { label: 'Документ',  icon: '📝' },
+  sheet: { label: 'Таблица',   icon: '📊' },
+  slide: { label: 'Презентация', icon: '📽️' },
+  image: { label: 'Картинка',  icon: '🖼️' },
+  video: { label: 'Видео',     icon: '🎬' },
+  link:  { label: 'Ссылка',    icon: '🔗' },
 };
 
 export function typeMeta(type) {

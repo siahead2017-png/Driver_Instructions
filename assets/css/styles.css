@@ -14,6 +14,7 @@
   --t-doc: #1f6feb;
   --t-sheet: #17a34a;
   --t-slide: #d97706;
+  --t-image: #0891b2;
   --t-video: #8b5cf6;
   --t-link: #64748b;
 
@@ -237,6 +238,7 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 .card__badge--doc   { color: var(--t-doc); }
 .card__badge--sheet { color: var(--t-sheet); }
 .card__badge--slide { color: var(--t-slide); }
+.card__badge--image { color: var(--t-image); }
 .card__badge--video { color: var(--t-video); }
 
 .card__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
