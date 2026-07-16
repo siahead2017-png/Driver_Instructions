@@ -1,5 +1,5 @@
 import { toEmbedUrl, typeMeta } from './drive.js';
-import { getRecent, pushRecent } from './store.js';
+import { getRecent, pushRecent, nextRecentExpiry } from './store.js';
 
 const view = document.getElementById('view');
 const headerTitle = document.getElementById('header-title');
@@ -124,10 +124,22 @@ function cardHTML(item, i = 0) {
     </a>`;
 }
 
+let recentTimer = null;
+
 function renderHome() {
   setHeader('Инструкции', false);
 
   const recent = getRecent().map(byId).filter(Boolean);
+
+  // Через минуту «Недавние» устаревают — перерисуем главную, чтобы блок исчез,
+  // даже если пользователь всё это время смотрит на неё.
+  clearTimeout(recentTimer);
+  const expiry = nextRecentExpiry();
+  if (expiry) {
+    recentTimer = setTimeout(() => {
+      if (!query.trim() && route().screen === 'home') renderHome();
+    }, Math.max(0, expiry - Date.now()) + 50);
+  }
   const recentHTML = recent.length
     ? `<section class="section">
          <h2 class="section__title">Недавние</h2>
