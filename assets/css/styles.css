@@ -442,6 +442,46 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   animation-delay: calc(var(--i, 0) * 40ms);
 }
 
+/* Иконки на главной «выплывают издалека»: прилетают из глубины с увеличением. */
+.tiles { perspective: 900px; }
+
+@keyframes icon-fly-in {
+  from { opacity: 0; transform: scale(.2) translateY(6px); }
+  55%  { opacity: 1; }
+  to   { opacity: 1; transform: none; }
+}
+
+.tile__icon {
+  animation: icon-fly-in .55s cubic-bezier(.2, .8, .3, 1.3) both;
+  animation-delay: calc(var(--i, 0) * 45ms + 130ms);
+}
+
+/* Нажатие на категорию: плитка «переворачивается» и уносит внутрь. */
+@keyframes tile-flip-out {
+  from { transform: rotateY(0) scale(1); opacity: 1; }
+  to   { transform: rotateY(90deg) scale(1.25); opacity: 0; }
+}
+
+.tile.is-flipping {
+  animation: tile-flip-out .38s ease-in forwards;
+  transform-origin: center;
+  transform-style: preserve-3d;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Экран категории влетает с обратной стороны переворота. */
+@keyframes flip-in {
+  from { opacity: 0; transform: perspective(1000px) rotateY(-92deg) scale(1.06); }
+  60%  { opacity: 1; }
+  to   { opacity: 1; transform: none; }
+}
+
+.app-main.is-flip-in {
+  animation: flip-in .42s cubic-bezier(.2, .7, .3, 1) both;
+  transform-origin: center top;
+}
+
 /* ---------- Скелетоны загрузки ---------- */
 .skeleton-tiles {
   display: grid;

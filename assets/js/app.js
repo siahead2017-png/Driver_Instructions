@@ -102,13 +102,34 @@ function setHeader(title, showBack) {
   backBtn.hidden = !showBack;
 }
 
+const prefersReducedMotion = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 // Заменяем содержимое #view и перезапускаем анимацию появления экрана.
-function setView(html) {
+// entrance: 'is-entering' (обычный fade) или 'is-flip-in' (влёт из переворота).
+function setView(html, entrance = 'is-entering') {
   view.innerHTML = html;
-  view.classList.remove('is-entering');
+  view.classList.remove('is-entering', 'is-flip-in');
   void view.offsetWidth; // форсируем reflow, чтобы анимация проиграла заново
-  view.classList.add('is-entering');
+  view.classList.add(entrance);
 }
+
+// Флаг: следующий экран категории показать анимацией переворота.
+let flipNext = false;
+
+// Клик по плитке: сначала «переворот» плитки, затем переход в категорию.
+view.addEventListener('click', (e) => {
+  const tile = e.target.closest('.tile');
+  if (!tile || !view.contains(tile) || prefersReducedMotion()) return; // иначе обычный переход
+  const href = tile.getAttribute('href');
+  if (!href) return;
+  e.preventDefault();
+  flipNext = true;
+  tile.classList.add('is-flipping');
+  const go = () => { location.hash = href.slice(1); };
+  tile.addEventListener('animationend', go, { once: true });
+  setTimeout(go, 450); // страховка, если animationend не придёт
+});
 
 function cardHTML(item, i = 0) {
   const t = typeMeta(item.type);
@@ -170,11 +191,15 @@ function renderHome() {
 function renderCategory(cat) {
   setHeader(cat.title, true);
 
+  // Вход переворотом — только если попали сюда кликом по плитке.
+  const entrance = flipNext ? 'is-flip-in' : 'is-entering';
+  flipNext = false;
+
   const items = itemsOf(cat.id);
   if (!items.length) {
     setView(`<div class="empty"><div class="empty__icon">📭</div>
       <p class="empty__title">Пока пусто</p>
-      <p class="empty__text">В этой категории ещё нет инструкций.</p></div>`);
+      <p class="empty__text">В этой категории ещё нет инструкций.</p></div>`, entrance);
     return;
   }
 
@@ -204,7 +229,7 @@ function renderCategory(cat) {
         ${sub ? `<h2 class="section__title">${esc(sub)}</h2>` : ''}
         <div class="list">${list.map((it) => cardHTML(it, idx++)).join('')}</div>
       </section>`)
-    .join(''));
+    .join(''), entrance);
 }
 
 function renderSearch() {
