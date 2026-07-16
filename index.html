@@ -12,7 +12,9 @@
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Инструкции">
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
+       иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
+  <link rel="stylesheet" href="assets/css/styles.css?v=2">
 </head>
 <body>
   <header class="app-header">
@@ -62,6 +64,6 @@
     <div class="viewer__body" id="viewer-body"></div>
   </div>
 
-  <script type="module" src="assets/js/app.js"></script>
+  <script type="module" src="assets/js/app.js?v=2"></script>
 </body>
 </html>
