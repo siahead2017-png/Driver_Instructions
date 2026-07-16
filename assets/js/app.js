@@ -34,7 +34,17 @@ function fmtDate(iso) {
 
 // ---------- Загрузка ----------
 
+function renderSkeleton() {
+  const cells = Array.from({ length: 8 }, () => '<div class="skeleton"></div>').join('');
+  view.innerHTML = `
+    <section class="section">
+      <h2 class="section__title">Категории</h2>
+      <div class="skeleton-tiles">${cells}</div>
+    </section>`;
+}
+
 async function load() {
+  renderSkeleton();
   try {
     const res = await fetch('data/instructions.json', { cache: 'no-cache' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -92,10 +102,18 @@ function setHeader(title, showBack) {
   backBtn.hidden = !showBack;
 }
 
-function cardHTML(item) {
+// Заменяем содержимое #view и перезапускаем анимацию появления экрана.
+function setView(html) {
+  view.innerHTML = html;
+  view.classList.remove('is-entering');
+  void view.offsetWidth; // форсируем reflow, чтобы анимация проиграла заново
+  view.classList.add('is-entering');
+}
+
+function cardHTML(item, i = 0) {
   const t = typeMeta(item.type);
   return `
-    <a class="card" href="#/item/${encodeURIComponent(item.id)}">
+    <a class="card" style="--i:${i}" href="#/item/${encodeURIComponent(item.id)}">
       <span class="card__badge card__badge--${esc(item.type)}" aria-hidden="true">${t.icon}</span>
       <span class="card__body">
         <span class="card__title">${esc(item.title)}</span>
@@ -113,15 +131,15 @@ function renderHome() {
   const recentHTML = recent.length
     ? `<section class="section">
          <h2 class="section__title">Недавние</h2>
-         <div class="list">${recent.map(cardHTML).join('')}</div>
+         <div class="list">${recent.map((it, i) => cardHTML(it, i)).join('')}</div>
        </section>`
     : '';
 
   const tiles = data.categories
-    .map((c) => {
+    .map((c, i) => {
       const n = itemsOf(c.id).length;
       return `
-        <a class="tile" href="#/category/${encodeURIComponent(c.id)}">
+        <a class="tile" style="--i:${i}" href="#/category/${encodeURIComponent(c.id)}">
           <span class="tile__icon" aria-hidden="true">${esc(c.icon ?? '📁')}</span>
           <span class="tile__title">${esc(c.title)}</span>
           <span class="tile__count">${n} ${plural(n, 'инструкция', 'инструкции', 'инструкций')}</span>
@@ -129,12 +147,12 @@ function renderHome() {
     })
     .join('');
 
-  view.innerHTML = `
+  setView(`
     ${recentHTML}
     <section class="section">
       <h2 class="section__title">Категории</h2>
       <div class="tiles">${tiles}</div>
-    </section>`;
+    </section>`);
 }
 
 function renderCategory(cat) {
@@ -142,9 +160,9 @@ function renderCategory(cat) {
 
   const items = itemsOf(cat.id);
   if (!items.length) {
-    view.innerHTML = `<div class="empty"><div class="empty__icon">📭</div>
+    setView(`<div class="empty"><div class="empty__icon">📭</div>
       <p class="empty__title">Пока пусто</p>
-      <p class="empty__text">В этой категории ещё нет инструкций.</p></div>`;
+      <p class="empty__text">В этой категории ещё нет инструкций.</p></div>`);
     return;
   }
 
@@ -167,13 +185,14 @@ function renderCategory(cat) {
   };
   const sorted = [...groups].sort((a, b) => rank(a[0]) - rank(b[0]));
 
-  view.innerHTML = sorted
+  let idx = 0; // сквозной индекс для ступенчатого появления через все группы
+  setView(sorted
     .map(([sub, list]) => `
       <section class="section">
         ${sub ? `<h2 class="section__title">${esc(sub)}</h2>` : ''}
-        <div class="list">${list.map(cardHTML).join('')}</div>
+        <div class="list">${list.map((it) => cardHTML(it, idx++)).join('')}</div>
       </section>`)
-    .join('');
+    .join(''));
 }
 
 function renderSearch() {
@@ -182,14 +201,14 @@ function renderSearch() {
   const hits = data.items.filter((i) =>
     [i.title, i.description, ...(i.tags ?? [])].join(' ').toLowerCase().includes(q));
 
-  view.innerHTML = hits.length
+  setView(hits.length
     ? `<section class="section">
          <h2 class="section__title">Найдено: ${hits.length}</h2>
-         <div class="list">${hits.map(cardHTML).join('')}</div>
+         <div class="list">${hits.map((it, i) => cardHTML(it, i)).join('')}</div>
        </section>`
     : `<div class="empty"><div class="empty__icon">🔍</div>
          <p class="empty__title">Ничего не найдено</p>
-         <p class="empty__text">Попробуй другое слово.</p></div>`;
+         <p class="empty__text">Попробуй другое слово.</p></div>`);
 }
 
 function plural(n, one, few, many) {
@@ -212,6 +231,14 @@ function openViewer(item) {
   viewerOpen.href = item.url;
   viewer.hidden = false;
   document.body.classList.add('is-locked');
+
+  // Анимация появления: стартуем из смещённого/прозрачного состояния и снимаем его.
+  // setTimeout, а не requestAnimationFrame — rAF не срабатывает в фоновой вкладке.
+  clearTimeout(closeTimer);
+  clearTimeout(openTimer);
+  viewer.classList.remove('is-closing');
+  viewer.classList.add('is-opening');
+  openTimer = setTimeout(() => viewer.classList.remove('is-opening'), 20);
 
   const embed = toEmbedUrl(item);
   if (!embed) {
@@ -247,12 +274,21 @@ function fallbackHTML(item, reason) {
     </div>`;
 }
 
+let closeTimer = null;
+let openTimer = null;
+
 function closeViewer() {
-  if (viewer.hidden) return;
+  if (viewer.hidden || viewer.classList.contains('is-closing')) return;
   viewerOpenId = null;
-  viewer.hidden = true;
-  viewerBody.innerHTML = ''; // выгружаем iframe, иначе видео продолжает играть
+  viewerBody.innerHTML = ''; // выгружаем iframe сразу, иначе видео продолжает играть
   document.body.classList.remove('is-locked');
+
+  // Анимация выезда, затем прячем контейнер.
+  viewer.classList.add('is-closing');
+  closeTimer = setTimeout(() => {
+    viewer.hidden = true;
+    viewer.classList.remove('is-closing');
+  }, 260);
 }
 
 // ---------- События ----------

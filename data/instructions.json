@@ -50,6 +50,7 @@
       "id": "tolls-eurovignette",
       "category": "tolls",
       "title": "Оплата дорог: EUROVIGNETTE",
+      "description": "Как купить виньетку EUROVIGNETTE для Люксембурга и Швеции на eurovignettes.eu картой EUROWAG",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1QgcDneKkqF48bE38hbKH0yn1NgfO3ybe/view?usp=drive_link",
       "tags": ["eurovignette", "виньетка", "оплата дорог"]
@@ -58,6 +59,7 @@
       "id": "tolls-baltics",
       "category": "tolls",
       "title": "Покупка дорог: Латвия, Литва, Эстония",
+      "description": "Покупка виньеток LV/LT/EST через приложение SMSVinjete: пошагово и частые ошибки",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1Q4bUq-UIn08-7aeYsqSxEwAXV8J3iWXu/view?usp=drive_link",
       "tags": ["латвия", "литва", "эстония", "балтия", "оплата дорог"]
@@ -67,6 +69,7 @@
       "id": "dtp-actions",
       "category": "dtp",
       "title": "ДТП: действия водителя",
+      "description": "Пошаговый порядок действий на месте ДТП и по оформлению страхового случая",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1rayBuxnNtAWt492XsOgqizdINLzyls5r/view?usp=drive_link",
       "tags": ["дтп", "авария", "действия"]
@@ -75,6 +78,7 @@
       "id": "dtp-act-sample",
       "category": "dtp",
       "title": "Образец согласованного акта",
+      "description": "Заполненный образец «Извещения о ДТП» (европротокол): как вписать данные и нарисовать схему",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1aT71uQ72FDueyUhSCsPJeZMU_HXbAWO-/view?usp=drive_link",
       "tags": ["дтп", "акт", "образец", "европротокол"]
@@ -84,6 +88,7 @@
       "id": "docs-cmr-work",
       "category": "docs",
       "title": "Работа по CMR",
+      "description": "Правила оформления CMR: своя накладная на каждую загрузку, подпись получателя, штрафы за ошибки",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1L-Jyf6-0XpQouRgaw2IJWqQBBbcREQZ7/view?usp=drive_link",
       "tags": ["cmr", "накладная", "документы"]
@@ -92,6 +97,7 @@
       "id": "docs-cmr-report",
       "category": "docs",
       "title": "CMR Loading/Unloading Report — образец",
+      "description": "Образец заполнения рейсового отчёта: загрузки, выгрузки, перецепки, спидометр и число CMR",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/10hGsICPoF8A2CblK7WEd9WNJlJe3wEjL/view?usp=drive_link",
       "tags": ["cmr", "report", "погрузка", "выгрузка", "образец", "paraugs"]
@@ -100,6 +106,7 @@
       "id": "docs-report-sample",
       "category": "docs",
       "title": "Образец заполнения отчёта",
+      "description": "Заполненный образец рейсового отчёта: маршрут, замеры баков, AdBlue и топливные чеки",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/12jb9VdieF3lZLz6y1czHTu46kXmrgQPC/view?usp=drive_link",
       "tags": ["отчёт", "образец", "заполнение"]
@@ -108,6 +115,7 @@
       "id": "docs-oil-report",
       "category": "docs",
       "title": "Отчёт по маслу",
+      "description": "Бланк MAN для замера расхода моторного масла (часть 1 заполняет сервис MAN)",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1B0g1wFJoY-ew2kiOdncQxksszjxc5VZf/view?usp=drive_link",
       "tags": ["масло", "отчёт"]
@@ -116,6 +124,7 @@
       "id": "docs-bank-receipts",
       "category": "docs",
       "title": "Банк, чеки: если нету",
+      "description": "Что делать, если терминал не выдал чек при оплате картой: сообщить в отдел учёта, иначе удержат сумму",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1z8Lt-v-w54hPC1a5xpQ1ay5nr8JMPWQB/view?usp=drive_link",
       "tags": ["банк", "чеки", "документы", "отчётность"]
@@ -124,6 +133,7 @@
       "id": "docs-company-details",
       "category": "docs",
       "title": "Реквизиты компаний",
+      "description": "Реквизиты SIA HEAD и SIA HD Logistics Group: рег. номера, VAT, адрес, контакты",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1s3mlngKI2B-s2-iZo-gaxZ5gt2k_NUAu/view?usp=drive_link",
       "tags": ["реквизиты", "компании", "данные"]
@@ -133,6 +143,7 @@
       "id": "fuel-cards",
       "category": "fuel",
       "title": "Топливные карты",
+      "description": "Обзор топливных карт (EUROWAG, CRT, Viada, Neste, Circle K, AS24) и заправки AdBlue",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/19SsIu_gGYLod4ITmktlYsqzlWRx1Nb0d/view?usp=drive_link",
       "tags": ["топливо", "карты", "заправка"]
@@ -141,6 +152,7 @@
       "id": "fuel-crt-card",
       "category": "fuel",
       "title": "CRT — топливная карта",
+      "description": "Топливная карта CRT Partner: как пользоваться и что делать с PIN-кодом",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1yPNgSx1Cadp8FOWYpU6mgkEI2HrHzy2N/view?usp=drive_link",
       "tags": ["crt", "топливо", "карта", "заправка"]
@@ -149,6 +161,7 @@
       "id": "fuel-norms",
       "category": "fuel",
       "title": "Нормы расхода",
+      "description": "Нормы расхода топлива по маршрутам и тягачам, зимняя надбавка и учёт догрузки",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/111gEQZ7PmjdRg9yZMU4D8nuyBvKnqrZe/view?usp=drive_link",
       "updated": "2026-07-01",
@@ -158,6 +171,7 @@
       "id": "fuel-tank-measure",
       "category": "fuel",
       "title": "Замеры топливных баков: Scania, DAF, Mercedes, MAN",
+      "description": "Замер топлива линейкой: коэффициенты см→литры для Scania, Mercedes, DAF, MAN",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1g6ABNaaR96Wbjbg68wRUiCF1iCPql0Id/view?usp=drive_link",
       "tags": ["замер", "баки", "scania", "daf", "mercedes", "man"]
@@ -166,6 +180,7 @@
       "id": "fuel-tank-measure-950",
       "category": "fuel",
       "title": "Инструкция по замеру топливных баков 950L и 545L",
+      "description": "Замер баков DAF 545 и 950 л линейкой: сколько литров приходится на один сантиметр",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1JynYIaW9Cq_iUTSKdi4ksUSa_RCYENPp/view?usp=drive_link",
       "tags": ["замер", "баки", "950", "545", "литров"]
@@ -174,6 +189,7 @@
       "id": "fuel-tank-valve",
       "category": "fuel",
       "title": "Перекрытие трубки бака",
+      "description": "Запрещено пережимать вентиляционную трубку бака — это ломает бак, штраф 1500 EUR",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1Pjs4bk4SaZetWcIWUoZMpgOm0QIWhJtQ/view?usp=drive_link",
       "tags": ["бак", "трубка", "перекрытие"]
@@ -182,6 +198,7 @@
       "id": "fuel-breakdown-consumption",
       "category": "fuel",
       "title": "Поломка авто в рейсе: повышенный расход топлива",
+      "description": "При поломке с повышенным расходом: сразу сообщить в ACTION и зафиксировать всё документально",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1LVe8CxU3rpYH9CNs9z-Pu38avB63NEcZ/view?usp=drive_link",
       "tags": ["поломка", "расход", "топливо", "рейс"]
@@ -191,6 +208,7 @@
       "id": "tacho-regime",
       "category": "tacho",
       "title": "Режим труда и отдыха",
+      "description": "Сводная таблица режима труда и отдыха: лимиты вождения, перерывы и отдых",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1nMg8aucyfHwV2tpwAAGJCFTKASR_m9hw/view?usp=drive_link",
       "tags": ["режим", "труд", "отдых", "тахограф"]
@@ -199,6 +217,7 @@
       "id": "tacho-pause-6h",
       "category": "tacho",
       "title": "Пауза после 6 часов непрерывной работы",
+      "description": "Перерыв после 6 часов работы: когда 30, а когда 45 минут, с примерами",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1UNm05fLU7eY4Y3rkM_5SUGGjWzeZyLaV/view?usp=drive_link",
       "tags": ["пауза", "перерыв", "6 часов", "режим"]
@@ -207,6 +226,7 @@
       "id": "tacho-double-crew",
       "category": "tacho",
       "title": "Практические примеры: режим труда и отдыха в двойном экипаже",
+      "description": "Режим труда и отдыха в двойном экипаже: практические примеры расчёта",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1UczhpY5-OhMhnvJHvnZ24l1-kaX4x1kf/view?usp=drive_link",
       "tags": ["двойной экипаж", "примеры", "режим", "отдых"]
@@ -215,6 +235,7 @@
       "id": "tacho-manual-input",
       "category": "tacho",
       "title": "Мануальный ввод",
+      "description": "Пошаговый ручной (мануальный) ввод на тахографе: режим, дата, время и страна",
       "type": "image",
       "url": "https://drive.google.com/file/d/18RmlUP-ptvqfV_R4wLcTRsF08q5TjUZj/view?usp=drive_link",
       "tags": ["мануальный ввод", "тахограф", "карта водителя"]
@@ -234,6 +255,7 @@
       "id": "truck-inspection-order",
       "category": "truck",
       "title": "Распоряжение: осмотр",
+      "description": "Распоряжение: осматривать тягач и прицеп перед рейсом и отмечать повреждения на бланке",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/12er1J5CJwOvaJ-eT-4Z1DVdpasUqhyG9/view?usp=drive_link",
       "tags": ["осмотр", "распоряжение", "rikojums"]
@@ -242,6 +264,7 @@
       "id": "truck-dashcam",
       "category": "truck",
       "title": "Видеорегистраторы: инструкция",
+      "description": "Правила видеорегистратора: рабочая SD-карта, непрерывная запись и сохранение записи при ДТП",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1eUyPQ7k8irGBl-90j2BPEu7nY5RFUrY5/view?usp=drive_link",
       "tags": ["видеорегистратор", "камера", "инструкция"]
@@ -250,6 +273,7 @@
       "id": "truck-reefer",
       "category": "truck",
       "title": "Холодильные установки и принтеры на рефрижераторах",
+      "description": "Работа с холодильной установкой рефрижератора и распечатка тикетов на принтере",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1hU_pKyZJrROp4fwKsvrwoB7lPTN_-Tjs/view?usp=drive_link",
       "tags": ["рефрижератор", "холодильник", "принтер", "температура"]
@@ -258,6 +282,7 @@
       "id": "truck-daf-cabin",
       "category": "truck",
       "title": "DAF: информация для машин с удлинённой кабиной",
+      "description": "Австрийское разъяснение по удлинённым кабинам DAF (Art. 9a 96/53/EC) — держать при себе",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/11ce0vFvjYHBkS-eDMN8e2LMDViDHehh9/view?usp=drive_link",
       "tags": ["daf", "кабина", "удлинённая"]
@@ -267,6 +292,7 @@
       "id": "loading-during",
       "category": "loading",
       "title": "Во время погрузки и разгрузки",
+      "description": "Что проверять при погрузке и разгрузке и как действовать при несоответствиях (отметка в CMR)",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1hXgSuGHW30XkfT6HD2YGaJ2JbZH_mQzJ/view?usp=drive_link",
       "tags": ["погрузка", "разгрузка", "инструкция"]
@@ -275,6 +301,7 @@
       "id": "loading-weight-control",
       "category": "loading",
       "title": "Контроль веса и расстановки груза на загрузке",
+      "description": "Контроль веса и правильной расстановки груза по осям во время загрузки",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1fN-RdL8LhyRwkCbVHtfamz4MasodwJm6/view?usp=drive_link",
       "tags": ["вес", "оси", "груз", "расстановка", "погрузка"]
@@ -284,6 +311,7 @@
       "id": "safety-rules",
       "category": "safety",
       "title": "Правила безопасности",
+      "description": "Правила безопасности: манёвры на парковке, перестроение, скоростной режим и ответственность",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1o7DVlFdS9WeSj4a-TnApBHZ8dJZx9IEw/view?usp=drive_link",
       "tags": ["безопасность", "правила", "техника безопасности"]
@@ -292,6 +320,7 @@
       "id": "safety-control-systems",
       "category": "safety",
       "title": "Системы контроля безопасности: распоряжение",
+      "description": "Приказ: не отключать LDW, пользоваться адаптивным круиз-контролем, держать включённым видеорегистратор",
       "type": "image",
       "url": "https://drive.google.com/file/d/1dMhXpA7jPc_PAMfh7RNahKTuNwldk16u/view?usp=drive_link",
       "tags": ["контроль", "безопасность", "распоряжение", "системы"]
@@ -300,6 +329,7 @@
       "id": "safety-instructaz",
       "category": "safety",
       "title": "Внеплановый инструктаж (Head, 2023)",
+      "description": "Внеплановый инструктаж 2023: случаи травм при входе/выходе из кабины и как их избежать",
       "type": "slide",
       "url": "https://docs.google.com/presentation/d/1E56ShVf3DSPJmnvcYnPpLeN2utvTd3uG/edit?usp=drive_link&rtpof=true&sd=true",
       "tags": ["инструктаж", "внеплановый", "head", "презентация"]
@@ -308,6 +338,7 @@
       "id": "safety-photo-radars",
       "category": "safety",
       "title": "Фоторадары: контроль",
+      "description": "Фоторадары и виньетки: как проверять оплату, сроки действия и избегать штрафов",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1JxmIXQvrDQtWkK0ZWYpCP-MBN-1pCejT/view?usp=drive_link",
       "tags": ["радары", "скорость", "контроль", "штрафы"]
@@ -317,6 +348,7 @@
       "id": "rules-bribe",
       "category": "rules",
       "title": "Взятка = тюрьма",
+      "description": "Запрет взяток инспекторам ЕС: это уголовное преступление — увольнение, депортация, тюрьма",
       "type": "doc",
       "url": "https://docs.google.com/document/d/1XHDbf3ri7xNmlu5Q-ofTWvTkfW5XP0Z8ivlyDlW_cU8/edit?usp=drive_link",
       "tags": ["взятка", "коррупция", "запрет", "тюрьма"]
@@ -325,6 +357,7 @@
       "id": "rules-company-car",
       "category": "rules",
       "title": "Правила работы на легковом авто компании",
+      "description": "Правила легкового авто компании: лимит 110 км/ч, штраф 50 EUR, не трогать видеорегистратор",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1BpXq59HDRRO8nDLAJ_U5JBPwikvl93BW/view?usp=drive_link",
       "tags": ["легковое авто", "правила", "компания"]
@@ -333,6 +366,7 @@
       "id": "rules-wash-poland",
       "category": "rules",
       "title": "Мойки в Польше",
+      "description": "Мойка TORZYM в Польше: координаты, часы работы и правила оплаты",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1x_BoY58J1vgnPK0sBawf2wNua9bqvywG/view?usp=drive_link",
       "tags": ["мойка", "польша"]
@@ -341,6 +375,7 @@
       "id": "rules-nl-tunnel",
       "category": "rules",
       "title": "Нидерланды: запрет на туннель A24",
+      "description": "В Нидерландах туннель на A24 платный — объезжать по альтернативному маршруту к Европорту",
       "type": "image",
       "url": "https://drive.google.com/file/d/14mxPYBfdrGOWDrDVyuQKXJ-XqEkDgIbD/view?usp=drive_link",
       "tags": ["нидерланды", "туннель", "a24", "запрет", "маршрут"]
@@ -349,6 +384,7 @@
       "id": "rules-norway-internet",
       "category": "rules",
       "title": "Если в Норвегии не работает интернет",
+      "description": "Если в Норвегии нет интернета: вручную выбрать сеть TELENOR 4G в настройках телефона",
       "type": "doc",
       "url": "https://docs.google.com/document/d/1XmyGeqz-eu5Hqiq7FbG9gRaJkiDz1_zNyu85ycEQRas/edit?usp=drive_link",
       "tags": ["норвегия", "интернет", "связь", "телефон"]
