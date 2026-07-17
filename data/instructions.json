@@ -140,7 +140,7 @@
     },
     {
       "id": "docs-bank-receipts",
-      "category": "docs",
+      "category": "rules",
       "title": "Банк, чеки: если нету",
       "description": "Что делать, если терминал не выдал чек при оплате картой: сообщить в отдел учёта, иначе удержат сумму",
       "type": "pdf",
@@ -149,7 +149,7 @@
     },
     {
       "id": "docs-company-details",
-      "category": "docs",
+      "category": "rules",
       "title": "Реквизиты компаний",
       "description": "Реквизиты SIA HEAD и SIA HD Logistics Group: рег. номера, VAT, адрес, контакты",
       "type": "pdf",
