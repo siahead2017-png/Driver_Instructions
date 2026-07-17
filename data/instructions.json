@@ -94,22 +94,40 @@
       "tags": ["cmr", "накладная", "документы"]
     },
     {
-      "id": "docs-cmr-report",
+      "id": "docs-report-main",
       "category": "docs",
-      "title": "CMR Loading/Unloading Report — образец",
-      "description": "Образец заполнения рейсового отчёта: загрузки, выгрузки, перецепки, спидометр и число CMR",
+      "title": "Образец заполнения основного отчёта",
+      "description": "Образец заполнения Вашего основного отчёта + дополнительные листы на длинные рейсы",
       "type": "pdf",
-      "url": "https://drive.google.com/file/d/10hGsICPoF8A2CblK7WEd9WNJlJe3wEjL/view?usp=drive_link",
-      "tags": ["cmr", "report", "погрузка", "выгрузка", "образец", "paraugs"]
+      "url": "https://drive.google.com/file/d/13_7FqNYg9CytOD5NrMXEya5kNTGrF0h-/view?usp=drive_link",
+      "tags": ["отчёт", "образец", "заполнение", "основной", "длинные рейсы"]
     },
     {
-      "id": "docs-report-sample",
+      "id": "docs-report-dotyazhka",
       "category": "docs",
-      "title": "Образец заполнения отчёта",
-      "description": "Заполненный образец рейсового отчёта: маршрут, замеры баков, AdBlue и топливные чеки",
+      "title": "Образец заполнения отчёта на дотяжку",
+      "description": "Образец заполнения отчёта на дотяжку",
       "type": "pdf",
-      "url": "https://drive.google.com/file/d/12jb9VdieF3lZLz6y1czHTu46kXmrgQPC/view?usp=drive_link",
-      "tags": ["отчёт", "образец", "заполнение"]
+      "url": "https://drive.google.com/file/d/1lxuWHRbiq0AGXxd6LKedM7SniA6dvY5_/view?usp=drive_link",
+      "tags": ["отчёт", "образец", "заполнение", "дотяжка"]
+    },
+    {
+      "id": "docs-report-cmr",
+      "category": "docs",
+      "title": "Образец заполнения отчёта по Загрузкам / Выгрузкам — CMR",
+      "description": "Образец заполнения отчёта по загрузкам / выгрузкам — CMR",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1Zl6TcsQQpHFAC--ZBnuaWpj3dlMf54NC/view?usp=drive_link",
+      "tags": ["cmr", "отчёт", "образец", "погрузка", "выгрузка"]
+    },
+    {
+      "id": "docs-report-car",
+      "category": "docs",
+      "title": "Образец заполнения отчёта по легковой машине",
+      "description": "Образец заполнения отчёта по легковой машине, обязателен к заполнению",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1i58x1IVTnsIxkzIrhxTbxz4ujhpRhjXd/view?usp=drive_link",
+      "tags": ["отчёт", "образец", "заполнение", "легковая", "обязательно"]
     },
     {
       "id": "docs-oil-report",
