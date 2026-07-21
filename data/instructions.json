@@ -130,15 +130,6 @@
       "tags": ["отчёт", "образец", "заполнение", "легковая", "обязательно"]
     },
     {
-      "id": "docs-oil-report",
-      "category": "docs",
-      "title": "Отчёт по маслу",
-      "description": "Бланк MAN для замера расхода моторного масла (часть 1 заполняет сервис MAN)",
-      "type": "pdf",
-      "url": "https://drive.google.com/file/d/1B0g1wFJoY-ew2kiOdncQxksszjxc5VZf/view?usp=drive_link",
-      "tags": ["масло", "отчёт"]
-    },
-    {
       "id": "docs-bank-receipts",
       "category": "rules",
       "title": "Банк, чеки: если нету",
@@ -268,6 +259,15 @@
       "tags": ["мануальный ввод", "тахограф", "карта водителя"]
     },
 
+    {
+      "id": "docs-oil-report",
+      "category": "truck",
+      "title": "Отчёт по маслу",
+      "description": "Бланк MAN для замера расхода моторного масла (часть 1 заполняет сервис MAN)",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1B0g1wFJoY-ew2kiOdncQxksszjxc5VZf/view?usp=drive_link",
+      "tags": ["масло", "отчёт"]
+    },
     {
       "id": "truck-photo",
       "category": "truck",
