@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-15",
+  "updated": "2026-07-21",
   "categories": [
     { "id": "tolls",   "title": "Оплата дорог и боксы",   "icon": "🛣️", "order": 1 },
     { "id": "dtp",     "title": "ДТП",                     "icon": "🚨", "order": 2 },
@@ -186,22 +186,31 @@
       "tags": ["нормы", "расход", "топливо"]
     },
     {
-      "id": "fuel-tank-measure",
+      "id": "fuel-tank-daf",
       "category": "fuel",
-      "title": "Замеры топливных баков: Scania, DAF, Mercedes, MAN",
-      "description": "Замер топлива линейкой: коэффициенты см→литры для Scania, Mercedes, DAF, MAN",
+      "title": "Замер топливных баков DAF (845 и 335 л)",
+      "description": "Замер линейкой: отметка 64 см, полный бак — 60 см. Бак 845 л — 1 см = 14,08 л, бак 335 л — 1 см = 5,58 л",
       "type": "pdf",
-      "url": "https://drive.google.com/file/d/1g6ABNaaR96Wbjbg68wRUiCF1iCPql0Id/view?usp=drive_link",
-      "tags": ["замер", "баки", "scania", "daf", "mercedes", "man"]
+      "url": "https://drive.google.com/file/d/18UkeILrec-ANa49d50Y5of79h4l0gjPe/view?usp=drive_link",
+      "tags": ["замер", "баки", "daf", "845", "335"]
     },
     {
-      "id": "fuel-tank-measure-950",
+      "id": "fuel-tank-man",
       "category": "fuel",
-      "title": "Инструкция по замеру топливных баков 950L и 545L",
-      "description": "Замер баков DAF 545 и 950 л линейкой: сколько литров приходится на один сантиметр",
+      "title": "Замер топливного бака MAN (580 л)",
+      "description": "Замер линейкой: отметка 70 см, полный бак — 67 см. Бак 580 л — 1 см = 8,65 л",
       "type": "pdf",
-      "url": "https://drive.google.com/file/d/1JynYIaW9Cq_iUTSKdi4ksUSa_RCYENPp/view?usp=drive_link",
-      "tags": ["замер", "баки", "950", "545", "литров"]
+      "url": "https://drive.google.com/file/d/1cPmUsoqUci1astzBGtbx6k1VB3SOsteB/view?usp=drive_link",
+      "tags": ["замер", "баки", "man", "580"]
+    },
+    {
+      "id": "fuel-tank-volvo",
+      "category": "fuel",
+      "title": "Замер топливных баков VOLVO (570 и 650 л)",
+      "description": "Замер линейкой: отметка 71 см, полный бак — 65 см. Бак 570 л — 1 см = 8,77 л, бак 650 л — 1 см = 10,00 л",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1ySFcYQkRce2UdwD9PezLewK4bODZd9mz/view?usp=drive_link",
+      "tags": ["замер", "баки", "volvo", "570", "650"]
     },
     {
       "id": "fuel-tank-valve",
