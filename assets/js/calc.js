@@ -208,12 +208,13 @@ function close() {
   }, 240);
 }
 
-// Значения по умолчанию: скорость 70, расходы 27 / 1,8, паузы и топливо выключены.
+// Значения по умолчанию: скорость 70, расходы 27 / 1,8, топливо включено, паузы сняты.
 function setDefaults() {
   applyState(null);
   speedEl.value = DEFAULT_SPEED;
   truckEl.value = DEFAULT_TRUCK;
   trailerEl.value = DEFAULT_TRAILER;
+  fuelOn.checked = true; // топливо считаем сразу
 }
 
 function reset() {
