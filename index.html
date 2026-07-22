@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=3">
+  <link rel="stylesheet" href="assets/css/styles.css?v=4">
 </head>
 <body>
   <header class="app-header">
@@ -84,10 +84,26 @@
     <div class="viewer__body" id="viewer-body"></div>
   </div>
 
-  <!-- Плавающая кнопка калькулятора времени -->
-  <button class="calc-fab" id="calc-fab" type="button" aria-label="Калькулятор времени в пути">
+  <!-- Плавающая кнопка калькулятора: время + топливо + маршрут -->
+  <button class="calc-fab" id="calc-fab" type="button" aria-label="Калькулятор времени и топлива">
     <span class="calc-fab__icon" aria-hidden="true">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    </span>
+    <span class="calc-fab__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M5 20V6a2 2 0 012-2h4a2 2 0 012 2v14"/>
+        <path d="M3 20h12"/>
+        <rect x="6.5" y="6.5" width="5" height="3.5" rx=".5"/>
+        <path d="M13 10.5h3a1.5 1.5 0 011.5 1.5v4a1.5 1.5 0 003 0V9l-2.5-2.5"/>
+      </svg>
+    </span>
+    <span class="calc-fab__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <rect x="8" y="7" width="12" height="8" rx="1"/>
+        <path d="M8 15V10H5l-2 3v2"/>
+        <circle cx="6" cy="17" r="1.6"/>
+        <circle cx="16" cy="17" r="1.6"/>
+      </svg>
     </span>
     <span class="calc-fab__icon" aria-hidden="true">
       <svg viewBox="0 0 24 24">
@@ -155,6 +171,31 @@
             </label>
           </div>
         </div>
+
+        <label class="calc__toggle">
+          <input type="checkbox" id="calc-fuel-on">
+          <span>Считать топливо (тягач + прицеп)</span>
+        </label>
+
+        <div class="calc__fuel" id="calc-fuel" hidden>
+          <div class="calc__fields">
+            <label class="calc__field">
+              <span class="calc__field-label">Расход тягача, л/100 км</span>
+              <input class="calc__input" id="calc-truck" type="number" inputmode="decimal"
+                min="0" step="0.1" placeholder="27" autocomplete="off">
+            </label>
+            <label class="calc__field">
+              <span class="calc__field-label">Расход прицепа, л/ч</span>
+              <input class="calc__input" id="calc-trailer" type="number" inputmode="decimal"
+                min="0" step="0.1" placeholder="1.8" autocomplete="off">
+            </label>
+          </div>
+          <div class="calc__fuel-result" aria-live="polite">
+            <div class="calc__fuel-row"><span>Тягач (по км)</span><span id="calc-fuel-truck">— л</span></div>
+            <div class="calc__fuel-row"><span>Прицеп (по времени)</span><span id="calc-fuel-trailer">— л</span></div>
+            <div class="calc__fuel-row calc__fuel-row--total"><span>Всего</span><span id="calc-fuel-total">— л</span></div>
+          </div>
+        </div>
       </div>
 
       <div class="calc__foot">
@@ -164,7 +205,7 @@
     </div>
   </div>
 
-  <script type="module" src="assets/js/app.js?v=3"></script>
-  <script type="module" src="assets/js/calc.js?v=3"></script>
+  <script type="module" src="assets/js/app.js?v=4"></script>
+  <script type="module" src="assets/js/calc.js?v=4"></script>
 </body>
 </html>

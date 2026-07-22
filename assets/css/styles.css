@@ -543,8 +543,8 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   z-index: 40;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 22px;
+  gap: 12px;
+  padding: 13px 20px;
   border: 0;
   border-radius: 999px;
   background: linear-gradient(135deg, var(--fab-a) 0%, var(--fab-b) 48%, var(--fab-c) 100%);
@@ -577,7 +577,7 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, .9)) drop-shadow(0 0 10px rgba(255, 170, 60, .8));
 }
 
-.calc-fab__icon svg { width: 26px; height: 26px; stroke-width: 2.2; }
+.calc-fab__icon svg { width: 24px; height: 24px; stroke-width: 2; }
 
 @media (hover: hover) {
   .calc-fab:hover { transform: translateY(-2px) scale(1.03); }
@@ -737,6 +737,97 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 /* Своя пауза */
 .calc__extra { display: flex; flex-direction: column; gap: 8px; }
 .calc__extra-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Переключатель «Считать топливо» */
+.calc__toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+
+.calc__toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+/* Кастомный «флажок» слева от текста. */
+.calc__toggle span { position: relative; padding-left: 30px; }
+
+.calc__toggle span::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--text-dim);
+  border-radius: 6px;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.calc__toggle span::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: calc(50% - 2px);
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: translateY(-50%) rotate(45deg) scale(0);
+  transition: transform .15s ease;
+}
+
+.calc__toggle:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.calc__toggle:has(input:checked) span::before { border-color: var(--accent); background: var(--accent); }
+.calc__toggle:has(input:checked) span::after { transform: translateY(-50%) rotate(45deg) scale(1); }
+.calc__toggle:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--accent-soft); }
+
+/* Топливный блок */
+.calc__fuel { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.calc__fuel[hidden] { display: none; }
+
+.calc__fuel-result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  border-radius: 14px;
+  background: linear-gradient(160deg, var(--accent-soft), var(--surface) 85%);
+}
+
+.calc__fuel-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.calc__fuel-row > span:first-child { color: var(--text-dim); font-size: 14px; }
+.calc__fuel-row > span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.calc__fuel-row--total {
+  margin-top: 2px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+}
+
+.calc__fuel-row--total > span:first-child { color: var(--text); font-weight: 700; font-size: 16px; }
+.calc__fuel-row--total > span:last-child { color: var(--accent); font-weight: 800; font-size: 20px; }
 
 /* Кнопки-подвал */
 .calc__foot { display: flex; gap: 10px; }

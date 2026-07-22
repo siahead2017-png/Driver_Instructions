@@ -18,7 +18,18 @@ const timeEl = document.getElementById('calc-time');
 const arrivalEl = document.getElementById('calc-arrival');
 const breakdownEl = document.getElementById('calc-breakdown');
 
+// Топливо (опционально, по галочке)
+const fuelOn = document.getElementById('calc-fuel-on');
+const fuelBlock = document.getElementById('calc-fuel');
+const truckEl = document.getElementById('calc-truck');
+const trailerEl = document.getElementById('calc-trailer');
+const fuelTruckEl = document.getElementById('calc-fuel-truck');
+const fuelTrailerEl = document.getElementById('calc-fuel-trailer');
+const fuelTotalEl = document.getElementById('calc-fuel-total');
+
 const DEFAULT_SPEED = 70;
+const DEFAULT_TRUCK = 27;    // л/100 км
+const DEFAULT_TRAILER = 1.8; // л/ч (холодильная установка)
 
 // ---------- Хранилище (ключ отдельный от «недавних»; TTL 5 минут) ----------
 const KEY = 'di:calc';
@@ -32,6 +43,9 @@ function saveState() {
       pauses: pauseEls.map((el) => el.checked),
       extraH: ehEl.value,
       extraM: emEl.value,
+      fuelOn: fuelOn.checked,
+      truck: truckEl.value,
+      trailer: trailerEl.value,
       t: Date.now(),
     };
     localStorage.setItem(KEY, JSON.stringify(state));
@@ -75,6 +89,10 @@ function fmtHHMM(totalMin) {
   return `${String(h).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
 }
 
+function fmtL(liters) {
+  return liters.toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + ' л';
+}
+
 function arrivalText(totalMin) {
   const now = new Date();
   const eta = new Date(now.getTime() + totalMin * 60_000);
@@ -108,6 +126,7 @@ function calc() {
     breakdownEl.textContent = pauseMin
       ? `Паузы ${fmtHHMM(pauseMin)} · введите расстояние и скорость`
       : 'Введите расстояние и скорость';
+    updateFuel(dist, 0, false); // время невалидно — топливо не считаем
     return;
   }
 
@@ -119,6 +138,28 @@ function calc() {
   breakdownEl.textContent = pauseMin
     ? `Движение ${fmtHHMM(driveMin)} + паузы ${fmtHHMM(pauseMin)}`
     : `Движение ${fmtHHMM(driveMin)}`;
+
+  updateFuel(dist, totalMin, true);
+}
+
+// Топливо считаем, только когда включена галочка. Тягач — от километража,
+// прицеп — от полного времени в пути (тот же totalMin, что и большая цифра).
+function updateFuel(dist, totalMin, timeValid) {
+  fuelBlock.hidden = !fuelOn.checked;
+  if (!fuelOn.checked) return;
+
+  if (!timeValid) {
+    fuelTruckEl.textContent = '— л';
+    fuelTrailerEl.textContent = '— л';
+    fuelTotalEl.textContent = '— л';
+    return;
+  }
+
+  const truckL = (dist / 100) * num(truckEl);
+  const trailerL = (totalMin / 60) * num(trailerEl);
+  fuelTruckEl.textContent = fmtL(truckL);
+  fuelTrailerEl.textContent = fmtL(trailerL);
+  fuelTotalEl.textContent = fmtL(truckL + trailerL);
 }
 
 // Пересчёт + сохранение на каждое изменение.
@@ -135,16 +176,16 @@ function applyState(s) {
   pauseEls.forEach((el, i) => { el.checked = Boolean(s?.pauses?.[i]); });
   ehEl.value = s?.extraH ?? '';
   emEl.value = s?.extraM ?? '';
+  fuelOn.checked = Boolean(s?.fuelOn);
+  truckEl.value = s?.truck ?? '';
+  trailerEl.value = s?.trailer ?? '';
 }
 
 function open() {
   if (!modal.hidden) return;
   const saved = loadState();
   if (saved) applyState(saved);
-  else {
-    applyState(null);
-    speedEl.value = DEFAULT_SPEED; // по умолчанию 70 км/ч
-  }
+  else setDefaults();
   calc();
 
   modal.hidden = false;
@@ -167,9 +208,16 @@ function close() {
   }, 240);
 }
 
-function reset() {
+// Значения по умолчанию: скорость 70, расходы 27 / 1,8, паузы и топливо выключены.
+function setDefaults() {
   applyState(null);
   speedEl.value = DEFAULT_SPEED;
+  truckEl.value = DEFAULT_TRUCK;
+  trailerEl.value = DEFAULT_TRAILER;
+}
+
+function reset() {
+  setDefaults();
   clearState();
   calc();
   saveState();
@@ -183,7 +231,7 @@ doneBtn.addEventListener('click', close);
 backdrop.addEventListener('click', close);
 resetBtn.addEventListener('click', reset);
 
-[distEl, speedEl, ehEl, emEl, ...pauseEls].forEach((el) => {
+[distEl, speedEl, ehEl, emEl, fuelOn, truckEl, trailerEl, ...pauseEls].forEach((el) => {
   el.addEventListener('input', onInput);
   el.addEventListener('change', onInput);
 });
