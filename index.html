@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=2">
+  <link rel="stylesheet" href="assets/css/styles.css?v=3">
 </head>
 <body>
   <header class="app-header">
@@ -84,6 +84,87 @@
     <div class="viewer__body" id="viewer-body"></div>
   </div>
 
-  <script type="module" src="assets/js/app.js?v=2"></script>
+  <!-- Плавающая кнопка калькулятора времени -->
+  <button class="calc-fab" id="calc-fab" type="button" aria-label="Калькулятор времени в пути">
+    <span class="calc-fab__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    </span>
+    <span class="calc-fab__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M5 18a2.5 2.5 0 010-5h9a2.5 2.5 0 000-5H8"/>
+        <circle cx="5" cy="18" r="1.4"/>
+        <path d="M15 4l3 3-3 3"/>
+      </svg>
+    </span>
+  </button>
+
+  <!-- Виджет расчёта времени до точки -->
+  <div class="calc" id="calc" hidden role="dialog" aria-modal="true" aria-labelledby="calc-title">
+    <div class="calc__backdrop" id="calc-backdrop"></div>
+    <div class="calc__card" role="document">
+      <div class="calc__head">
+        <h2 class="calc__title" id="calc-title">Время до точки</h2>
+        <button class="icon-btn" id="calc-close" type="button" aria-label="Закрыть">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="calc__body">
+        <div class="calc__result" aria-live="polite">
+          <span class="calc__result-label">Время в пути</span>
+          <span class="calc__time" id="calc-time">—:—</span>
+          <span class="calc__arrival" id="calc-arrival"></span>
+          <span class="calc__breakdown" id="calc-breakdown"></span>
+        </div>
+
+        <div class="calc__fields">
+          <label class="calc__field">
+            <span class="calc__field-label">Расстояние, км</span>
+            <input class="calc__input" id="calc-dist" type="number" inputmode="decimal"
+              min="0" step="1" placeholder="0" autocomplete="off">
+          </label>
+          <label class="calc__field">
+            <span class="calc__field-label">Скорость, км/ч</span>
+            <input class="calc__input" id="calc-speed" type="number" inputmode="decimal"
+              min="1" step="1" placeholder="70" autocomplete="off">
+          </label>
+        </div>
+
+        <fieldset class="calc__pauses">
+          <legend class="calc__field-label">Паузы в пути</legend>
+          <div class="calc__chips">
+            <label class="calc__chip"><input type="checkbox" id="calc-p9"  value="9"><span>Пауза 9 ч</span></label>
+            <label class="calc__chip"><input type="checkbox" id="calc-p24" value="24"><span>Пауза 24 ч</span></label>
+            <label class="calc__chip"><input type="checkbox" id="calc-p45" value="45"><span>Пауза 45 ч</span></label>
+            <label class="calc__chip"><input type="checkbox" id="calc-p2"  value="2"><span>Остановка 2 ч</span></label>
+          </div>
+        </fieldset>
+
+        <div class="calc__extra">
+          <span class="calc__field-label">Своя пауза</span>
+          <div class="calc__extra-row">
+            <label class="calc__field calc__field--sm">
+              <span class="calc__field-sub">часы</span>
+              <input class="calc__input" id="calc-eh" type="number" inputmode="numeric"
+                min="0" step="1" placeholder="0" autocomplete="off">
+            </label>
+            <label class="calc__field calc__field--sm">
+              <span class="calc__field-sub">минуты</span>
+              <input class="calc__input" id="calc-em" type="number" inputmode="numeric"
+                min="0" max="59" step="1" placeholder="0" autocomplete="off">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc__foot">
+        <button class="btn btn--ghost" id="calc-reset" type="button">Сбросить</button>
+        <button class="btn" id="calc-done" type="button">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="assets/js/app.js?v=3"></script>
+  <script type="module" src="assets/js/calc.js?v=3"></script>
 </body>
 </html>

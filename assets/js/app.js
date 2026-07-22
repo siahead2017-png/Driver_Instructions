@@ -1,6 +1,6 @@
 // ?v=... держим синхронно с index.html — иначе браузер закеширует старую версию модуля.
-import { toEmbedUrl, typeMeta } from './drive.js?v=2';
-import { getRecent, pushRecent, nextRecentExpiry } from './store.js?v=2';
+import { toEmbedUrl, typeMeta } from './drive.js?v=3';
+import { getRecent, pushRecent, nextRecentExpiry } from './store.js?v=3';
 
 const view = document.getElementById('view');
 const headerTitle = document.getElementById('header-title');
