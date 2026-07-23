@@ -1,4 +1,5 @@
 // Калькулятор времени до точки: расстояние + скорость + паузы -> ЧЧ:ММ и время прибытия.
+// Плюс вкладка «Баки»: остаток топлива по замеру уровня в сантиметрах.
 // Самодостаточный модуль: открывается плавающей кнопкой, не трогает hash-роутинг app.js.
 
 const fab = document.getElementById('calc-fab');
@@ -8,11 +9,26 @@ const closeBtn = document.getElementById('calc-close');
 const doneBtn = document.getElementById('calc-done');
 const resetBtn = document.getElementById('calc-reset');
 
+// Вкладки: «Время и топливо» / «Баки»
+const tabTrip = document.getElementById('calc-tab-trip');
+const tabTanks = document.getElementById('calc-tab-tanks');
+const panelTrip = document.getElementById('calc-panel-trip');
+const panelTanks = document.getElementById('calc-panel-tanks');
+
 const distEl = document.getElementById('calc-dist');
 const speedEl = document.getElementById('calc-speed');
 const ehEl = document.getElementById('calc-eh');
 const emEl = document.getElementById('calc-em');
-const pauseEls = ['calc-p9', 'calc-p24', 'calc-p45', 'calc-p2'].map((id) => document.getElementById(id));
+// Чекбокс-чипы пауз (24/45/2 ч). Девятки считаются отдельно степпером.
+const pauseEls = ['calc-p24', 'calc-p45', 'calc-p2'].map((id) => document.getElementById(id));
+
+// Степпер «Пауза 9 ч»: девяток в рейсе бывает 2–3, поэтому не чекбокс, а счётчик.
+const p9Chip = document.getElementById('calc-p9-chip');
+const p9Main = document.getElementById('calc-p9-main');
+const p9Minus = document.getElementById('calc-p9-minus');
+const p9Plus = document.getElementById('calc-p9-plus');
+const p9X = document.getElementById('calc-p9-x');
+let p9Count = 0; // 0..P9_MAX
 
 const timeEl = document.getElementById('calc-time');
 const arrivalEl = document.getElementById('calc-arrival');
@@ -23,13 +39,66 @@ const fuelOn = document.getElementById('calc-fuel-on');
 const fuelBlock = document.getElementById('calc-fuel');
 const truckEl = document.getElementById('calc-truck');
 const trailerEl = document.getElementById('calc-trailer');
+const idleEl = document.getElementById('calc-idle');
 const fuelTruckEl = document.getElementById('calc-fuel-truck');
+const fuelIdleRow = document.getElementById('calc-fuel-idle-row');
+const fuelIdleEl = document.getElementById('calc-fuel-idle');
+const fuelTruckTotalEl = document.getElementById('calc-fuel-truck-total');
 const fuelTrailerEl = document.getElementById('calc-fuel-trailer');
-const fuelTotalEl = document.getElementById('calc-fuel-total');
+
+// Баки
+const brandEls = [...document.querySelectorAll('input[name="calc-brand"]')];
+const tank1El = document.getElementById('calc-tank1');
+const tank2El = document.getElementById('calc-tank2');
+const tank1LEl = document.getElementById('calc-tank1-l');
+const tank2LEl = document.getElementById('calc-tank2-l');
+const tank1LabelEl = document.getElementById('calc-tank1-label');
+const tank2LabelEl = document.getElementById('calc-tank2-label');
+const tank1NameEl = document.getElementById('calc-tank1-name');
+const tank2NameEl = document.getElementById('calc-tank2-name');
+const tankNoteEl = document.getElementById('calc-tank-note');
+const tanksTotalEl = document.getElementById('calc-tanks-total');
 
 const DEFAULT_SPEED = 70;
 const DEFAULT_TRUCK = 27;    // л/100 км
 const DEFAULT_TRAILER = 1.8; // л/ч (холодильная установка)
+const IDLE_LPH = 2.5;        // л/ч на стоянке с работающим двигателем (водителю не показываем)
+const P9_MAX = 5;            // максимум девяток в степпере
+
+// Баки по маркам: ёмкость (для подписи), литров на 1 см замера, памятка.
+// Данные владельца (июль 2026). Сходимость проверена: ёмкость ~ полный бак (см) × л/см.
+// У DAF бак 1 коэффициент выведен из ёмкости: 845 л / 60 см = 14,08 (владелец подтвердил ёмкость).
+const TANKS = {
+  man: {
+    note: 'Линейка должна быть зафиксирована на отметке 70 см. Полный бак — 67 см.',
+    tanks: [
+      { cap: 580, lPerCm: 8.65 },
+      { cap: 580, lPerCm: 8.65 }, // у MAN оба бака одинаковые
+    ],
+  },
+  daf: {
+    note: 'Линейка должна быть зафиксирована на отметке 64 см. Полный бак — 60 см.',
+    tanks: [
+      { cap: 845, lPerCm: 14.08 },
+      { cap: 355, lPerCm: 5.58 },
+    ],
+  },
+  volvo: {
+    note: 'Линейка должна быть зафиксирована на отметке 71 см. Полный бак — 65 см.',
+    tanks: [
+      { cap: 570, lPerCm: 8.77 },
+      { cap: 650, lPerCm: 10 },
+    ],
+  },
+};
+
+// Сантиметры замеров храним по каждой марке отдельно:
+// водитель мог мерить чужую машину и вернуться к своей.
+let tankCm = { man: ['', ''], daf: ['', ''], volvo: ['', ''] };
+
+function currentBrand() {
+  return brandEls.find((el) => el.checked)?.value ?? 'man';
+}
 
 // ---------- Хранилище (ключ отдельный от «недавних»; TTL 5 минут) ----------
 const KEY = 'di:calc';
@@ -40,12 +109,17 @@ function saveState() {
     const state = {
       dist: distEl.value,
       speed: speedEl.value,
+      p9: p9Count,
       pauses: pauseEls.map((el) => el.checked),
       extraH: ehEl.value,
       extraM: emEl.value,
       fuelOn: fuelOn.checked,
       truck: truckEl.value,
       trailer: trailerEl.value,
+      idle: idleEl.value,
+      tab: panelTanks.hidden ? 'trip' : 'tanks',
+      brand: currentBrand(),
+      tanks: tankCm,
       t: Date.now(),
     };
     localStorage.setItem(KEY, JSON.stringify(state));
@@ -90,7 +164,7 @@ function fmtHHMM(totalMin) {
 }
 
 function fmtL(liters) {
-  return liters.toLocaleString('ru-RU', { maximumFractionDigits: 1 }) + ' л';
+  return liters.toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' л';
 }
 
 function arrivalText(totalMin) {
@@ -114,8 +188,9 @@ function calc() {
   const dist = num(distEl);
   const speed = num(speedEl);
 
-  // Паузы: сумма отмеченных чек-боксов + своя пауза (часы/минуты).
-  const pauseHours = pauseEls.reduce((sum, el) => sum + (el.checked ? Number(el.value) : 0), 0);
+  // Паузы: девятки из степпера + отмеченные чек-боксы + своя пауза (часы/минуты).
+  const pauseHours = 9 * p9Count
+    + pauseEls.reduce((sum, el) => sum + (el.checked ? Number(el.value) : 0), 0);
   const extraH = num(ehEl);
   const extraMin = Math.min(59, num(emEl)); // минуты клампим в 0–59
   const pauseMin = pauseHours * 60 + extraH * 60 + extraMin;
@@ -142,29 +217,111 @@ function calc() {
   updateFuel(dist, totalMin, true);
 }
 
-// Топливо считаем, только когда включена галочка. Тягач — от километража,
-// прицеп — от полного времени в пути (тот же totalMin, что и большая цифра).
+// Топливо считаем, только когда включена галочка. Тягач — километраж + двигатель
+// на стоянке (часы × IDLE_LPH), прицеп — полное время в пути (тот же totalMin, что и большая цифра).
 function updateFuel(dist, totalMin, timeValid) {
   fuelBlock.hidden = !fuelOn.checked;
   if (!fuelOn.checked) return;
 
+  const idleH = num(idleEl);
+  const idleL = idleH * IDLE_LPH;
+  fuelIdleRow.hidden = !idleH; // строка стоянки видна, только если часы > 0
+
   if (!timeValid) {
     fuelTruckEl.textContent = '— л';
+    fuelIdleEl.textContent = '— л';
+    fuelTruckTotalEl.textContent = '— л';
     fuelTrailerEl.textContent = '— л';
-    fuelTotalEl.textContent = '— л';
     return;
   }
 
   const truckL = (dist / 100) * num(truckEl);
   const trailerL = (totalMin / 60) * num(trailerEl);
   fuelTruckEl.textContent = fmtL(truckL);
+  fuelIdleEl.textContent = fmtL(idleL);
+  fuelTruckTotalEl.textContent = fmtL(truckL + idleL);
   fuelTrailerEl.textContent = fmtL(trailerL);
-  fuelTotalEl.textContent = fmtL(truckL + trailerL);
 }
 
-// Пересчёт + сохранение на каждое изменение.
+// ---------- Степпер «Пауза 9 ч» ----------
+
+function setP9(n) {
+  p9Count = Math.max(0, Math.min(P9_MAX, n));
+  const on = p9Count > 0;
+  p9Chip.classList.toggle('is-on', on);
+  p9Minus.hidden = !on;
+  p9Plus.hidden = !on;
+  p9X.hidden = !on;
+  p9X.textContent = on ? `×${p9Count}` : '';
+  p9Plus.disabled = p9Count >= P9_MAX;
+}
+
+// ---------- Баки ----------
+
+// Подписи и памятка под выбранную марку: ёмкость в названии бака, отметка линейки.
+function updateTankInfo() {
+  const b = TANKS[currentBrand()];
+  tank1LabelEl.textContent = `Бак 1 (${b.tanks[0].cap} л), см`;
+  tank2LabelEl.textContent = `Бак 2 (${b.tanks[1].cap} л), см`;
+  tank1NameEl.textContent = `Бак 1 (${b.tanks[0].cap} л)`;
+  tank2NameEl.textContent = `Бак 2 (${b.tanks[1].cap} л)`;
+  tankNoteEl.textContent = b.note;
+}
+
+// Расчёт остатка: литры = см × л/см. Пустое поле -> «— л».
+function calcTanks() {
+  const tanks = TANKS[currentBrand()].tanks;
+  const cms = [num(tank1El), num(tank2El)];
+  const outs = [tank1LEl, tank2LEl];
+
+  let total = 0;
+  let anyKnown = false;
+  cms.forEach((cm, i) => {
+    if (cm) {
+      const liters = cm * tanks[i].lPerCm;
+      outs[i].textContent = fmtL(liters);
+      total += liters;
+      anyKnown = true;
+    } else {
+      outs[i].textContent = '— л';
+    }
+  });
+  tanksTotalEl.textContent = anyKnown ? fmtL(total) : '— л';
+}
+
+// Смена марки: запоминаем сантиметры прежней марки, показываем сантиметры новой.
+let shownBrand = 'man';
+
+function switchBrand() {
+  tankCm[shownBrand] = [tank1El.value, tank2El.value];
+  shownBrand = currentBrand();
+  [tank1El.value, tank2El.value] = tankCm[shownBrand];
+  updateTankInfo();
+  calcTanks();
+}
+
+// ---------- Вкладки ----------
+
+function setTab(name) {
+  const tanks = name === 'tanks';
+  tabTrip.classList.toggle('is-active', !tanks);
+  tabTanks.classList.toggle('is-active', tanks);
+  tabTrip.setAttribute('aria-selected', String(!tanks));
+  tabTanks.setAttribute('aria-selected', String(tanks));
+  panelTrip.hidden = tanks;
+  panelTanks.hidden = !tanks;
+}
+
+// ---------- Пересчёт + сохранение на каждое изменение ----------
+
 function onInput() {
   calc();
+  saveState();
+}
+
+function onTankInput() {
+  tankCm[shownBrand] = [tank1El.value, tank2El.value];
+  calcTanks();
   saveState();
 }
 
@@ -173,12 +330,27 @@ function onInput() {
 function applyState(s) {
   distEl.value = s?.dist ?? '';
   speedEl.value = s?.speed ?? '';
+  setP9(Number(s?.p9) || 0);
   pauseEls.forEach((el, i) => { el.checked = Boolean(s?.pauses?.[i]); });
   ehEl.value = s?.extraH ?? '';
   emEl.value = s?.extraM ?? '';
   fuelOn.checked = Boolean(s?.fuelOn);
   truckEl.value = s?.truck ?? '';
   trailerEl.value = s?.trailer ?? '';
+  idleEl.value = s?.idle ?? '';
+
+  // Баки: сантиметры по маркам + выбранная марка.
+  const brands = ['man', 'daf', 'volvo'];
+  tankCm = Object.fromEntries(brands.map((b) => {
+    const pair = s?.tanks?.[b];
+    return [b, [pair?.[0] ?? '', pair?.[1] ?? '']];
+  }));
+  shownBrand = brands.includes(s?.brand) ? s.brand : 'man';
+  brandEls.forEach((el) => { el.checked = el.value === shownBrand; });
+  [tank1El.value, tank2El.value] = tankCm[shownBrand];
+  updateTankInfo();
+
+  setTab(s?.tab === 'tanks' ? 'tanks' : 'trip');
 }
 
 function open() {
@@ -187,6 +359,7 @@ function open() {
   if (saved) applyState(saved);
   else setDefaults();
   calc();
+  calcTanks();
 
   modal.hidden = false;
   document.body.classList.add('is-locked');
@@ -208,7 +381,8 @@ function close() {
   }, 240);
 }
 
-// Значения по умолчанию: скорость 70, расходы 27 / 1,8, топливо включено, паузы сняты.
+// Значения по умолчанию: скорость 70, расходы 27 / 1,8, топливо включено, паузы сняты,
+// баки пустые, марка MAN, вкладка «Время и топливо».
 function setDefaults() {
   applyState(null);
   speedEl.value = DEFAULT_SPEED;
@@ -217,10 +391,14 @@ function setDefaults() {
   fuelOn.checked = true; // топливо считаем сразу
 }
 
+// Сбрасывает обе вкладки, активную не переключает.
 function reset() {
+  const wasTanks = !panelTanks.hidden;
   setDefaults();
+  setTab(wasTanks ? 'tanks' : 'trip');
   clearState();
   calc();
+  calcTanks();
   saveState();
 }
 
@@ -232,9 +410,26 @@ doneBtn.addEventListener('click', close);
 backdrop.addEventListener('click', close);
 resetBtn.addEventListener('click', reset);
 
-[distEl, speedEl, ehEl, emEl, fuelOn, truckEl, trailerEl, ...pauseEls].forEach((el) => {
+tabTrip.addEventListener('click', () => { setTab('trip'); saveState(); });
+tabTanks.addEventListener('click', () => { setTab('tanks'); saveState(); });
+
+// Степпер девяток: тап по надписи тоже +1 (крупная цель), минус до нуля выключает.
+p9Main.addEventListener('click', () => { setP9(p9Count + 1); onInput(); });
+p9Plus.addEventListener('click', () => { setP9(p9Count + 1); onInput(); });
+p9Minus.addEventListener('click', () => { setP9(p9Count - 1); onInput(); });
+
+[distEl, speedEl, ehEl, emEl, fuelOn, truckEl, trailerEl, idleEl, ...pauseEls].forEach((el) => {
   el.addEventListener('input', onInput);
   el.addEventListener('change', onInput);
+});
+
+[tank1El, tank2El].forEach((el) => {
+  el.addEventListener('input', onTankInput);
+  el.addEventListener('change', onTankInput);
+});
+
+brandEls.forEach((el) => {
+  el.addEventListener('change', () => { switchBrand(); saveState(); });
 });
 
 document.addEventListener('keydown', (e) => {

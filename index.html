@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=5">
+  <link rel="stylesheet" href="assets/css/styles.css?v=6">
 </head>
 <body>
   <header class="app-header">
@@ -115,17 +115,23 @@
   </button>
 
   <!-- Виджет расчёта времени до точки -->
-  <div class="calc" id="calc" hidden role="dialog" aria-modal="true" aria-labelledby="calc-title">
+  <div class="calc" id="calc" hidden role="dialog" aria-modal="true" aria-label="Калькулятор">
     <div class="calc__backdrop" id="calc-backdrop"></div>
     <div class="calc__card" role="document">
       <div class="calc__head">
-        <h2 class="calc__title" id="calc-title">Время до точки</h2>
+        <div class="calc__tabs" role="tablist" aria-label="Разделы калькулятора">
+          <button class="calc__tab is-active" id="calc-tab-trip" type="button" role="tab"
+            aria-selected="true" aria-controls="calc-panel-trip">Время и топливо</button>
+          <button class="calc__tab" id="calc-tab-tanks" type="button" role="tab"
+            aria-selected="false" aria-controls="calc-panel-tanks">Остатки топлива в баке</button>
+        </div>
         <button class="icon-btn" id="calc-close" type="button" aria-label="Закрыть">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       </div>
 
       <div class="calc__body">
+        <div class="calc__panel" id="calc-panel-trip" role="tabpanel" aria-labelledby="calc-tab-trip">
         <div class="calc__result" aria-live="polite">
           <span class="calc__result-label">Время в пути</span>
           <span class="calc__time" id="calc-time">—:—</span>
@@ -149,7 +155,12 @@
         <fieldset class="calc__pauses">
           <legend class="calc__field-label">Паузы в пути</legend>
           <div class="calc__chips">
-            <label class="calc__chip"><input type="checkbox" id="calc-p9"  value="9"><span>Пауза 9 ч</span></label>
+            <!-- Девяток в рейсе бывает несколько: чип-степпер вместо чекбокса -->
+            <div class="calc__chip calc__chip--stepper" id="calc-p9-chip">
+              <button class="calc__chip-btn" id="calc-p9-minus" type="button" hidden aria-label="Убрать одну паузу 9 ч">&minus;</button>
+              <button class="calc__chip-label" id="calc-p9-main" type="button">Пауза 9 ч<b id="calc-p9-x" hidden></b></button>
+              <button class="calc__chip-btn" id="calc-p9-plus" type="button" hidden aria-label="Добавить паузу 9 ч">+</button>
+            </div>
             <label class="calc__chip"><input type="checkbox" id="calc-p24" value="24"><span>Пауза 24 ч</span></label>
             <label class="calc__chip"><input type="checkbox" id="calc-p45" value="45"><span>Пауза 45 ч</span></label>
             <label class="calc__chip"><input type="checkbox" id="calc-p2"  value="2"><span>Остановка 2 ч</span></label>
@@ -189,12 +200,55 @@
               <input class="calc__input" id="calc-trailer" type="number" inputmode="decimal"
                 min="0" step="0.1" placeholder="1.8" autocomplete="off">
             </label>
+            <label class="calc__field">
+              <span class="calc__field-label">Двигатель на стоянке, ч</span>
+              <input class="calc__input" id="calc-idle" type="number" inputmode="decimal"
+                min="0" step="0.5" placeholder="0" autocomplete="off">
+            </label>
           </div>
           <div class="calc__fuel-result" aria-live="polite">
             <div class="calc__fuel-row"><span>Тягач (по км)</span><span id="calc-fuel-truck">— л</span></div>
-            <div class="calc__fuel-row"><span>Прицеп (по времени)</span><span id="calc-fuel-trailer">— л</span></div>
-            <div class="calc__fuel-row calc__fuel-row--total"><span>Всего</span><span id="calc-fuel-total">— л</span></div>
+            <div class="calc__fuel-row" id="calc-fuel-idle-row" hidden><span>Двигатель на стоянке</span><span id="calc-fuel-idle">— л</span></div>
+            <div class="calc__fuel-row calc__fuel-row--total"><span>Итого тягач</span><span id="calc-fuel-truck-total">— л</span></div>
+            <div class="calc__fuel-row calc__fuel-row--total"><span>Итого прицеп (по времени)</span><span id="calc-fuel-trailer">— л</span></div>
           </div>
+        </div>
+        </div>
+
+        <!-- Вкладка «Остатки топлива в баке»: замер линейкой в сантиметрах -> литры -->
+        <div class="calc__panel" id="calc-panel-tanks" role="tabpanel" aria-labelledby="calc-tab-tanks" hidden>
+          <fieldset class="calc__pauses">
+            <legend class="calc__field-label">Марка машины</legend>
+            <div class="calc__chips">
+              <label class="calc__chip"><input type="radio" name="calc-brand" value="man" checked><span>MAN</span></label>
+              <label class="calc__chip"><input type="radio" name="calc-brand" value="daf"><span>DAF</span></label>
+              <label class="calc__chip"><input type="radio" name="calc-brand" value="volvo"><span>VOLVO</span></label>
+            </div>
+          </fieldset>
+
+          <!-- Памятка по выбранной марке: отметка линейки и полный бак (текст ставит calc.js) -->
+          <p class="calc__note" id="calc-tank-note"></p>
+
+          <div class="calc__fields">
+            <label class="calc__field">
+              <span class="calc__field-label" id="calc-tank1-label">Бак 1, см</span>
+              <input class="calc__input" id="calc-tank1" type="number" inputmode="decimal"
+                min="0" step="0.5" placeholder="0" autocomplete="off">
+            </label>
+            <label class="calc__field">
+              <span class="calc__field-label" id="calc-tank2-label">Бак 2, см</span>
+              <input class="calc__input" id="calc-tank2" type="number" inputmode="decimal"
+                min="0" step="0.5" placeholder="0" autocomplete="off">
+            </label>
+          </div>
+
+          <div class="calc__fuel-result" aria-live="polite">
+            <div class="calc__fuel-row"><span id="calc-tank1-name">Бак 1</span><span id="calc-tank1-l">— л</span></div>
+            <div class="calc__fuel-row"><span id="calc-tank2-name">Бак 2</span><span id="calc-tank2-l">— л</span></div>
+            <div class="calc__fuel-row calc__fuel-row--total"><span>Всего в баках</span><span id="calc-tanks-total">— л</span></div>
+          </div>
+
+          <p class="calc__hint">Замерь уровень топлива в каждом баке и впиши сантиметры — остаток посчитается сам.</p>
         </div>
       </div>
 
@@ -206,6 +260,6 @@
   </div>
 
   <script type="module" src="assets/js/app.js?v=5"></script>
-  <script type="module" src="assets/js/calc.js?v=5"></script>
+  <script type="module" src="assets/js/calc.js?v=6"></script>
 </body>
 </html>
