@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-21",
+  "updated": "2026-07-24",
   "categories": [
     { "id": "tolls",   "title": "Оплата дорог и боксы",   "icon": "🛣️", "order": 1 },
     { "id": "dtp",     "title": "ДТП",                     "icon": "🚨", "order": 2 },
@@ -397,6 +397,17 @@
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1x_BoY58J1vgnPK0sBawf2wNua9bqvywG/view?usp=drive_link",
       "tags": ["мойка", "польша"]
+    },
+    {
+      "id": "rules-nl-merwedebrug",
+      "category": "rules",
+      "title": "Нидерланды: мост Merwedebrug (A27) закрыт для грузовиков",
+      "description": "Проезд грузовикам запрещён с 18.07.2026 — слабая конструкция моста. Объезд: A15→A16→A59 или A15→A2→A59 (+1 час). Штраф 500 € за проезд, фиксация камерами",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1dXxEepfZJxiQboorsFE3tNk8LAN2D67v/view?usp=drive_link",
+      "updated": "2026-07-18",
+      "tags": ["нидерланды", "merwedebrug", "мост", "запрет", "объезд", "штраф", "a27"],
+      "important": true
     },
     {
       "id": "rules-nl-tunnel",

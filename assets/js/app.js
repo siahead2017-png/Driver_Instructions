@@ -134,8 +134,9 @@ view.addEventListener('click', (e) => {
 
 function cardHTML(item, i = 0) {
   const t = typeMeta(item.type);
+  const importantClass = item.important ? ' card--important' : '';
   return `
-    <a class="card" style="--i:${i}" href="#/item/${encodeURIComponent(item.id)}">
+    <a class="card${importantClass}" style="--i:${i}" href="#/item/${encodeURIComponent(item.id)}">
       <span class="card__badge card__badge--${esc(item.type)}" aria-hidden="true">${t.icon}</span>
       <span class="card__body">
         <span class="card__title">${esc(item.title)}</span>
@@ -150,6 +151,15 @@ let recentTimer = null;
 
 function renderHome() {
   setHeader('Инструкции', false);
+
+  // Важные инструкции — всегда первым блоком, чтобы не потерялись внутри категорий.
+  const important = data.items.filter((it) => it.important);
+  const importantHTML = important.length
+    ? `<section class="section section--important">
+         <h2 class="section__title">❗ Важно</h2>
+         <div class="list">${important.map((it, i) => cardHTML(it, i)).join('')}</div>
+       </section>`
+    : '';
 
   const recent = getRecent().map(byId).filter(Boolean);
 
@@ -182,6 +192,7 @@ function renderHome() {
     .join('');
 
   setView(`
+    ${importantHTML}
     ${recentHTML}
     <section class="section">
       <h2 class="section__title">Категории</h2>
