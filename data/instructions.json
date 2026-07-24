@@ -390,6 +390,16 @@
       "tags": ["легковое авто", "правила", "компания"]
     },
     {
+      "id": "rules-parking-tunnels-receipts",
+      "category": "rules",
+      "title": "Парковки, туннели и чеки: согласование расходов",
+      "description": "Платную парковку и платный туннель нужно заранее согласовать с менеджером; на все оплаты обязателен товарный чек — иначе расходы не примут",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1q5SXFb2Picji9yiRbNupwKXEiSZoikVW/view?usp=drive_link",
+      "updated": "2026-07-24",
+      "tags": ["парковка", "туннель", "чеки", "согласование", "менеджер", "польша", "нидерланды", "расходы"]
+    },
+    {
       "id": "rules-wash-poland",
       "category": "rules",
       "title": "Мойки в Польше",

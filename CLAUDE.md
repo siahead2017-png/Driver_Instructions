@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Контекст проекта
 
 Мобильный веб-дашборд с инструкциями для водителей грузовиков компании HEAD, HDLG. Водитель открывает одну ссылку, находит тему и читает PDF / документ / видео прямо в приложении. Файлы живут на Google Диске — здесь только витрина.
@@ -12,8 +16,16 @@
 
 ## Окружение
 
+Сборки, тестов и линтера в проекте нет — только эти команды:
+
+```powershell
+.\serve.ps1                                                                     # локальный сервер -> http://localhost:8000
+node --check assets/js/app.js                                                   # синтаксис-чек после правки любого .js
+node -e "JSON.parse(require('fs').readFileSync('data/instructions.json','utf8'))"  # валидность JSON после правки контента
+```
+
 - **Нет рабочего Python** (`python` — заглушка Windows Store). Node.js есть (v24) — годится для `node --check` и смоук-тестов, но npm-зависимостей в проект не тянуть.
-- Локальный сервер — `serve.ps1` (PowerShell `HttpListener`); обязателен, т.к. `fetch()` не работает из `file://`.
+- Локальный сервер — `serve.ps1` (PowerShell `HttpListener`, порт задаётся `-Port`); обязателен, т.к. `fetch()` не работает из `file://`. Отдаёт файлы с `Cache-Control: no-store`, так что кеш `?v=` — забота только продакшена (GitHub Pages / телефон), не локального сервера.
 - **`.ps1` держать ASCII-only**: PowerShell 5.1 читает файлы без BOM как ANSI, кириллица ломает парсер (уже падал `serve.ps1`).
 - Растровую графику генерировать через GDI+ (`System.Drawing`), не Pillow.
 
