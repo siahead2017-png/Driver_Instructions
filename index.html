@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=7">
+  <link rel="stylesheet" href="assets/css/styles.css?v=8">
 </head>
 <body>
   <header class="app-header">
@@ -61,6 +61,19 @@
     </div>
   </header>
 
+  <!-- Гид по инструктажу: вход. Вне #view, чтобы renderHome()/setView() его не стирали. -->
+  <a class="guide-banner" id="guide-banner" href="#/guide">
+    <span class="guide-banner__icon" aria-hidden="true">🎓</span>
+    <span class="guide-banner__body">
+      <span class="guide-banner__title">Вводный инструктаж</span>
+      <span class="guide-banner__sub" id="guide-banner-sub">Пошаговый гид для новых водителей</span>
+      <span class="guide-banner__bar" id="guide-banner-bar" hidden>
+        <span class="guide-banner__fill" id="guide-banner-fill"></span>
+      </span>
+    </span>
+    <svg class="guide-banner__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+  </a>
+
   <main class="app-main" id="view" aria-live="polite"></main>
 
   <footer class="app-footer">
@@ -82,6 +95,31 @@
       </a>
     </div>
     <div class="viewer__body" id="viewer-body"></div>
+  </div>
+
+  <!-- Гид по инструктажу: полноэкранный оверлей. Показ/скрытие — через hidden в guide.js,
+       синхронизировано с хешем #/guide/... Прячется, когда открыт viewer карточки. -->
+  <div class="guide" id="guide" hidden role="dialog" aria-modal="true" aria-labelledby="guide-block-title">
+    <div class="guide__bar">
+      <button class="icon-btn" id="guide-close" aria-label="Закрыть инструктаж">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <span class="guide__bar-title" id="guide-block-title"></span>
+      <button class="icon-btn" id="guide-home" aria-label="На главную">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      </button>
+    </div>
+    <div class="guide__chips" id="guide-chips"></div>
+    <div class="guide__progress">
+      <span class="guide__progress-text" id="guide-progress-text"></span>
+      <span class="guide__progress-bar"><span class="guide__progress-fill" id="guide-progress-fill"></span></span>
+    </div>
+    <div class="guide__body" id="guide-body"></div>
+    <div class="guide__nav">
+      <button class="btn btn--ghost" id="guide-back" type="button">← Назад</button>
+      <button class="btn" id="guide-next" type="button">Далее →</button>
+    </div>
+    <a class="guide__reset" id="guide-reset-link" href="#">Сбросить прогресс</a>
   </div>
 
   <!-- Плавающая кнопка калькулятора: время + топливо + маршрут -->
@@ -261,5 +299,6 @@
 
   <script type="module" src="assets/js/app.js?v=6"></script>
   <script type="module" src="assets/js/calc.js?v=6"></script>
+  <script type="module" src="assets/js/guide.js?v=1"></script>
 </body>
 </html>

@@ -41,6 +41,11 @@
   /* Прозрачность тинта плитки: слабее в светлой теме. */
   --tile-tint: 10%;
   --tile-tint-icon: 16%;
+
+  /* Фирменный цвет гида по инструктажу — отдельный от --accent (общая навигация)
+     и от --danger (плашка «Важно»), чтобы баннер и оверлей читались как одна фича. */
+  --guide: #0d9488;
+  --guide-soft: #e6f6f4;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -57,6 +62,9 @@
 
     --tile-tint: 20%;
     --tile-tint-icon: 30%;
+
+    --guide: #2dd4bf;
+    --guide-soft: #103733;
   }
 }
 
@@ -965,6 +973,296 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 .calc__card { transition: transform .24s cubic-bezier(.22, 1, .36, 1); }
 .calc.is-opening .calc__card,
 .calc.is-closing .calc__card { transform: translateY(16px) scale(.98); }
+
+/* ---------- Гид по инструктажу: баннер входа на главной ---------- */
+.guide-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 720px;
+  margin: 10px auto 0;
+  padding: 14px var(--pad);
+  border: 1px solid color-mix(in srgb, var(--guide) 30%, var(--border));
+  border-radius: var(--radius);
+  background:
+    linear-gradient(150deg,
+      color-mix(in srgb, var(--guide) 12%, var(--surface)),
+      var(--surface) 78%);
+  box-shadow: var(--shadow);
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .16s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease;
+}
+
+@media (hover: hover) {
+  .guide-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--guide) 26%, transparent);
+  }
+}
+
+.guide-banner:active { transform: scale(.985); }
+
+.guide-banner__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--guide) 16%, var(--surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--guide) 30%, transparent);
+  font-size: 24px;
+}
+
+.guide-banner__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.guide-banner__title { font-weight: 700; letter-spacing: -.01em; }
+.guide-banner__sub { font-size: 13px; color: var(--text-dim); }
+
+.guide-banner__bar {
+  display: block;
+  height: 4px;
+  margin-top: 2px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.guide-banner__bar[hidden] { display: none; }
+
+.guide-banner__fill {
+  display: block;
+  height: 100%;
+  background: var(--guide);
+  border-radius: 3px;
+  transition: width .25s ease;
+}
+
+.guide-banner__chevron { flex: none; width: 18px; color: var(--text-dim); }
+
+/* ---------- Гид по инструктажу: полноэкранный оверлей ----------
+   Показ/скрытие — через hidden в guide.js, синхронизировано с хешем #/guide/...
+   z-index между calc-fab (40) и viewer карточки (50): гид обязан прятаться под
+   открывшейся карточкой, а не перекрывать её — это делает JS через hidden,
+   z-index здесь только подстраховка на случай гонки. */
+.guide {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.guide[hidden] { display: none; }
+
+/* guide.js прячет calc-fab атрибутом hidden на время работы гида (визуально он и
+   так перекрыт z-index'ом 45 > 40, но без этого остаётся в tab-order и ловит
+   фокус с клавиатуры позади гида). Собственное правило .calc-fab { display:flex }
+   специфичнее браузерного [hidden] { display:none }, поэтому нужен явный override. */
+.calc-fab[hidden] { display: none; }
+
+.guide__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(env(safe-area-inset-top) + 6px) 10px 6px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.guide__bar .icon-btn { margin-left: 0; }
+
+.guide__bar-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guide__chips {
+  display: flex;
+  gap: 6px;
+  padding: 10px var(--pad);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.guide__chips::-webkit-scrollbar { display: none; }
+
+.guide__chip {
+  flex: none;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.guide__chip.is-active {
+  border-color: color-mix(in srgb, var(--guide) 45%, var(--border));
+  background: color-mix(in srgb, var(--guide) 16%, var(--surface));
+  color: var(--guide);
+}
+
+.guide__progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px var(--pad);
+}
+
+.guide__progress-text { flex: none; font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+
+.guide__progress-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 3px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.guide__progress-fill {
+  display: block;
+  height: 100%;
+  background: var(--guide);
+  border-radius: 3px;
+  transition: width .25s ease;
+}
+
+.guide__body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px var(--pad) 24px;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Крупнее обычного текста карточек: этот текст читают вслух или водитель сам себе. */
+.guide__step-title {
+  margin: 6px 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+
+.guide__step-text { font-size: 16.5px; line-height: 1.55; }
+.guide__step-text p { margin: 0 0 12px; }
+.guide__step-text p:last-child { margin-bottom: 0; }
+
+.guide__links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.guide-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: inherit;
+  text-decoration: none;
+  transition: transform .14s ease, box-shadow .2s ease, border-color .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .guide-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(16, 21, 28, .1);
+    border-color: color-mix(in srgb, var(--guide) 35%, var(--border));
+  }
+}
+
+.guide-link:active { transform: scale(.985); }
+
+.guide-link__badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--t, var(--guide)) 14%, var(--surface));
+  font-size: 18px;
+}
+
+.guide-link__title { flex: 1; min-width: 0; font-weight: 600; letter-spacing: -.01em; }
+.guide-link__chevron { flex: none; width: 18px; color: var(--text-dim); }
+
+.guide-link--broken {
+  padding: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+  cursor: default;
+}
+
+.guide-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.guide-check input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 1px 0 0;
+  accent-color: var(--guide);
+}
+
+.guide__nav {
+  display: flex;
+  gap: 10px;
+  padding: 10px var(--pad) calc(env(safe-area-inset-bottom) + 10px);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.guide__nav .btn { flex: 1; margin-top: 0; text-align: center; border: 0; cursor: pointer; font-size: 15px; }
+.guide__nav .btn:disabled { opacity: .4; cursor: default; }
+#guide-next { background: var(--guide); }
+
+.guide__reset {
+  padding: 8px var(--pad) calc(env(safe-area-inset-bottom) + 10px);
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-dim);
+  background: var(--surface);
+}
+
+/* Анимация появления — тот же паттерн, что у .calc (opacity, гасится reduced-motion ниже). */
+.guide { transition: opacity .22s ease; }
+.guide.is-opening, .guide.is-closing { opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
