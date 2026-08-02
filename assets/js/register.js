@@ -59,6 +59,8 @@ const el = document.getElementById('register');
 const closeBtn = document.getElementById('register-close');
 const bodyEl = document.getElementById('register-body');
 const actionBtn = document.getElementById('register-action');
+const closeDoneBtn = document.getElementById('register-close-done');
+closeDoneBtn.addEventListener('click', () => { location.hash = ''; }); // на главную, тот же приём, что у guide-home
 
 let pad = null; // SignaturePad — живёт, пока не пересобрана форма (renderForm())
 
@@ -245,6 +247,7 @@ function renderForm() {
     });
   });
 
+  closeDoneBtn.hidden = true; // виден только на экране «Данные собраны», см. renderDone()
   actionBtn.textContent = 'Отправить';
   actionBtn.onclick = handleSubmit;
 }
@@ -379,6 +382,7 @@ function renderDone(payload) {
 
   actionBtn.disabled = false;
 
+  closeDoneBtn.hidden = false;
   actionBtn.textContent = 'Заполнить ещё раз';
   actionBtn.onclick = renderForm;
 }
