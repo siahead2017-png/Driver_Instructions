@@ -135,9 +135,17 @@ view.addEventListener('click', (e) => {
 function cardHTML(item, i = 0) {
   const t = typeMeta(item.type);
   const importantClass = item.important ? ' card--important' : '';
+  // type "link" — не Диск, а внешний сайт/приложение: открываем сразу в новой вкладке,
+  // а не через внутренний просмотрщик (там нечего встраивать).
+  const external = item.type === 'link';
+  const href = external ? esc(item.url) : `#/item/${encodeURIComponent(item.id)}`;
+  const extraAttrs = external ? ' target="_blank" rel="noopener"' : '';
+  const badge = item.image
+    ? `<img class="card__badge card__badge--custom" src="${esc(item.image)}" alt="" aria-hidden="true">`
+    : `<span class="card__badge card__badge--${esc(item.type)}" aria-hidden="true">${t.icon}</span>`;
   return `
-    <a class="card${importantClass}" style="--i:${i}" href="#/item/${encodeURIComponent(item.id)}">
-      <span class="card__badge card__badge--${esc(item.type)}" aria-hidden="true">${t.icon}</span>
+    <a class="card${importantClass}" style="--i:${i}" href="${href}"${extraAttrs}>
+      ${badge}
       <span class="card__body">
         <span class="card__title">${esc(item.title)}</span>
         ${item.description ? `<span class="card__desc">${esc(item.description)}</span>` : ''}
@@ -151,6 +159,16 @@ let recentTimer = null;
 
 function renderHome() {
   setHeader('Инструкции', false);
+
+  // Ссылки на другие приложения компании (Заправки, fotohd.lv) — сверху главной,
+  // чтобы их было видно сразу и не искали по памяти. Список — data.apps.
+  // Рендерятся через cardHTML() — та же карточка, что и везде в каталоге (type: "link" уже умеет открывать в новой вкладке).
+  const apps = data.apps ?? [];
+  const appsHTML = apps.length
+    ? `<section class="section section--apps">
+         <div class="list">${apps.map((a, i) => cardHTML(a, i)).join('')}</div>
+       </section>`
+    : '';
 
   // Важные инструкции — всегда первым блоком, чтобы не потерялись внутри категорий.
   const important = data.items.filter((it) => it.important);
@@ -192,6 +210,7 @@ function renderHome() {
     .join('');
 
   setView(`
+    ${appsHTML}
     ${importantHTML}
     ${recentHTML}
     <section class="section">

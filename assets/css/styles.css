@@ -337,6 +337,14 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 .card__badge--image { color: var(--t-image); }
 .card__badge--video { color: var(--t-video); }
 
+/* Настоящая иконка (item.image) вместо эмодзи по типу — например, лого стороннего приложения. */
+.card__badge--custom {
+  box-shadow: none;
+  background: transparent;
+  object-fit: contain;
+  padding: 1px;
+}
+
 .card__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
 
 .card__title { font-weight: 600; letter-spacing: -.01em; }
@@ -1206,6 +1214,12 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   border-radius: 10px;
   background: color-mix(in srgb, var(--t, var(--guide)) 14%, var(--surface));
   font-size: 18px;
+}
+
+.guide-link__badge--custom {
+  background: transparent;
+  object-fit: contain;
+  padding: 1px;
 }
 
 .guide-link__title { flex: 1; min-width: 0; font-weight: 600; letter-spacing: -.01em; }

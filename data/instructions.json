@@ -26,6 +26,24 @@
       ]
     }
   ],
+  "apps": [
+    {
+      "id": "fuel",
+      "title": "Заправки",
+      "description": "Инструкция по заправкам (Diesel + AdBlue)",
+      "type": "link",
+      "url": "https://siahead2017-png.github.io/FuelInstruction/",
+      "image": "assets/img/fuel-app-icon-192.png"
+    },
+    {
+      "id": "fotohd",
+      "title": "Фотофиксация",
+      "description": "Приложение для загрузки фотографий техники",
+      "type": "link",
+      "url": "https://fotohd.lv",
+      "image": "assets/img/fotohd-icon-192.png"
+    }
+  ],
   "items": [
     {
       "id": "tolls-boxes",
@@ -149,6 +167,16 @@
       "tags": ["реквизиты", "компании", "данные"]
     },
 
+    {
+      "id": "link-fuel-app",
+      "category": "fuel",
+      "title": "HEAD, HDLG Заправки",
+      "description": "Отдельное приложение: где заправляться и какой картой платить в каждой стране",
+      "type": "link",
+      "url": "https://siahead2017-png.github.io/FuelInstruction/",
+      "image": "assets/img/fuel-app-icon-192.png",
+      "tags": ["заправки", "приложение", "карта", "топливо", "сеть"]
+    },
     {
       "id": "fuel-cards",
       "category": "fuel",

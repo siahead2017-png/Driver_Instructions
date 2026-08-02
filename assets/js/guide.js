@@ -197,9 +197,17 @@ function itemLinkHTML(itemId) {
     return `<span class="guide-link guide-link--broken">Материал недоступен</span>`;
   }
   const t = typeMeta(item.type);
+  // type "link" — внешний сайт/приложение: открываем сразу в новой вкладке,
+  // минуя внутренний просмотрщик карточки.
+  const external = item.type === 'link';
+  const href = external ? esc(item.url) : `#/item/${encodeURIComponent(item.id)}`;
+  const extraAttrs = external ? ' target="_blank" rel="noopener"' : '';
+  const badge = item.image
+    ? `<img class="guide-link__badge guide-link__badge--custom" src="${esc(item.image)}" alt="" aria-hidden="true">`
+    : `<span class="guide-link__badge" style="--t: var(--t-${esc(item.type)})" aria-hidden="true">${t.icon}</span>`;
   return `
-    <a class="guide-link" href="#/item/${encodeURIComponent(item.id)}">
-      <span class="guide-link__badge" style="--t: var(--t-${esc(item.type)})" aria-hidden="true">${t.icon}</span>
+    <a class="guide-link" href="${href}"${extraAttrs}>
+      ${badge}
       <span class="guide-link__title">${esc(item.title)}</span>
       <svg class="guide-link__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </a>`;

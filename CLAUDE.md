@@ -153,7 +153,7 @@ node -e "JSON.parse(require('fs').readFileSync('data/guide.json','utf8'))"      
 GitHub Pages, ветка `main`, корень. Пуш = деплой (~1 мин).
 
 - Коммиты — рабочей личностью `Konstantins Persins <siahead2017@gmail.com>` через `--local` конфиг (глобальный на машине — личный, не трогать). Пуш через `gh` (аккаунт `siahead2017-png`); если просит доступ: `git config --local credential.https://github.com.helper "!gh auth git-credential"`.
-- **Кеш-метки `?v=N` обязательны при любой правке css/js** — браузер и PWA кешируют агрессивно. Места: `index.html` → `styles.css?v=`, `app.js?v=`, `calc.js?v=`, `guide.js?v=`, `register.js?v=`, `signature-pad.js?v=`; внутри `app.js`/`guide.js` → импорты `drive.js`/`store.js`. Поднимать только у реально изменённых файлов. Сейчас: `styles.css?v=12`, `calc.js?v=6`, `app.js?v=6`, `guide.js?v=3`, `register.js?v=6`, `signature-pad.js?v=1`.
+- **Кеш-метки `?v=N` обязательны при любой правке css/js** — браузер и PWA кешируют агрессивно. Места: `index.html` → `styles.css?v=`, `app.js?v=`, `calc.js?v=`, `guide.js?v=`, `register.js?v=`, `signature-pad.js?v=`; внутри `app.js`/`guide.js` → импорты `drive.js`/`store.js`. Поднимать только у реально изменённых файлов. Сейчас: `styles.css?v=15`, `calc.js?v=6`, `app.js?v=9`, `guide.js?v=4`, `register.js?v=6`, `signature-pad.js?v=1`.
 - Жалоба «на телефоне не видно изменений» — почти всегда кеш PWA, реже режим «Уменьшение движения».
 
 **Репозиторий публичный — что нельзя сюда пушить:**
