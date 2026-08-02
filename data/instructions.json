@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-07-24",
+  "updated": "2026-08-02",
   "categories": [
     { "id": "tolls",   "title": "Оплата дорог и боксы",   "icon": "🛣️", "order": 1 },
     { "id": "dtp",     "title": "ДТП",                     "icon": "🚨", "order": 2 },
@@ -19,6 +19,7 @@
       "subtopics": [
         "Работа с дорожными боксами",
         "Бокс TELEPASS",
+        "Топливо",
         "Режим труда и отдыха",
         "Лайфхаки с телефоном",
         "Техника безопасности"
@@ -604,6 +605,18 @@
       "type": "video",
       "url": "https://drive.google.com/file/d/14Ulr3Ult5CHDcR0mcdQXFXtMiit43htS/view?usp=drive_link",
       "tags": ["google play", "приложение", "телефон", "ошибка"]
+    },
+
+    {
+      "id": "video-trailer-refuel",
+      "category": "video",
+      "subtopic": "Топливо",
+      "title": "Заправка прицепа: верните пистолет на место",
+      "description": "Почему топливо тягача уходит в чек прицепа",
+      "type": "video",
+      "url": "https://drive.google.com/file/d/1VYbBCiXgpyBrcnt4NKyshRuV942hKuom/view?usp=drive_link",
+      "updated": "2026-08-02",
+      "tags": ["заправка", "прицеп", "топливо", "пистолет", "чек"]
     },
 
     {
