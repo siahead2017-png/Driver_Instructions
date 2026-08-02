@@ -74,22 +74,98 @@ function parseScreen() {
   return hash.split('/')[0] || 'home';
 }
 
-// ---------- Формат дат: везде dd.mm.yyyy, ISO остаётся только в <input type="date"> ----------
+// ---------- Дата рождения: свободный ввод dd.mm.yyyy + пикер Год/Месяц/День ----------
+// Родной <input type="date"> заменён: на телефоне владельца он открывал календарь
+// сразу на сегодняшнем дне, и пролистывать на 20-40 лет назад до нужного года было
+// тяжело. Теперь основной способ — печатать цифры (мобильная цифровая клавиатура
+// через inputmode="numeric", маска сама расставляет точки), а раскрывающийся пикер
+// с тремя select'ами — для тех, кто предпочитает тапать, а не печатать.
 
-function fmtDateRu(iso) {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
-  return m ? `${m[3]}.${m[2]}.${m[1]}` : '';
+const MONTHS_RU = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+const MIN_AGE = 18; // ниже — не пускаем, это не только правило компании, но и ловит опечатки в годе
+const MAX_AGE = 90; // выше — почти наверняка опечатка в годе, а не реальный возраст
+
+const pad2 = (n) => String(n).padStart(2, '0');
+
+function daysInMonth(year, month) {
+  return new Date(year, month, 0).getDate(); // month: 1-12, день 0 следующего месяца = последний день этого
 }
 
-function ageYears(iso) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return (Date.now() - d.getTime()) / (365.25 * 24 * 3600 * 1000);
+// Разбирает ДД.ММ.ГГГГ и проверяет, что дата реально существует (не «31.02.1990»):
+// new Date() сама «перетекает» несуществующие даты на соседний месяц, поэтому
+// результат сверяется обратно с исходными числами.
+function parseBirthInput(text) {
+  const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec((text || '').trim());
+  if (!m) return null;
+  const day = Number(m[1]);
+  const month = Number(m[2]);
+  const year = Number(m[3]);
+  const d = new Date(year, month - 1, day);
+  if (d.getFullYear() !== year || d.getMonth() !== month - 1 || d.getDate() !== day) return null;
+  return d;
+}
+
+function ageYears(date) {
+  return (Date.now() - date.getTime()) / (365.25 * 24 * 3600 * 1000);
+}
+
+// Маска: цифры набираются свободно (в т.ч. одной длинной последовательностью),
+// точки после дня и месяца расставляются сами. Курсор при этом улетает в конец
+// поля — для десятизначной даты, которую печатают слева направо не редактируя
+// середину, это приемлемо и не мешает набору.
+function maskBirthInput(e) {
+  const digits = e.target.value.replace(/\D/g, '').slice(0, 8);
+  let out = digits.slice(0, 2);
+  if (digits.length > 2) out += '.' + digits.slice(2, 4);
+  if (digits.length > 4) out += '.' + digits.slice(4, 8);
+  e.target.value = out;
+}
+
+// Три select'а — Год, Месяц, День (в этом порядке, чтобы сначала выбирался год:
+// для родившихся 20-40 лет назад это избавляет от пролистывания месяцев).
+// Список дней пересчитывается при смене года/месяца, чтобы в феврале не было 30-31.
+function populateBirthPicker() {
+  const yearSel = document.getElementById('reg-birth-year');
+  const monthSel = document.getElementById('reg-birth-month');
+  const daySel = document.getElementById('reg-birth-day');
+
+  const nowYear = new Date().getFullYear();
+  const years = [];
+  for (let y = nowYear - MIN_AGE; y >= nowYear - MAX_AGE; y--) years.push(y);
+
+  yearSel.innerHTML = '<option value="">Год</option>' + years.map((y) => `<option value="${y}">${y}</option>`).join('');
+  monthSel.innerHTML = '<option value="">Месяц</option>' + MONTHS_RU.map((name, i) => `<option value="${i + 1}">${name}</option>`).join('');
+
+  const syncDayOptions = () => {
+    const y = Number(yearSel.value) || null;
+    const m = Number(monthSel.value) || null;
+    const max = y && m ? daysInMonth(y, m) : 31;
+    const current = Number(daySel.value) || null;
+    daySel.innerHTML = '<option value="">День</option>' + Array.from({ length: max }, (_, i) => i + 1)
+      .map((d) => `<option value="${d}"${d === current ? ' selected' : ''}>${d}</option>`).join('');
+  };
+  syncDayOptions();
+
+  const applyIfComplete = () => {
+    if (yearSel.value && monthSel.value && daySel.value) {
+      document.getElementById('reg-birth-text').value = `${pad2(daySel.value)}.${pad2(monthSel.value)}.${yearSel.value}`;
+    }
+  };
+
+  yearSel.addEventListener('change', () => { syncDayOptions(); applyIfComplete(); });
+  monthSel.addEventListener('change', () => { syncDayOptions(); applyIfComplete(); });
+  daySel.addEventListener('change', applyIfComplete);
 }
 
 // ---------- Форма ----------
 
 function renderForm() {
+  // Повторный вызов (после «Заполнить ещё раз») обязан начинать с чистой подписи —
+  // canvas в .sig-full статичен в index.html, а не пересобирается вместе с формой,
+  // поэтому старые чернила сами по себе не пропадут. При первом вызове pad ещё
+  // не существует (создаётся лениво в ensureFullSigPad() при первом открытии).
+  if (pad) pad.clear();
+
   bodyEl.innerHTML = `
     <p class="register__intro">Инструктаж пройден. Заполните данные и распишитесь ниже — этим Вы подтверждаете, что ознакомлены с инструктажем.</p>
 
@@ -116,10 +192,16 @@ function renderForm() {
       </label>
     </div>
 
-    <label class="calc__field">
-      <span class="calc__field-label">Дата рождения</span>
-      <input class="calc__input" id="reg-birth" type="date" autocomplete="bday">
-    </label>
+    <div class="calc__field">
+      <label class="calc__field-label" for="reg-birth-text">Дата рождения</label>
+      <input class="calc__input" id="reg-birth-text" type="text" inputmode="numeric" autocomplete="bday" placeholder="ДД.ММ.ГГГГ" maxlength="10">
+      <button type="button" class="register__birth-toggle" id="reg-birth-toggle">Выбрать по шагам: год → месяц → день</button>
+      <div class="register__birth-picker" id="reg-birth-picker" hidden>
+        <select class="calc__input" id="reg-birth-year" aria-label="Год рождения"></select>
+        <select class="calc__input" id="reg-birth-month" aria-label="Месяц рождения"></select>
+        <select class="calc__input" id="reg-birth-day" aria-label="День рождения"></select>
+      </div>
+    </div>
 
     <label class="calc__field">
       <span class="calc__field-label">E-mail (необязательно)</span>
@@ -130,25 +212,30 @@ function renderForm() {
 
     <div class="register__sig">
       <span class="calc__field-label">Подпись</span>
-      <div class="register__pad" id="register-pad">
-        <canvas id="reg-signature"></canvas>
-      </div>
-      <button class="register__sig-clear" id="reg-sig-clear" type="button">Очистить подпись</button>
+      <button type="button" class="register__pad" id="register-pad" aria-label="Открыть подпись на весь экран">
+        <img class="register__pad-preview" id="register-pad-preview" alt="Подпись" hidden>
+      </button>
     </div>
 
     <p class="register__error" id="register-error" hidden></p>
   `;
 
-  // Канвас меряет свой размер через getBoundingClientRect() — контейнер обязан
-  // быть уже видимым (el.hidden === false к этому моменту, см. showRegister()),
-  // иначе SignaturePad посчитает себя 0×0 и подпись некуда будет рисовать.
-  const canvas = document.getElementById('reg-signature');
-  const padWrap = document.getElementById('register-pad');
-  pad = new SignaturePad(canvas, {
-    onChange: (p) => padWrap.classList.toggle('is-filled', !p.isEmpty()),
-  });
+  // Маленькое поле в форме больше не рисует само (на узком телефоне в нём
+  // неудобно расписываться) — тап открывает полноэкранный .sig-full, там и
+  // живёт единственный canvas/SignaturePad, см. openSigFull()/updatePadPreview()
+  // ниже. Здесь только превью уже нарисованного (пусто до первой подписи).
+  document.getElementById('register-pad').addEventListener('click', openSigFull);
+  updatePadPreview();
 
-  document.getElementById('reg-sig-clear').addEventListener('click', () => pad.clear());
+  document.getElementById('reg-birth-text').addEventListener('input', maskBirthInput);
+  populateBirthPicker();
+  document.getElementById('reg-birth-toggle').addEventListener('click', (e) => {
+    const picker = document.getElementById('reg-birth-picker');
+    picker.hidden = !picker.hidden;
+    e.target.textContent = picker.hidden
+      ? 'Выбрать по шагам: год → месяц → день'
+      : 'Скрыть выбор по шагам';
+  });
 
   // Текст согласия называет компанию — при смене выбора наверху перерисовываем
   // только этот блок (не всю форму, иначе слетит canvas/pad).
@@ -173,7 +260,7 @@ function readFields() {
     company: companyInput ? companyInput.value : COMPANIES[0].id,
     lastName: document.getElementById('reg-last').value.trim(),
     firstName: document.getElementById('reg-first').value.trim(),
-    birth: document.getElementById('reg-birth').value,
+    birth: document.getElementById('reg-birth-text').value.trim(),
     email: document.getElementById('reg-email').value.trim(),
   };
 }
@@ -189,8 +276,12 @@ function validate({ lastName, firstName, birth, email }) {
   if (lastName.length < 2) return 'Укажите фамилию.';
   if (firstName.length < 2) return 'Укажите имя.';
   if (!birth) return 'Укажите дату рождения.';
-  const age = ageYears(birth);
-  if (age === null || age < 16 || age > 90) return 'Проверьте дату рождения.';
+  const date = parseBirthInput(birth);
+  if (!date) return 'Проверьте дату рождения — похоже, такой даты не существует.';
+  if (date.getTime() > Date.now()) return 'Дата рождения не может быть в будущем — проверьте дату.';
+  const age = ageYears(date);
+  if (age < MIN_AGE) return `Судя по дате рождения, водителю ещё нет ${MIN_AGE} лет — проверьте дату.`;
+  if (age > MAX_AGE) return 'Проверьте дату рождения — похоже на опечатку в годе.';
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Проверьте e-mail — похоже, в нём опечатка.';
   if (!pad || pad.isEmpty()) return 'Распишитесь в поле подписи.';
   return null;
@@ -206,11 +297,12 @@ function handleSubmit() {
     if (!proceed) return;
   }
 
+  const birthDate = parseBirthInput(fields.birth);
   const payload = {
     company: fields.company,
     lastName: fields.lastName,
     firstName: fields.firstName,
-    birthDate: fmtDateRu(fields.birth),
+    birthDate: `${pad2(birthDate.getDate())}.${pad2(birthDate.getMonth() + 1)}.${birthDate.getFullYear()}`,
     email: fields.email,
     signature: pad.toDataURL('image/png', { trim: true, background: '#fff' }),
     submittedAt: new Date().toISOString(),
@@ -291,6 +383,65 @@ function renderDone(payload) {
   actionBtn.onclick = renderForm;
 }
 
+// ---------- Полноэкранная подпись ----------
+// Маленькое поле .register__pad в форме — только превью и кнопка «открыть»;
+// сам SignaturePad живёт на canvas внутри .sig-full (статичный узел в
+// index.html, не пересоздаётся вместе с формой). Открывается/закрывается без
+// изменения хеша: это не отдельный экран приложения, а временное состояние
+// уже открытой регистрации — пуш ещё одной записи в history добавил бы
+// путаницу с «Назад», не отражая ничего нового по смыслу URL.
+
+function updatePadPreview() {
+  const img = document.getElementById('register-pad-preview');
+  const wrap = document.getElementById('register-pad');
+  if (!img || !wrap) return; // форма могла уже пересобраться (renderForm) — узлы старые
+  if (!pad || pad.isEmpty()) {
+    img.hidden = true;
+    img.removeAttribute('src');
+    wrap.classList.remove('is-filled');
+    return;
+  }
+  img.src = pad.toDataURL('image/png', { trim: true });
+  img.hidden = false;
+  wrap.classList.add('is-filled');
+}
+
+// Канвас .sig-full создаётся один раз на всю сессию (не при каждом открытии) —
+// тот же приём, что и с прежним inline-канвасом: getBoundingClientRect() должен
+// мерить уже видимый контейнер, поэтому создание — только после el.hidden = false.
+function ensureFullSigPad() {
+  if (pad) return;
+  const canvas = document.getElementById('sig-full-canvas');
+  pad = new SignaturePad(canvas, { onChange: updatePadPreview });
+}
+
+let sigFullCloseTimer = null;
+
+function openSigFull() {
+  const el = document.getElementById('sig-full');
+  clearTimeout(sigFullCloseTimer);
+  el.classList.remove('is-closing');
+  el.hidden = false;
+  ensureFullSigPad();
+  el.classList.add('is-opening');
+  setTimeout(() => el.classList.remove('is-opening'), 20);
+}
+
+function closeSigFull() {
+  const el = document.getElementById('sig-full');
+  if (el.hidden || el.classList.contains('is-closing')) return;
+  el.classList.add('is-closing');
+  clearTimeout(sigFullCloseTimer);
+  sigFullCloseTimer = setTimeout(() => {
+    el.hidden = true;
+    el.classList.remove('is-closing');
+  }, 220);
+  updatePadPreview();
+}
+
+document.getElementById('sig-full-done').addEventListener('click', closeSigFull);
+document.getElementById('sig-full-clear').addEventListener('click', () => { if (pad) pad.clear(); });
+
 // ---------- Показ / скрытие, синхронизация с хешем (паттерн из guide.js) ----------
 
 let closeTimer = null;
@@ -340,12 +491,53 @@ function closeRegister() {
 closeBtn.addEventListener('click', closeRegister);
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !el.hidden) closeRegister();
+  if (e.key !== 'Escape') return;
+  const sigFull = document.getElementById('sig-full');
+  // Полноэкранная подпись открыта поверх регистрации — Escape должен закрыть
+  // сначала её, а не выкинуть из всей формы разом.
+  if (sigFull && !sigFull.hidden) { closeSigFull(); return; }
+  if (!el.hidden) closeRegister();
 });
 
-function syncFromHash() {
+// Гид хранит прогресс отдельно (di:guide) — свой модуль, без общего состояния
+// с app.js, поэтому здесь читаем его напрямую. Не только защита от чипов в
+// гиде (см. guide.js resolveStepId): #/register — обычный хеш, на него можно
+// зайти по прямой ссылке/закладке в обход гида целиком, минуя ту защиту.
+// Возвращает id первого непройденного шага, либо null (гид пройден полностью),
+// либо false (не удалось проверить — данные гида не загрузились).
+async function firstIncompleteGuideStep() {
+  try {
+    const res = await fetch(`data/guide.json?v=${Date.now()}`, { cache: 'no-cache' });
+    if (!res.ok) throw new Error('fetch failed');
+    const guideData = await res.json();
+    let done = {};
+    try { done = (JSON.parse(localStorage.getItem('di:guide') || 'null') || {}).done || {}; } catch { /* пусто */ }
+    for (const block of guideData.blocks) {
+      for (const step of block.steps) {
+        if (step.confirm && !done[step.id]) return step.id;
+      }
+    }
+    return null;
+  } catch (err) {
+    console.error('Регистрация: не удалось проверить прогресс гида', err);
+    return false;
+  }
+}
+
+async function syncFromHash() {
   if (parseScreen() !== 'register') { hideRegister(); return; }
-  showRegister();
+
+  const gate = await firstIncompleteGuideStep();
+  if (gate === null) {
+    showRegister();
+  } else if (gate) {
+    // Не весь гид пройден — отправляем на первый непройденный шаг, а не в форму.
+    location.hash = `#/guide/${encodeURIComponent(gate)}`;
+  } else {
+    // Данные гида не загрузились — не пускаем в форму вслепую, но и не рушим
+    // навигацию: отправляем в сам гид, он сам разберётся, с какого шага начать.
+    location.hash = '#/guide';
+  }
 }
 
 window.addEventListener('hashchange', syncFromHash);

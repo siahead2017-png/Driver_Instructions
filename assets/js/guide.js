@@ -261,15 +261,39 @@ function syncNextBtn(step) {
   nextBtn.title = nextBtn.disabled ? 'Сначала отметьте галочку под текстом' : '';
 }
 
+// Индекс первого шага, у которого есть чекбокс и он не отмечен — граница,
+// дальше которой водителя пускать нельзя ни чипом блока, ни прямой ссылкой
+// на #/guide/<id>. -1, если всё пройдено.
+function firstIncompleteIndex() {
+  const progress = getProgress();
+  for (let i = 0; i < steps.length; i++) {
+    if (steps[i].confirm && !progress.done[steps[i].id]) return i;
+  }
+  return -1;
+}
+
+// Если запрошенный шаг дальше границы firstIncompleteIndex() — водителя
+// возвращают на первый непройденный шаг вместо запрошенного. Шаги ДО границы
+// (уже пройденные, либо сама граница) открываются свободно — можно вернуться
+// и перечитать.
+function resolveStepId(requestedId) {
+  const reqIdx = steps.findIndex((s) => s.id === requestedId);
+  if (reqIdx < 0) return requestedId;
+  const gateIdx = firstIncompleteIndex();
+  if (gateIdx >= 0 && reqIdx > gateIdx) return steps[gateIdx].id;
+  return requestedId;
+}
+
 function goToStep(id, { push = false } = {}) {
-  const step = findStep(id);
+  const resolvedId = resolveStepId(id);
+  const step = findStep(resolvedId);
   if (!step) return;
-  currentId = id;
-  setCurrent(id);
+  currentId = step.id;
+  setCurrent(step.id);
   renderStep(step);
   bodyEl.scrollTop = 0;
-  if (push) location.hash = `#/guide/${encodeURIComponent(id)}`;
-  else history.replaceState(null, '', `#/guide/${encodeURIComponent(id)}`);
+  if (push) location.hash = `#/guide/${encodeURIComponent(step.id)}`;
+  else history.replaceState(null, '', `#/guide/${encodeURIComponent(step.id)}`);
 }
 
 function goDelta(delta) {
@@ -323,10 +347,16 @@ document.addEventListener('keydown', (e) => {
 let closeTimer = null;
 
 function showGuide(id) {
-  const target = id && findStep(id) ? id : targetStepId();
+  const requestedId = id && findStep(id) ? id : null;
+  const target = requestedId ? resolveStepId(requestedId) : targetStepId();
   if (!target) return;
   currentId = target;
   renderStep(findStep(target));
+  // Запрошенный шаг был дальше границы и его подменили — поправить адресную
+  // строку, иначе после перезагрузки она снова укажет на непройденный шаг.
+  if (requestedId && target !== requestedId) {
+    history.replaceState(null, '', `#/guide/${encodeURIComponent(target)}`);
+  }
 
   clearTimeout(closeTimer);
   guideEl.classList.remove('is-closing');

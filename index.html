@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=10">
+  <link rel="stylesheet" href="assets/css/styles.css?v=12">
 </head>
 <body>
   <header class="app-header">
@@ -136,6 +136,22 @@
     <div class="register__body" id="register-body"></div>
     <div class="register__nav">
       <button class="btn" id="register-action" type="button">Отправить</button>
+    </div>
+  </div>
+
+  <!-- Полноэкранная подпись: маленькое поле в форме регистрации только открывает
+       этот экран (не рисует само) — на узком телефоне в маленьком поле неудобно
+       расписываться. Тот же canvas, тот же SignaturePad — см. register.js. -->
+  <div class="sig-full" id="sig-full" hidden role="dialog" aria-modal="true" aria-labelledby="sig-full-title">
+    <div class="sig-full__bar">
+      <span class="sig-full__title" id="sig-full-title">Подпись</span>
+      <button class="sig-full__clear" id="sig-full-clear" type="button">Очистить</button>
+    </div>
+    <div class="sig-full__pad" id="sig-full-pad">
+      <canvas id="sig-full-canvas"></canvas>
+    </div>
+    <div class="register__nav">
+      <button class="btn" id="sig-full-done" type="button">Готово</button>
     </div>
   </div>
 
@@ -319,7 +335,7 @@
   <script src="assets/js/signature-pad.js?v=1"></script>
   <script type="module" src="assets/js/app.js?v=6"></script>
   <script type="module" src="assets/js/calc.js?v=6"></script>
-  <script type="module" src="assets/js/guide.js?v=2"></script>
-  <script type="module" src="assets/js/register.js?v=2"></script>
+  <script type="module" src="assets/js/guide.js?v=3"></script>
+  <script type="module" src="assets/js/register.js?v=5"></script>
 </body>
 </html>

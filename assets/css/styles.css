@@ -1379,18 +1379,45 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 
 .register__confirm-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
 
+/* Дата рождения: текстом с маской (основной способ) + пикер Год/Месяц/День
+   для тех, кто предпочитает тапать, а не печатать — см. register.js. */
+.register__birth-toggle {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.register__birth-picker {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 0.8fr;
+  gap: 8px;
+}
+
 .register__sig { display: flex; flex-direction: column; gap: 6px; }
 
-/* Подпись рисуется только чернилами (canvas прозрачный) — линейка и подсказка
-   нарисованы в CSS под канвасом, иначе попали бы в экспорт PNG (правило из
-   WEB-SIGNATURE/signature-pad.js). */
+/* Маленькое поле в форме больше не рисует само (на узком телефоне неудобно
+   расписываться в нём) — это кнопка-превью: пусто → подсказка «Распишитесь
+   здесь», после подписи → уменьшенная картинка. Тап открывает .sig-full ниже,
+   где и живёт единственный canvas/SignaturePad — см. register.js. */
 .register__pad {
   position: relative;
+  display: block;
+  width: 100%;
   height: 170px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
   overflow: hidden;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .register__pad::before {
@@ -1418,12 +1445,94 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 
 .register__pad.is-filled::before { opacity: 0; }
 
-.register__pad canvas {
+.register__pad-preview {
   position: relative;
   z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: contain;
+  padding: 12px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+/* В тёмной теме чернила (по умолчанию почти чёрные, см. signature-pad.js
+   DEFAULTS.penColor) не видны на тёмном фоне — ни на превью, ни на самом
+   canvas. filter: invert() меняет только то, что рисует экран: пиксели
+   canvas (и, соответственно, PNG, который уходит в PDF при отправке)
+   остаются тёмными чернилами как были, инверсия чисто визуальная и в
+   экспорт не попадает — то же верно для превью, оно и есть такой же PNG. */
+@media (prefers-color-scheme: dark) {
+  .register__pad-preview,
+  .sig-full__pad canvas { filter: invert(1); }
+}
+
+/* Полноэкранная подпись — тот же уровень оверлеев, что .guide/.register (45),
+   но выше: открывается ПОВЕРХ уже открытой регистрации. */
+.sig-full {
+  position: fixed;
+  inset: 0;
+  z-index: 65;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  transition: opacity .22s ease;
+}
+
+.sig-full[hidden] { display: none; }
+.sig-full.is-opening, .sig-full.is-closing { opacity: 0; }
+
+.sig-full__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: calc(env(safe-area-inset-top) + 6px) var(--pad) 6px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.sig-full__title { font-weight: 600; }
+
+.sig-full__clear {
+  border: none;
+  background: none;
+  padding: 6px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+/* Занимает весь оставшийся экран — специально ради простора для подписи,
+   ради которого этот экран и открывается (в отличие от узкого .register__pad). */
+.sig-full__pad {
+  position: relative;
+  flex: 1;
+  margin: var(--pad);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.sig-full__pad canvas {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.sig-full__pad::after {
+  content: '';
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 40%;
+  border-bottom: 1px dashed var(--border);
+  pointer-events: none;
 }
 
 .register__sig-clear {
