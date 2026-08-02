@@ -132,9 +132,9 @@ view.addEventListener('click', (e) => {
   setTimeout(go, 450); // страховка, если animationend не придёт
 });
 
-function cardHTML(item, i = 0) {
+function cardHTML(item, i = 0, extraClass = '') {
   const t = typeMeta(item.type);
-  const importantClass = item.important ? ' card--important' : '';
+  const classes = `${item.important ? ' card--important' : ''}${extraClass ? ` ${extraClass}` : ''}`;
   // type "link" — не Диск, а внешний сайт/приложение: открываем сразу в новой вкладке,
   // а не через внутренний просмотрщик (там нечего встраивать).
   const external = item.type === 'link';
@@ -144,7 +144,7 @@ function cardHTML(item, i = 0) {
     ? `<img class="card__badge card__badge--custom" src="${esc(item.image)}" alt="" aria-hidden="true">`
     : `<span class="card__badge card__badge--${esc(item.type)}" aria-hidden="true">${t.icon}</span>`;
   return `
-    <a class="card${importantClass}" style="--i:${i}" href="${href}"${extraAttrs}>
+    <a class="card${classes}" style="--i:${i}" href="${href}"${extraAttrs}>
       ${badge}
       <span class="card__body">
         <span class="card__title">${esc(item.title)}</span>
@@ -162,11 +162,12 @@ function renderHome() {
 
   // Ссылки на другие приложения компании (Заправки, fotohd.lv) — сверху главной,
   // чтобы их было видно сразу и не искали по памяти. Список — data.apps.
-  // Рендерятся через cardHTML() — та же карточка, что и везде в каталоге (type: "link" уже умеет открывать в новой вкладке).
+  // Рендерятся через cardHTML() — та же карточка, что и везде в каталоге (type: "link" уже умеет открывать в новой вкладке),
+  // с модификатором card--app: 2 колонки, крупнее иконка, акцентная подсветка — чтобы выделялись как отдельная фича.
   const apps = data.apps ?? [];
   const appsHTML = apps.length
     ? `<section class="section section--apps">
-         <div class="list">${apps.map((a, i) => cardHTML(a, i)).join('')}</div>
+         <div class="apps-grid">${apps.map((a, i) => cardHTML(a, i, 'card--app')).join('')}</div>
        </section>`
     : '';
 

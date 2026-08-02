@@ -315,6 +315,34 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 
 .section--important .section__title { color: var(--danger); }
 
+/* Ссылки на другие приложения компании — 2 колонки, акцентная подсветка (по образцу .guide-banner),
+   крупнее иконка и без стрелки (карточка сама по себе — вся кликабельная область компактна). */
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap);
+}
+
+.card--app {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  background:
+    linear-gradient(150deg,
+      color-mix(in srgb, var(--accent) 12%, var(--surface)),
+      var(--surface) 78%);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+@media (hover: hover) {
+  .card--app:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+}
+
+.card--app .card__badge { width: 52px; height: 52px; }
+.card--app .card__body { width: 100%; }
+.card--app .card__chevron { display: none; }
+
 .card__chevron { transition: transform .18s ease, color .18s ease; }
 
 .card__badge {
