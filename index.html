@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=8">
+  <link rel="stylesheet" href="assets/css/styles.css?v=10">
 </head>
 <body>
   <header class="app-header">
@@ -120,6 +120,23 @@
       <button class="btn" id="guide-next" type="button">Далее →</button>
     </div>
     <a class="guide__reset" id="guide-reset-link" href="#">Сбросить прогресс</a>
+  </div>
+
+  <!-- Регистрация после инструктажа: компания/ФИО/дата рождения/e-mail + подпись (register.js).
+       Открывается с последнего шага гида, «Отправить» уходит на боевой Apps Script Web App
+       (ENDPOINT_URL в начале register.js) — см. раздел «Регистрация после инструктажа» в CLAUDE.md. -->
+  <div class="register" id="register" hidden role="dialog" aria-modal="true" aria-labelledby="register-title">
+    <div class="register__bar">
+      <button class="icon-btn" id="register-close" aria-label="Закрыть регистрацию">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <span class="register__bar-title" id="register-title">Регистрация</span>
+      <span class="icon-btn" aria-hidden="true" style="visibility:hidden"></span>
+    </div>
+    <div class="register__body" id="register-body"></div>
+    <div class="register__nav">
+      <button class="btn" id="register-action" type="button">Отправить</button>
+    </div>
   </div>
 
   <!-- Плавающая кнопка калькулятора: время + топливо + маршрут -->
@@ -297,8 +314,12 @@
     </div>
   </div>
 
+  <!-- classic script (не модуль): UMD, вешает window.SignaturePad. Модули (ниже) всегда
+       выполняются после классических скриптов, так что к register.js глобал уже готов. -->
+  <script src="assets/js/signature-pad.js?v=1"></script>
   <script type="module" src="assets/js/app.js?v=6"></script>
   <script type="module" src="assets/js/calc.js?v=6"></script>
-  <script type="module" src="assets/js/guide.js?v=1"></script>
+  <script type="module" src="assets/js/guide.js?v=2"></script>
+  <script type="module" src="assets/js/register.js?v=2"></script>
 </body>
 </html>

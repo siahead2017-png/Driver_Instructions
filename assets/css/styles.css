@@ -1232,6 +1232,10 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Пока галочка не отмечена, «Далее» заблокирована — подсвечиваем рамкой, чтобы
+   водитель видел, чего от него ждут, а не искал причину неактивной кнопки. */
+.guide-check:has(input:not(:checked)) { border-color: var(--guide); }
+
 .guide-check input {
   flex: none;
   width: 22px;
@@ -1263,6 +1267,238 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 /* Анимация появления — тот же паттерн, что у .calc (opacity, гасится reduced-motion ниже). */
 .guide { transition: opacity .22s ease; }
 .guide.is-opening, .guide.is-closing { opacity: 0; }
+
+/* ---------- Регистрация после инструктажа (register.js) ---------- */
+
+.register {
+  position: fixed;
+  inset: 0;
+  z-index: 45; /* тот же уровень, что у .guide — они никогда не показаны одновременно */
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.register[hidden] { display: none; }
+
+.register__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(env(safe-area-inset-top) + 6px) 10px 6px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.register__bar .icon-btn { margin-left: 0; }
+
+.register__bar-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.register__body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px var(--pad) 24px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.register__intro { margin: 0; font-size: 15px; line-height: 1.5; color: var(--text-dim); }
+
+/* Выбор компании трудоустройства — карточки с логотипом, тот же приём скрытого
+   radio + :has(:checked), что у .calc__chip. Логотипы поставляются на белом фоне,
+   поэтому карточка всегда светлая, независимо от тёмной темы сайта. */
+.register__companies {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.register__company {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.register__company input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+.register__company img { max-width: 100%; max-height: 40px; object-fit: contain; }
+
+.register__company:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+
+.register__company:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--accent-soft); }
+
+.register__names {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Предпросмотр текста согласия перед подписью — показывает водителю, под чем он
+   расписывается, до того как это станет PDF. */
+.register__confirm {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0; /* .register__body — сам flex-column, без этого длинный блок сжимался бы вместо общего скролла */
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  max-height: 220px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.register__confirm p { margin: 0; }
+.register__confirm strong { color: inherit; font-weight: 700; }
+
+.register__confirm-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+
+.register__sig { display: flex; flex-direction: column; gap: 6px; }
+
+/* Подпись рисуется только чернилами (canvas прозрачный) — линейка и подсказка
+   нарисованы в CSS под канвасом, иначе попали бы в экспорт PNG (правило из
+   WEB-SIGNATURE/signature-pad.js). */
+.register__pad {
+  position: relative;
+  height: 170px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.register__pad::before {
+  content: 'Распишитесь здесь';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  font-size: 14px;
+  pointer-events: none;
+  transition: opacity .15s ease;
+}
+
+.register__pad::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 30px;
+  border-bottom: 1px dashed var(--border);
+  pointer-events: none;
+}
+
+.register__pad.is-filled::before { opacity: 0; }
+
+.register__pad canvas {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.register__sig-clear {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-dim);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.register__error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.register__nav {
+  display: flex;
+  gap: 10px;
+  padding: 10px var(--pad) calc(env(safe-area-inset-bottom) + 10px);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.register__nav .btn { flex: 1; margin-top: 0; text-align: center; border: 0; cursor: pointer; font-size: 15px; }
+
+.register__sending {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 0;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.register__done { text-align: center; padding: 8px 0; }
+.register__done-icon { font-size: 40px; }
+.register__done-title { margin: 10px 0 6px; font-size: 19px; font-weight: 700; }
+.register__done-text { margin: 0 0 16px; color: var(--text-dim); font-size: 14px; line-height: 1.5; }
+
+.register__summary {
+  text-align: left;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+}
+
+.register__summary dt { color: var(--text-dim); font-size: 13px; }
+.register__summary dd { margin: 0; font-weight: 600; }
+
+.register__sig-preview {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.register { transition: opacity .22s ease; }
+.register.is-opening, .register.is-closing { opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

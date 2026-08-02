@@ -65,6 +65,15 @@ function markDone(stepId) {
   saveState(s);
 }
 
+// Снятая галочка обязана стирать отметку о прохождении: иначе водитель мог бы
+// поставить её, вернуться назад, снять — а шаг остался бы зачтённым.
+function unmarkDone(stepId) {
+  const s = getProgress();
+  delete s.done[stepId];
+  s.current = stepId;
+  saveState(s);
+}
+
 function setCurrent(stepId) {
   const s = getProgress();
   s.current = stepId;
@@ -166,6 +175,20 @@ function renderChips(activeBlockId) {
       </button>`
     )
     .join('');
+  scrollActiveChipIntoView();
+}
+
+// Лента блоков вверху шире экрана, поэтому активный блок нужно подвозить к
+// водителю самим — иначе на шаге из середины гида подсвеченный блок остаётся
+// за правым краем и кажется, что заголовок не совпадает с вопросом.
+// Скроллим саму ленту (scrollLeft), а не scrollIntoView(): последний утянул бы
+// за собой и вертикальный скролл страницы.
+function scrollActiveChipIntoView() {
+  const active = chipsEl.querySelector('.guide__chip.is-active');
+  if (!active) return;
+  const target = active.offsetLeft - (chipsEl.clientWidth - active.offsetWidth) / 2;
+  const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  chipsEl.scrollTo({ left: Math.max(0, target), behavior: smooth ? 'smooth' : 'auto' });
 }
 
 function itemLinkHTML(itemId) {
@@ -212,11 +235,30 @@ function renderStep(step) {
   `;
 
   const box = document.getElementById('guide-confirm-box');
-  if (box) box.addEventListener('change', () => { if (box.checked) markDone(step.id); });
+  if (box) {
+    box.addEventListener('change', () => {
+      if (box.checked) markDone(step.id);
+      else unmarkDone(step.id);
+      syncNextBtn(step);
+    });
+  }
 
   backBtn.disabled = idx === 0;
   const isLast = idx === steps.length - 1;
   nextBtn.textContent = isLast ? 'Готово ✓' : 'Далее →';
+  syncNextBtn(step);
+}
+
+// Пока водитель сам не поставил галочку, «Далее» заблокирована — шаг нельзя
+// проскочить не прочитав. Раньше goDelta() отмечал шаг пройденным самим фактом
+// нажатия «Далее», из-за чего при возврате галочка оказывалась уже проставленной,
+// хотя водитель её не трогал. У шагов без confirm (если появятся) блокировки нет.
+function syncNextBtn(step) {
+  const needsConfirm = !!step.confirm;
+  const done = !!getProgress().done[step.id];
+  nextBtn.disabled = needsConfirm && !done;
+  nextBtn.setAttribute('aria-disabled', String(nextBtn.disabled));
+  nextBtn.title = nextBtn.disabled ? 'Сначала отметьте галочку под текстом' : '';
 }
 
 function goToStep(id, { push = false } = {}) {
@@ -233,12 +275,17 @@ function goToStep(id, { push = false } = {}) {
 function goDelta(delta) {
   const idx = steps.findIndex((s) => s.id === currentId);
   if (idx < 0) return;
+  // Вперёд можно только с отмеченной галочкой — см. syncNextBtn(). Проверка
+  // продублирована здесь, т.к. вперёд ведёт не только кнопка (клавиатура, код).
+  if (delta > 0 && steps[idx].confirm && !getProgress().done[steps[idx].id]) return;
+
   const next = steps[idx + delta];
   if (!next) {
-    if (delta > 0) closeGuide(); // «Готово» на последнем шаге
+    // «Готово» на последнем шаге — не закрываем гид, а ведём в регистрацию
+    // (register.js), она сама скроет гид и покажет себя через #/register.
+    if (delta > 0) location.hash = '#/register';
     return;
   }
-  markDone(steps[idx].id); // «Далее» само отмечает пройденный шаг
   goToStep(next.id);
 }
 
