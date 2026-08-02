@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=16">
+  <link rel="stylesheet" href="assets/css/styles.css?v=17">
 </head>
 <body>
   <header class="app-header">
@@ -150,7 +150,10 @@
       <button class="sig-full__clear" id="sig-full-clear" type="button">Очистить</button>
     </div>
     <div class="sig-full__pad" id="sig-full-pad">
-      <canvas id="sig-full-canvas"></canvas>
+      <p class="sig-full__hint">Распишитесь в рамке ниже</p>
+      <div class="sig-full__zone">
+        <canvas id="sig-full-canvas"></canvas>
+      </div>
     </div>
     <div class="register__nav">
       <button class="btn" id="sig-full-done" type="button">Готово</button>

@@ -1547,19 +1547,48 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   cursor: pointer;
 }
 
-/* Занимает весь оставшийся экран — специально ради простора для подписи,
-   ради которого этот экран и открывается (в отличие от узкого .register__pad). */
+/* БАГ (найден 02.08.2026): раньше canvas растягивался на весь экран, а
+   пунктирная линия на 40% от низа была чисто декоративной — расписаться
+   можно было где угодно. При подписи в верхней части штрихи всё равно
+   попадали в trim-экспорт (signature-pad.js toDataURL) с высоким bbox,
+   Apps Script (Code.gs insertSignature_) масштабирует картинку по ширине
+   и ставит высоту по реальному соотношению сторон — высокая подпись
+   раздувала строку в docx и рожала второй лист PDF. Компактная подпись
+   у самого низа (где мало места дотянуться вверх) работала случайно.
+   Фикс: canvas живёт только внутри .sig-full__zone — узкой рамки
+   с фиксированной альбомной пропорцией у нижнего края экрана, выше
+   неё рисовать физически нечем. См. WEB_FOR_FUTURE — та же ловушка
+   ждёт любой другой canvas-подписи на весь экран. */
 .sig-full__pad {
   position: relative;
   flex: 1;
   margin: var(--pad);
-  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.sig-full__hint {
+  margin: 0;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.sig-full__zone {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2.4 / 1;
+  max-height: 42%;
+  border: 1.5px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
   overflow: hidden;
 }
 
-.sig-full__pad canvas {
+.sig-full__zone canvas {
   position: relative;
   z-index: 1;
   display: block;
@@ -1567,14 +1596,11 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   height: 100%;
 }
 
-.sig-full__pad::after {
-  content: '';
-  position: absolute;
-  left: 24px;
-  right: 24px;
-  bottom: 40%;
-  border-bottom: 1px dashed var(--border);
-  pointer-events: none;
+@media (prefers-color-scheme: dark) {
+  .sig-full__zone {
+    border-color: rgba(255, 255, 255, .24);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .05), 0 0 22px -6px rgba(77, 144, 254, .4);
+  }
 }
 
 .register__sig-clear {
