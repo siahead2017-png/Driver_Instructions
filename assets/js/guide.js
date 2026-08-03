@@ -263,8 +263,9 @@ function renderStep(step) {
   }
 
   backBtn.disabled = idx === 0;
-  const isLast = idx === steps.length - 1;
-  nextBtn.textContent = isLast ? 'Готово ✓' : 'Далее →';
+  // Последний шаг ведёт на экран подписи (#/register), а не завершает инструктаж —
+  // поэтому кнопка везде «Далее →», чтобы «Готово» не воспринималось как «всё сделано».
+  nextBtn.textContent = 'Далее →';
   syncNextBtn(step);
 }
 

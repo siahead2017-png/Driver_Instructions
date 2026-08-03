@@ -89,11 +89,11 @@ node -e "JSON.parse(require('fs').readFileSync('data/guide.json','utf8'))"      
 
 **Данные**: `data/guide.json` — отдельный файл (опечатка в гиде не должна ронять главную/поиск). Схема: `{ blocks: [{ id, title, icon, steps: [{ id, title, text: [...], items: [...item.id], confirm }] }] }`. `items` резолвятся через `typeMeta` из `drive.js`; несуществующий id рендерится как «Материал недоступен». `confirm` — если есть, на шаге чекбокс, отметка пишет прогресс.
 
-**Прогресс**: `localStorage`, ключ `di:guide`, без TTL. `{ current, done: {stepId: true} }`. Чекбокс — единственное, что пишет/стирает `done` (`markDone`/`unmarkDone`); кнопка «Далее»/«Готово ✓» заблокирована, пока `done[step.id]` не выставлен (`syncNextBtn`), проверка продублирована в `goDelta()`.
+**Прогресс**: `localStorage`, ключ `di:guide`, без TTL. `{ current, done: {stepId: true} }`. Чекбокс — единственное, что пишет/стирает `done` (`markDone`/`unmarkDone`); кнопка «Далее →» заблокирована, пока `done[step.id]` не выставлен (`syncNextBtn`), проверка продублирована в `goDelta()`.
 
 **Нельзя перепрыгнуть вперёд мимо непройденных шагов** — ни чипом блока, ни прямой ссылкой `#/guide/<id>`. `firstIncompleteIndex()` — индекс первого шага с `confirm` без отметки; `resolveStepId()` подменяет более дальний запрошенный шаг на этот граничный. Встроено в `goToStep()` (значит, и в чип, и в «Далее»/«Назад») и в `showGuide()` для прямых ссылок (с `history.replaceState`, чтобы адресная строка не осталась битой). Шаги до границы открываются свободно.
 
-Последний шаг («Готово ✓») переводит на `#/register`, не закрывает гид.
+Последний шаг («Далее →», как и все — намеренно не «Готово», чтобы инструктаж не воспринимался завершённым до подписи) переводит на `#/register`, не закрывает гид.
 
 **Вход в гид гейтится «данными сначала» (03.08.2026):** `syncFromHash` требует `hasDraft()` (`di:register:draft`, пишет `register.js` на `#/start`) — без черновика редирект на `#/start`. Баннер на главной по той же причине ведёт на `#/start` для новичка и прямо в `#/guide` для вернувшегося с черновиком. Подробности потока — в разделе «Регистрация после инструктажа».
 
@@ -105,7 +105,7 @@ node -e "JSON.parse(require('fs').readFileSync('data/guide.json','utf8'))"      
 - `#/start` — приветствие (`WELCOME_HTML`) + данные (компания/ФИО/дата/e-mail), `renderDataForm()`, кнопка «Начать инструктаж →». Гейтов нет: это точка входа во весь инструктаж. По кнопке `validateData()` → `saveDraft()` (`di:register:draft`) → `#/guide`.
 - `#/register` — согласие + подпись, `renderSignForm()`, кнопка «Закончить инструктаж, отправить подтверждение». Здесь собирается payload из черновика + подписи.
 
-**Поток:** баннер на главной → `#/start` (если черновика ещё нет) → гид → «Готово ✓» ведёт на `#/register` → отправка. Вернувшийся с черновиком идёт баннером сразу в `#/guide` (welcome только новичку — логика в `guide.js`).
+**Поток:** баннер на главной → `#/start` (если черновика ещё нет) → гид → «Далее →» на последнем шаге ведёт на `#/register` → отправка. Вернувшийся с черновиком идёт баннером сразу в `#/guide` (welcome только новичку — логика в `guide.js`).
 
 **Гейты (строго «данные сначала»):**
 - Вход в гид: `guide.js::syncFromHash` требует `hasDraft()` (`di:register:draft`); нет → редирект `#/start`. Симметрично тому, как `register.js` читает `di:guide`.
@@ -163,7 +163,7 @@ node -e "JSON.parse(require('fs').readFileSync('data/guide.json','utf8'))"      
 GitHub Pages, ветка `main`, корень. Пуш = деплой (~1 мин).
 
 - Коммиты — рабочей личностью `Konstantins Persins <siahead2017@gmail.com>` через `--local` конфиг (глобальный на машине — личный, не трогать). Пуш через `gh` (аккаунт `siahead2017-png`); если просит доступ: `git config --local credential.https://github.com.helper "!gh auth git-credential"`.
-- **Кеш-метки `?v=N` обязательны при любой правке css/js** — браузер и PWA кешируют агрессивно. Места: `index.html` → `styles.css?v=`, `app.js?v=`, `calc.js?v=`, `guide.js?v=`, `register.js?v=`, `signature-pad.js?v=`; внутри `app.js`/`guide.js` → импорты `drive.js`/`store.js`. Поднимать только у реально изменённых файлов. Сейчас: `styles.css?v=18`, `calc.js?v=6`, `app.js?v=10`, `guide.js?v=5`, `register.js?v=7`, `signature-pad.js?v=1`.
+- **Кеш-метки `?v=N` обязательны при любой правке css/js** — браузер и PWA кешируют агрессивно. Места: `index.html` → `styles.css?v=`, `app.js?v=`, `calc.js?v=`, `guide.js?v=`, `register.js?v=`, `signature-pad.js?v=`; внутри `app.js`/`guide.js` → импорты `drive.js`/`store.js`. Поднимать только у реально изменённых файлов. Сейчас: `styles.css?v=18`, `calc.js?v=6`, `app.js?v=10`, `guide.js?v=6`, `register.js?v=7`, `signature-pad.js?v=1`.
 - Жалоба «на телефоне не видно изменений» — почти всегда кеш PWA, реже режим «Уменьшение движения».
 
 **Репозиторий публичный — что нельзя сюда пушить:**
