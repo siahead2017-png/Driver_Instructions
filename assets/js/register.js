@@ -1,13 +1,17 @@
-// Регистрация водителя после инструктажа: ФИО/дата рождения/e-mail + подпись.
-// Самодостаточный модуль по образцу guide.js — свой виртуальный экран #/register,
-// открывается автоматически с последнего шага гида («Готово»). app.js его не
-// знает: route()/render() не распознают 'register' и уходят в renderHome(),
-// как уже происходит с 'guide' — контракт описан в CLAUDE.md.
+// Регистрация и подтверждение вводного инструктажа. Разбита на два этапа (два
+// виртуальных экрана поверх одного оверлея #register):
+//   #/start    — приветствие + данные водителя (компания/ФИО/дата рождения/e-mail).
+//   #/register — согласие + подпись, финальная отправка.
+// Данные первого этапа держатся в localStorage (di:register:draft) и на втором
+// этапе объединяются с подписью в единый payload. Так электронный инструктаж
+// проходится ДО устного: водитель сначала регистрируется, потом идёт гид, и лишь
+// в конце подписывает — см. Dashboard_Instructions/CLAUDE.md.
+//
+// Самодостаточный модуль по образцу guide.js: app.js не знает про 'start'/'register',
+// они безопасно уходят в renderHome(), как и 'guide'.
 //
 // Payload уходит в Apps Script Web App (ENDPOINT_URL) — Content-Type: text/plain,
 // чтобы не ловить CORS-preflight (проверено вручную с боевого домена, см. CLAUDE.md).
-// localStorage (di:register:last) — не источник истины, а подстраховка на случай
-// обрыва сети: пишется до отправки и стирается только при успешном ответе сервера.
 
 const ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbyXEGa18iJf5B6XKTnsmNn89ZJ11cfrHeBjShTaOQ015mDa5ak0h6PXjn400e6nUKEn/exec';
 
@@ -18,6 +22,19 @@ const COMPANIES = [
   { id: 'HEAD', label: 'SIA HEAD', logo: 'assets/img/logo-head.png?v=1' },
   { id: 'HDLG', label: 'SIA HD LOGISTICS GROUP', logo: 'assets/img/logo-hdlg.png?v=1' },
 ];
+
+// Приветствие на первом экране (#/start): рассказывает, как устроен инструктаж и
+// что в конце нужно подписать форму. Сокращённая версия текста, согласованного с
+// владельцем, — суть сохранена (welcome / зачем / база знаний / регистрация / подпись).
+const WELCOME_HTML = `
+  <div class="register__welcome">
+    <h2 class="register__welcome-title">Добро пожаловать в нашу команду!</h2>
+    <p>Прежде чем приступить к работе, пройдите вводный инструктаж — он познакомит с основными правилами и порядком работы компании и поможет увереннее начать.</p>
+    <p>Здесь собрано самое важное, что нужно знать каждому водителю. Если по какой-то теме нужны детали — их всегда можно найти в базе знаний, ссылки есть в каждом разделе.</p>
+    <p>Начнём с регистрации: выберите компанию, укажите фамилию, имя, дату рождения и e-mail. После всех разделов подпишите и отправьте итоговую форму — только тогда инструктаж считается пройденным.</p>
+    <p>Безопасных дорог и удачной работы!</p>
+  </div>
+`;
 
 // Текст ниже дублирует тело PDF-шаблонов (Driver_Instructions_Backend/PDF_TEMPLATES.txt,
 // без шапки с логотипом/реквизитами) — водитель должен видеть, под чем расписывается,
@@ -53,16 +70,19 @@ function confirmationHtml(companyId) {
   `;
 }
 
-const KEY = 'di:register:last';
+const KEY = 'di:register:last';    // бэкап полного payload на случай обрыва сети при отправке
+const DRAFT_KEY = 'di:register:draft'; // данные первого этапа (#/start), объединяются с подписью на #/register
+const GUIDE_KEY = 'di:guide';      // прогресс гида — чистим при полном сбросе «Заполнить ещё раз»
 
 const el = document.getElementById('register');
 const closeBtn = document.getElementById('register-close');
+const barTitle = document.getElementById('register-title');
 const bodyEl = document.getElementById('register-body');
 const actionBtn = document.getElementById('register-action');
 const closeDoneBtn = document.getElementById('register-close-done');
 closeDoneBtn.addEventListener('click', () => { location.hash = ''; }); // на главную, тот же приём, что у guide-home
 
-let pad = null; // SignaturePad — живёт, пока не пересобрана форма (renderForm())
+let pad = null; // SignaturePad — живёт, пока не пересобрана форма подписи (renderSignForm())
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => (
@@ -74,6 +94,24 @@ const esc = (s) =>
 function parseScreen() {
   const hash = location.hash.slice(2);
   return hash.split('/')[0] || 'home';
+}
+
+// ---------- Черновик данных (первый этап) ----------
+
+function loadDraft() {
+  try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch { return null; }
+}
+
+function saveDraft(d) {
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch { /* приватный режим — не критично */ }
+}
+
+// Полный сброс перед следующим водителем на том же устройстве: данные, бэкап
+// payload и прогресс гида. Подпись (pad) чистит вызывающий код отдельно.
+function clearAll() {
+  for (const k of [DRAFT_KEY, KEY, GUIDE_KEY]) {
+    try { localStorage.removeItem(k); } catch { /* не критично */ }
+  }
 }
 
 // ---------- Дата рождения: свободный ввод dd.mm.yyyy + пикер Год/Месяц/День ----------
@@ -159,24 +197,22 @@ function populateBirthPicker() {
   daySel.addEventListener('change', applyIfComplete);
 }
 
-// ---------- Форма ----------
+// ---------- Этап 1: данные водителя (#/start) ----------
 
-function renderForm() {
-  // Повторный вызов (после «Заполнить ещё раз») обязан начинать с чистой подписи —
-  // canvas в .sig-full статичен в index.html, а не пересобирается вместе с формой,
-  // поэтому старые чернила сами по себе не пропадут. При первом вызове pad ещё
-  // не существует (создаётся лениво в ensureFullSigPad() при первом открытии).
-  if (pad) pad.clear();
+function renderDataForm() {
+  const draft = loadDraft() || {};
+  const selectedCompany = draft.company || COMPANIES[0].id;
+  barTitle.textContent = 'Регистрация';
 
   bodyEl.innerHTML = `
-    <p class="register__intro">Инструктаж пройден. Заполните данные и распишитесь ниже — этим Вы подтверждаете, что ознакомлены с инструктажем.</p>
+    ${WELCOME_HTML}
 
     <div class="calc__field">
       <span class="calc__field-label">Компания трудоустройства</span>
       <div class="register__companies">
-        ${COMPANIES.map((c, i) => `
+        ${COMPANIES.map((c) => `
           <label class="register__company">
-            <input type="radio" name="reg-company" value="${c.id}" ${i === 0 ? 'checked' : ''}>
+            <input type="radio" name="reg-company" value="${c.id}" ${c.id === selectedCompany ? 'checked' : ''}>
             <img src="${c.logo}" alt="${esc(c.label)}">
           </label>
         `).join('')}
@@ -186,17 +222,17 @@ function renderForm() {
     <div class="register__names">
       <label class="calc__field">
         <span class="calc__field-label">Фамилия</span>
-        <input class="calc__input" id="reg-last" type="text" autocomplete="family-name" placeholder="Иванов">
+        <input class="calc__input" id="reg-last" type="text" autocomplete="family-name" placeholder="Иванов" value="${esc(draft.lastName || '')}">
       </label>
       <label class="calc__field">
         <span class="calc__field-label">Имя</span>
-        <input class="calc__input" id="reg-first" type="text" autocomplete="given-name" placeholder="Иван">
+        <input class="calc__input" id="reg-first" type="text" autocomplete="given-name" placeholder="Иван" value="${esc(draft.firstName || '')}">
       </label>
     </div>
 
     <div class="calc__field">
       <label class="calc__field-label" for="reg-birth-text">Дата рождения</label>
-      <input class="calc__input" id="reg-birth-text" type="text" inputmode="numeric" autocomplete="bday" placeholder="ДД.ММ.ГГГГ" maxlength="10">
+      <input class="calc__input" id="reg-birth-text" type="text" inputmode="numeric" autocomplete="bday" placeholder="ДД.ММ.ГГГГ" maxlength="10" value="${esc(draft.birth || '')}">
       <button type="button" class="register__birth-toggle" id="reg-birth-toggle">Выбрать по шагам: год → месяц → день</button>
       <div class="register__birth-picker" id="reg-birth-picker" hidden>
         <select class="calc__input" id="reg-birth-year" aria-label="Год рождения"></select>
@@ -207,10 +243,83 @@ function renderForm() {
 
     <label class="calc__field">
       <span class="calc__field-label">E-mail (необязательно)</span>
-      <input class="calc__input" id="reg-email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com">
+      <input class="calc__input" id="reg-email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" value="${esc(draft.email || '')}">
     </label>
 
-    ${confirmationHtml(COMPANIES[0].id)}
+    <p class="register__error" id="register-error" hidden></p>
+  `;
+
+  document.getElementById('reg-birth-text').addEventListener('input', maskBirthInput);
+  populateBirthPicker();
+  document.getElementById('reg-birth-toggle').addEventListener('click', (e) => {
+    const picker = document.getElementById('reg-birth-picker');
+    picker.hidden = !picker.hidden;
+    e.target.textContent = picker.hidden
+      ? 'Выбрать по шагам: год → месяц → день'
+      : 'Скрыть выбор по шагам';
+  });
+
+  closeDoneBtn.hidden = true;
+  actionBtn.disabled = false;
+  actionBtn.textContent = 'Начать инструктаж →';
+  actionBtn.onclick = handleStart;
+}
+
+function readDataFields() {
+  const companyInput = document.querySelector('input[name="reg-company"]:checked');
+  return {
+    company: companyInput ? companyInput.value : COMPANIES[0].id,
+    lastName: document.getElementById('reg-last').value.trim(),
+    firstName: document.getElementById('reg-first').value.trim(),
+    birth: document.getElementById('reg-birth-text').value.trim(),
+    email: document.getElementById('reg-email').value.trim(),
+  };
+}
+
+// Проверка данных первого этапа. Подпись здесь НЕ проверяется — она собирается
+// на втором этапе (#/register). E-mail не проверяется на «пусто» (пустой e-mail не
+// ошибка — водитель может не иметь почты; предупреждение через confirm() при отправке).
+function validateData({ lastName, firstName, birth, email }) {
+  if (lastName.length < 2) return 'Укажите фамилию.';
+  if (firstName.length < 2) return 'Укажите имя.';
+  if (!birth) return 'Укажите дату рождения.';
+  const date = parseBirthInput(birth);
+  if (!date) return 'Проверьте дату рождения — похоже, такой даты не существует.';
+  if (date.getTime() > Date.now()) return 'Дата рождения не может быть в будущем — проверьте дату.';
+  const age = ageYears(date);
+  if (age < MIN_AGE) return `Судя по дате рождения, водителю ещё нет ${MIN_AGE} лет — проверьте дату.`;
+  if (age > MAX_AGE) return 'Проверьте дату рождения — похоже на опечатку в годе.';
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Проверьте e-mail — похоже, в нём опечатка.';
+  return null;
+}
+
+function handleStart() {
+  const fields = readDataFields();
+  const err = validateData(fields);
+  if (err) { showError(err); return; }
+  saveDraft(fields);
+  // В гид: guide.js сам откроет первый (или текущий) шаг через targetStepId().
+  location.hash = '#/guide';
+}
+
+// ---------- Этап 2: согласие + подпись (#/register) ----------
+
+function renderSignForm() {
+  // Повторный вызов обязан начинать с чистой подписи — canvas в .sig-full статичен
+  // в index.html, а не пересобирается вместе с формой, поэтому старые чернила сами
+  // по себе не пропадут. При первом вызове pad ещё не существует (создаётся лениво
+  // в ensureFullSigPad() при первом открытии).
+  if (pad) pad.clear();
+
+  const draft = loadDraft();
+  if (!draft) { location.hash = '#/start'; return; } // страховка: без данных подписывать нечего
+
+  barTitle.textContent = 'Подтверждение инструктажа';
+
+  bodyEl.innerHTML = `
+    <p class="register__intro">Инструктаж пройден. Проверьте текст ниже и распишитесь — этим Вы подтверждаете, что ознакомлены с инструктажем.</p>
+
+    ${confirmationHtml(draft.company)}
 
     <div class="register__sig">
       <span class="calc__field-label">Подпись</span>
@@ -224,31 +333,13 @@ function renderForm() {
 
   // Маленькое поле в форме больше не рисует само (на узком телефоне в нём
   // неудобно расписываться) — тап открывает полноэкранный .sig-full, там и
-  // живёт единственный canvas/SignaturePad, см. openSigFull()/updatePadPreview()
-  // ниже. Здесь только превью уже нарисованного (пусто до первой подписи).
+  // живёт единственный canvas/SignaturePad, см. openSigFull()/updatePadPreview().
   document.getElementById('register-pad').addEventListener('click', openSigFull);
   updatePadPreview();
 
-  document.getElementById('reg-birth-text').addEventListener('input', maskBirthInput);
-  populateBirthPicker();
-  document.getElementById('reg-birth-toggle').addEventListener('click', (e) => {
-    const picker = document.getElementById('reg-birth-picker');
-    picker.hidden = !picker.hidden;
-    e.target.textContent = picker.hidden
-      ? 'Выбрать по шагам: год → месяц → день'
-      : 'Скрыть выбор по шагам';
-  });
-
-  // Текст согласия называет компанию — при смене выбора наверху перерисовываем
-  // только этот блок (не всю форму, иначе слетит canvas/pad).
-  document.querySelectorAll('input[name="reg-company"]').forEach((input) => {
-    input.addEventListener('change', () => {
-      document.getElementById('register-confirm').outerHTML = confirmationHtml(input.value);
-    });
-  });
-
-  closeDoneBtn.hidden = true; // виден только на экране «Данные собраны», см. renderDone()
-  actionBtn.textContent = 'Отправить';
+  closeDoneBtn.hidden = true;
+  actionBtn.disabled = false;
+  actionBtn.textContent = 'Закончить инструктаж, отправить подтверждение';
   actionBtn.onclick = handleSubmit;
 }
 
@@ -257,56 +348,28 @@ function showError(msg) {
   if (box) { box.textContent = msg; box.hidden = false; }
 }
 
-function readFields() {
-  const companyInput = document.querySelector('input[name="reg-company"]:checked');
-  return {
-    company: companyInput ? companyInput.value : COMPANIES[0].id,
-    lastName: document.getElementById('reg-last').value.trim(),
-    firstName: document.getElementById('reg-first').value.trim(),
-    birth: document.getElementById('reg-birth-text').value.trim(),
-    email: document.getElementById('reg-email').value.trim(),
-  };
-}
-
 function companyLabel(id) {
   return COMPANIES.find((c) => c.id === id)?.label || id;
 }
 
-// E-mail не проверяется здесь на «пусто» — пустой e-mail не ошибка формы,
-// а отдельное подтверждение через confirm() в handleSubmit (водитель может
-// не иметь рабочей почты, отправка всё равно уходит в Sheet/PDF).
-function validate({ lastName, firstName, birth, email }) {
-  if (lastName.length < 2) return 'Укажите фамилию.';
-  if (firstName.length < 2) return 'Укажите имя.';
-  if (!birth) return 'Укажите дату рождения.';
-  const date = parseBirthInput(birth);
-  if (!date) return 'Проверьте дату рождения — похоже, такой даты не существует.';
-  if (date.getTime() > Date.now()) return 'Дата рождения не может быть в будущем — проверьте дату.';
-  const age = ageYears(date);
-  if (age < MIN_AGE) return `Судя по дате рождения, водителю ещё нет ${MIN_AGE} лет — проверьте дату.`;
-  if (age > MAX_AGE) return 'Проверьте дату рождения — похоже на опечатку в годе.';
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Проверьте e-mail — похоже, в нём опечатка.';
-  if (!pad || pad.isEmpty()) return 'Распишитесь в поле подписи.';
-  return null;
-}
-
 function handleSubmit() {
-  const fields = readFields();
-  const err = validate(fields);
-  if (err) { showError(err); return; }
+  if (!pad || pad.isEmpty()) { showError('Распишитесь в поле подписи.'); return; }
 
-  if (!fields.email) {
+  const draft = loadDraft();
+  if (!draft) { location.hash = '#/start'; return; }
+
+  if (!draft.email) {
     const proceed = confirm('E-mail не указан — подтверждение прохождения инструктажа не придёт на почту (данные всё равно сохранятся). Отправить без e-mail?');
     if (!proceed) return;
   }
 
-  const birthDate = parseBirthInput(fields.birth);
+  const birthDate = parseBirthInput(draft.birth);
   const payload = {
-    company: fields.company,
-    lastName: fields.lastName,
-    firstName: fields.firstName,
+    company: draft.company,
+    lastName: draft.lastName,
+    firstName: draft.firstName,
     birthDate: `${pad2(birthDate.getDate())}.${pad2(birthDate.getMonth() + 1)}.${birthDate.getFullYear()}`,
-    email: fields.email,
+    email: draft.email,
     signature: pad.toDataURL('image/png', { trim: true, background: '#fff' }),
     submittedAt: new Date().toISOString(),
   };
@@ -383,8 +446,15 @@ function renderDone(payload) {
   actionBtn.disabled = false;
 
   closeDoneBtn.hidden = false;
+  // «Заполнить ещё раз» — полный сброс под следующего водителя на том же
+  // устройстве: стираем данные, бэкап payload и прогресс гида, чистим подпись,
+  // возвращаемся к приветствию (#/start).
   actionBtn.textContent = 'Заполнить ещё раз';
-  actionBtn.onclick = renderForm;
+  actionBtn.onclick = () => {
+    clearAll();
+    if (pad) pad.clear();
+    location.hash = '#/start';
+  };
 }
 
 // ---------- Полноэкранная подпись ----------
@@ -398,7 +468,7 @@ function renderDone(payload) {
 function updatePadPreview() {
   const img = document.getElementById('register-pad-preview');
   const wrap = document.getElementById('register-pad');
-  if (!img || !wrap) return; // форма могла уже пересобраться (renderForm) — узлы старые
+  if (!img || !wrap) return; // форма могла уже пересобраться — узлы старые
   if (!pad || pad.isEmpty()) {
     img.hidden = true;
     img.removeAttribute('src');
@@ -411,8 +481,8 @@ function updatePadPreview() {
 }
 
 // Канвас .sig-full создаётся один раз на всю сессию (не при каждом открытии) —
-// тот же приём, что и с прежним inline-канвасом: getBoundingClientRect() должен
-// мерить уже видимый контейнер, поэтому создание — только после el.hidden = false.
+// getBoundingClientRect() должен мерить уже видимый контейнер, поэтому создание —
+// только после el.hidden = false.
 function ensureFullSigPad() {
   if (pad) return;
   const canvas = document.getElementById('sig-full-canvas');
@@ -422,23 +492,23 @@ function ensureFullSigPad() {
 let sigFullCloseTimer = null;
 
 function openSigFull() {
-  const el = document.getElementById('sig-full');
+  const sigEl = document.getElementById('sig-full');
   clearTimeout(sigFullCloseTimer);
-  el.classList.remove('is-closing');
-  el.hidden = false;
+  sigEl.classList.remove('is-closing');
+  sigEl.hidden = false;
   ensureFullSigPad();
-  el.classList.add('is-opening');
-  setTimeout(() => el.classList.remove('is-opening'), 20);
+  sigEl.classList.add('is-opening');
+  setTimeout(() => sigEl.classList.remove('is-opening'), 20);
 }
 
 function closeSigFull() {
-  const el = document.getElementById('sig-full');
-  if (el.hidden || el.classList.contains('is-closing')) return;
-  el.classList.add('is-closing');
+  const sigEl = document.getElementById('sig-full');
+  if (sigEl.hidden || sigEl.classList.contains('is-closing')) return;
+  sigEl.classList.add('is-closing');
   clearTimeout(sigFullCloseTimer);
   sigFullCloseTimer = setTimeout(() => {
-    el.hidden = true;
-    el.classList.remove('is-closing');
+    sigEl.hidden = true;
+    sigEl.classList.remove('is-closing');
   }, 220);
   updatePadPreview();
 }
@@ -450,16 +520,17 @@ document.getElementById('sig-full-clear').addEventListener('click', () => { if (
 
 let closeTimer = null;
 
-function showRegister() {
+function showRegister(mode) {
   clearTimeout(closeTimer);
   el.classList.remove('is-closing');
-  el.hidden = false; // до renderForm() — см. комментарий про размер канваса
+  el.hidden = false; // до render*() — см. комментарий про размер канваса
   document.body.classList.add('is-locked');
 
   const fab = document.getElementById('calc-fab');
   if (fab) fab.hidden = true;
 
-  if (!pad) renderForm();
+  if (mode === 'data') renderDataForm();
+  else renderSignForm();
 
   el.classList.add('is-opening');
   setTimeout(() => el.classList.remove('is-opening'), 20);
@@ -515,7 +586,7 @@ async function firstIncompleteGuideStep() {
     if (!res.ok) throw new Error('fetch failed');
     const guideData = await res.json();
     let done = {};
-    try { done = (JSON.parse(localStorage.getItem('di:guide') || 'null') || {}).done || {}; } catch { /* пусто */ }
+    try { done = (JSON.parse(localStorage.getItem(GUIDE_KEY) || 'null') || {}).done || {}; } catch { /* пусто */ }
     for (const block of guideData.blocks) {
       for (const step of block.steps) {
         if (step.confirm && !done[step.id]) return step.id;
@@ -529,20 +600,34 @@ async function firstIncompleteGuideStep() {
 }
 
 async function syncFromHash() {
-  if (parseScreen() !== 'register') { hideRegister(); return; }
+  const screen = parseScreen();
 
-  const gate = await firstIncompleteGuideStep();
-  if (gate === null) {
-    showRegister();
-  } else if (gate) {
-    // Не весь гид пройден — отправляем на первый непройденный шаг, а не в форму.
-    location.hash = `#/guide/${encodeURIComponent(gate)}`;
-  } else {
-    // Данные гида не загрузились — не пускаем в форму вслепую, но и не рушим
-    // навигацию: отправляем в сам гид, он сам разберётся, с какого шага начать.
-    location.hash = '#/guide';
+  // Этап 1 — данные. Гейтов нет: это точка входа во весь инструктаж.
+  if (screen === 'start') {
+    showRegister('data');
+    return;
   }
+
+  // Этап 2 — согласие + подпись. Два гейта: гид должен быть пройден и данные
+  // первого этапа должны существовать (иначе подписывать нечего).
+  if (screen === 'register') {
+    const gate = await firstIncompleteGuideStep();
+    if (gate === null) {
+      if (!loadDraft()) { location.hash = '#/start'; return; } // данных нет — вернуть на первый этап
+      showRegister('sign');
+    } else if (gate) {
+      // Не весь гид пройден — отправляем на первый непройденный шаг, а не в форму.
+      location.hash = `#/guide/${encodeURIComponent(gate)}`;
+    } else {
+      // Данные гида не загрузились — не пускаем в форму вслепую, но и не рушим
+      // навигацию: отправляем в сам гид, он сам разберётся, с какого шага начать.
+      location.hash = '#/guide';
+    }
+    return;
+  }
+
+  hideRegister();
 }
 
 window.addEventListener('hashchange', syncFromHash);
-syncFromHash(); // прямой заход по ссылке на #/register
+syncFromHash(); // прямой заход по ссылке на #/start или #/register

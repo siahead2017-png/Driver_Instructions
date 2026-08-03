@@ -7,6 +7,14 @@
 import { typeMeta } from './drive.js?v=5';
 
 const KEY = 'di:guide'; // без TTL — водитель может вернуться через неделю
+const DRAFT_KEY = 'di:register:draft'; // данные первого этапа (register.js) — без них в гид не пускаем
+
+// Строго «данные сначала»: гид открывается только после заполнения первого этапа
+// регистрации (#/start). Черновик пишет register.js — читаем его напрямую, как
+// register.js напрямую читает наш di:guide (симметрично, без общего состояния).
+function hasDraft() {
+  try { return !!localStorage.getItem(DRAFT_KEY); } catch { return false; }
+}
 
 const banner = document.getElementById('guide-banner');
 const bannerSub = document.getElementById('guide-banner-sub');
@@ -155,6 +163,9 @@ function targetStepId() {
 
 banner.addEventListener('click', (e) => {
   e.preventDefault();
+  // Данные первого этапа ещё не заполнены — сначала приветствие и регистрация,
+  // welcome показывается только новичку; вернувшийся с черновиком идёт прямо в гид.
+  if (!hasDraft()) { location.hash = '#/start'; return; }
   const id = targetStepId();
   if (id) location.hash = `#/guide/${encodeURIComponent(id)}`;
 });
@@ -405,8 +416,14 @@ async function syncFromHash() {
   const { screen, id } = parseHash();
   if (screen !== 'guide') {
     hideGuide();
+    // Перерисовать баннер на главной: прогресс мог измениться внутри гида, а после
+    // «Заполнить ещё раз» (register.js) di:guide сбрасывается — иначе баннер показывал
+    // бы старый прогресс до перезагрузки страницы.
+    paintBanner();
     return;
   }
+  // Строго «данные сначала» — без черновика регистрации гид не открываем.
+  if (!hasDraft()) { location.hash = '#/start'; return; }
   const ok = await ensureData();
   if (!ok) return;
   showGuide(id);

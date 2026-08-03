@@ -1359,6 +1359,12 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 
 .register__intro { margin: 0; font-size: 15px; line-height: 1.5; color: var(--text-dim); }
 
+/* Приветствие на первом экране (#/start): вступление перед формой данных. Тот же
+   мягкий тон, что у .register__intro, но с выраженным заголовком. */
+.register__welcome { display: flex; flex-direction: column; gap: 8px; }
+.register__welcome-title { margin: 0; font-size: 19px; font-weight: 700; line-height: 1.3; }
+.register__welcome p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--text-dim); }
+
 /* Выбор компании трудоустройства — карточки с логотипом, тот же приём скрытого
    radio + :has(:checked), что у .calc__chip. Логотипы поставляются на белом фоне,
    поэтому карточка всегда светлая, независимо от тёмной темы сайта. */
