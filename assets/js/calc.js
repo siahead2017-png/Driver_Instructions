@@ -58,12 +58,16 @@ const tank1NameEl = document.getElementById('calc-tank1-name');
 const tank2NameEl = document.getElementById('calc-tank2-name');
 const tankNoteEl = document.getElementById('calc-tank-note');
 const tanksTotalEl = document.getElementById('calc-tanks-total');
+const tanksRangeEl = document.getElementById('calc-tanks-range');
+const tanksRangeNoteEl = document.getElementById('calc-tanks-range-note');
 
 const DEFAULT_SPEED = 70;
 const DEFAULT_TRUCK = 27;    // л/100 км
 const DEFAULT_TRAILER = 1.8; // л/ч (холодильная установка)
 const IDLE_LPH = 2.5;        // л/ч на стоянке с работающим двигателем (водителю не показываем)
 const P9_MAX = 5;            // максимум девяток в степпере
+const RESERVE_L = 100;       // л «неприкосновенного» топлива на дне бака — не входит в запас хода,
+                              // чтобы не заглохнуть на подъёме в горах при почти пустом баке
 
 // Баки по маркам: ёмкость (для подписи), литров на 1 см замера, памятка.
 // Данные владельца (июль 2026). Сходимость проверена: ёмкость ~ полный бак (см) × л/см.
@@ -165,6 +169,10 @@ function fmtHHMM(totalMin) {
 
 function fmtL(liters) {
   return liters.toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' л';
+}
+
+function fmtNum(n) {
+  return n.toLocaleString('ru-RU', { maximumFractionDigits: 2 });
 }
 
 function arrivalText(totalMin) {
@@ -287,6 +295,29 @@ function calcTanks() {
     }
   });
   tanksTotalEl.textContent = anyKnown ? fmtL(total) : '— л';
+
+  updateTanksRange(total, anyKnown);
+}
+
+// Запас хода: (всего в баках − резерв) ÷ расход тягача × 100. Расход берём с вкладки
+// «Время и топливо» — водитель мог поменять его там; если поле пустое, берём DEFAULT_TRUCK.
+function updateTanksRange(total, anyKnown) {
+  const consumption = num(truckEl) || DEFAULT_TRUCK;
+
+  if (!anyKnown) {
+    tanksRangeEl.textContent = '— км';
+    tanksRangeNoteEl.textContent =
+      `Расчёт по норме ${fmtNum(consumption)} л/100 км · минус резерв ${RESERVE_L} л ` +
+      `(не тратим, чтобы не заглохнуть в горах при малом остатке).`;
+    return;
+  }
+
+  const usable = Math.max(0, total - RESERVE_L);
+  const rangeKm = (usable / consumption) * 100;
+  tanksRangeEl.textContent = `${Math.round(rangeKm).toLocaleString('ru-RU')} км`;
+  tanksRangeNoteEl.textContent =
+    `Расчёт: (${fmtL(total)} − резерв ${RESERVE_L} л) ÷ ${fmtNum(consumption)} л/100 км. ` +
+    `Резерв в баке не тратим — чтобы не заглохнуть в горах при малом остатке топлива.`;
 }
 
 // Смена марки: запоминаем сантиметры прежней марки, показываем сантиметры новой.
@@ -316,6 +347,7 @@ function setTab(name) {
 
 function onInput() {
   calc();
+  calcTanks(); // расход на этой вкладке может влиять на «Запас хода» в баках
   saveState();
 }
 

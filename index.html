@@ -322,7 +322,11 @@
             <div class="calc__fuel-row"><span id="calc-tank1-name">Бак 1</span><span id="calc-tank1-l">— л</span></div>
             <div class="calc__fuel-row"><span id="calc-tank2-name">Бак 2</span><span id="calc-tank2-l">— л</span></div>
             <div class="calc__fuel-row calc__fuel-row--total"><span>Всего в баках</span><span id="calc-tanks-total">— л</span></div>
+            <div class="calc__fuel-row calc__fuel-row--total"><span>Запас хода</span><span id="calc-tanks-range">— км</span></div>
           </div>
+
+          <!-- Пояснение расчёта запаса хода: какая норма расхода взята и резерв (текст ставит calc.js) -->
+          <p class="calc__hint" id="calc-tanks-range-note"></p>
 
           <p class="calc__hint">Замерь уровень топлива в каждом баке и впиши сантиметры — остаток посчитается сам.</p>
         </div>
@@ -339,7 +343,7 @@
        выполняются после классических скриптов, так что к register.js глобал уже готов. -->
   <script src="assets/js/signature-pad.js?v=1"></script>
   <script type="module" src="assets/js/app.js?v=10"></script>
-  <script type="module" src="assets/js/calc.js?v=6"></script>
+  <script type="module" src="assets/js/calc.js?v=7"></script>
   <script type="module" src="assets/js/guide.js?v=6"></script>
   <script type="module" src="assets/js/register.js?v=7"></script>
 </body>
