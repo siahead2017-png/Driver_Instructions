@@ -178,6 +178,16 @@
       "tags": ["заправки", "приложение", "карта", "топливо", "сеть"]
     },
     {
+      "id": "link-fotohd",
+      "category": "truck",
+      "title": "Фотофиксация (fotohd.lv)",
+      "description": "Приложение для загрузки фотографий техники при выезде, перецепке и возврате",
+      "type": "link",
+      "url": "https://fotohd.lv",
+      "image": "assets/img/fotohd-icon-192.png",
+      "tags": ["фото", "фотофиксация", "техника", "приложение"]
+    },
+    {
       "id": "fuel-cards",
       "category": "fuel",
       "title": "Топливные карты",
