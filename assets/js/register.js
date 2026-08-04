@@ -72,7 +72,16 @@ function confirmationHtml(companyId) {
 
 const KEY = 'di:register:last';    // бэкап полного payload на случай обрыва сети при отправке
 const DRAFT_KEY = 'di:register:draft'; // данные первого этапа (#/start), объединяются с подписью на #/register
-const GUIDE_KEY = 'di:guide';      // прогресс гида — чистим при полном сбросе «Заполнить ещё раз»
+const GUIDE_KEY = 'di:guide';      // прогресс гида — чистим при полном сбросе после отправки
+
+// Защита от спама (один водитель шлёт форму подряд много раз): после успешной
+// отправки (или ответа сервера rate_limited) метим устройство до этого момента
+// времени. Сознательно НЕ в списке ключей clearAll() — иначе сброс после
+// отправки сразу же снимал бы собственную блокировку. Совпадает с окном
+// сервера (Driver_Instructions_Backend/Code.gs, doPost) — там та же защита
+// ещё и по ФИО+дата рождения+компания, эта — быстрая клиентская подсказка.
+const COOLDOWN_KEY = 'di:register:cooldownUntil';
+const COOLDOWN_MS = 3 * 60 * 60 * 1000; // 3 часа
 
 const el = document.getElementById('register');
 const closeBtn = document.getElementById('register-close');
@@ -83,6 +92,7 @@ const closeDoneBtn = document.getElementById('register-close-done');
 closeDoneBtn.addEventListener('click', () => { location.hash = ''; }); // на главную, тот же приём, что у guide-home
 
 let pad = null; // SignaturePad — живёт, пока не пересобрана форма подписи (renderSignForm())
+let doneResetTimer = null; // автосброс после экрана «Данные собраны» — см. renderDone()/hideRegister()
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => (
@@ -107,11 +117,24 @@ function saveDraft(d) {
 }
 
 // Полный сброс перед следующим водителем на том же устройстве: данные, бэкап
-// payload и прогресс гида. Подпись (pad) чистит вызывающий код отдельно.
+// payload и прогресс гида. COOLDOWN_KEY сюда сознательно не входит — см.
+// комментарий у константы. Подпись (pad) чистит вызывающий код отдельно.
 function clearAll() {
   for (const k of [DRAFT_KEY, KEY, GUIDE_KEY]) {
     try { localStorage.removeItem(k); } catch { /* не критично */ }
   }
+}
+
+// ---------- Защита от спама: cooldown на устройстве ----------
+
+function setCooldown() {
+  try { localStorage.setItem(COOLDOWN_KEY, String(Date.now() + COOLDOWN_MS)); } catch { /* не критично */ }
+}
+
+// Сколько миллисекунд осталось до конца блокировки; 0 или отрицательное — не заблокировано.
+function getCooldownRemaining() {
+  const until = Number(localStorage.getItem(COOLDOWN_KEY) || 0);
+  return until - Date.now();
 }
 
 // ---------- Дата рождения: свободный ввод dd.mm.yyyy + пикер Год/Месяц/День ----------
@@ -260,6 +283,7 @@ function renderDataForm() {
   });
 
   closeDoneBtn.hidden = true;
+  actionBtn.hidden = false;
   actionBtn.disabled = false;
   actionBtn.textContent = 'Начать инструктаж →';
   actionBtn.onclick = handleStart;
@@ -338,6 +362,7 @@ function renderSignForm() {
   updatePadPreview();
 
   closeDoneBtn.hidden = true;
+  actionBtn.hidden = false;
   actionBtn.disabled = false;
   actionBtn.textContent = 'Закончить инструктаж, отправить подтверждение';
   actionBtn.onclick = handleSubmit;
@@ -390,9 +415,23 @@ function submitPayload(payload) {
   })
     .then((res) => res.json())
     .then((data) => {
-      if (!data.ok) throw new Error(data.error || 'server error');
-      try { localStorage.removeItem(KEY); } catch { /* не критично */ }
-      renderDone(payload);
+      if (data.ok) {
+        try { localStorage.removeItem(KEY); } catch { /* не критично */ }
+        setCooldown();
+        renderDone(payload);
+        return;
+      }
+      // rate_limited — сервер узнал того же водителя по ФИО+дата рождения+
+      // компания (Driver_Instructions_Backend/Code.gs, doPost), даже если
+      // клиентский cooldown почему-то не сработал (другой браузер/устройство,
+      // приватный режим). Это не сетевая ошибка — показываем отдельный экран,
+      // а не «Не получилось отправить, проверьте интернет».
+      if (data.error === 'rate_limited') {
+        setCooldown();
+        renderCooldown();
+        return;
+      }
+      throw new Error(data.error || 'server error');
     })
     .catch((e) => {
       console.error('Отправка регистрации не удалась:', e);
@@ -443,18 +482,46 @@ function renderDone(payload) {
     </div>
   `;
 
-  actionBtn.disabled = false;
-
   closeDoneBtn.hidden = false;
-  // «Заполнить ещё раз» — полный сброс под следующего водителя на том же
-  // устройстве: стираем данные, бэкап payload и прогресс гида, чистим подпись,
-  // возвращаемся к приветствию (#/start).
-  actionBtn.textContent = 'Заполнить ещё раз';
-  actionBtn.onclick = () => {
+  actionBtn.hidden = true; // сброс теперь автоматический — кнопка «Заполнить ещё раз» не нужна
+
+  // Полный сброс под следующего водителя на том же устройстве — автоматически,
+  // без ожидания клика: стираем данные, бэкап payload и прогресс гида, чистим
+  // подпись, возвращаемся к приветствию (#/start). Пауза даёт водителю время
+  // увидеть подтверждение и превью подписи, а не мигание экрана. Таймер
+  // снимается в hideRegister(), если водитель уйдёт с экрана раньше сам.
+  clearTimeout(doneResetTimer);
+  doneResetTimer = setTimeout(() => {
     clearAll();
     if (pad) pad.clear();
     location.hash = '#/start';
-  };
+  }, 3000);
+}
+
+// Экран блокировки: та же связка ключей (ФИО+дата рождения+компания) уже
+// отправляла форму недавно — либо клиент сам это знает (COOLDOWN_KEY), либо
+// сервер ответил rate_limited. См. константу COOLDOWN_MS и Code.gs, doPost.
+function renderCooldown() {
+  barTitle.textContent = 'Регистрация';
+
+  const remainingMs = Math.max(getCooldownRemaining(), 0) || COOLDOWN_MS;
+  const totalMinutes = Math.max(1, Math.ceil(remainingMs / 60000));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const timeText = hours > 0
+    ? `${hours} ч ${minutes} мин`
+    : `${minutes} мин`;
+
+  bodyEl.innerHTML = `
+    <div class="register__done">
+      <div class="register__done-icon" aria-hidden="true">⏳</div>
+      <h2 class="register__done-title">Инструктаж уже отправлен</h2>
+      <p class="register__done-text">С этого устройства инструктаж уже был отправлен недавно. Повторная отправка будет доступна примерно через ${timeText}.</p>
+    </div>
+  `;
+
+  closeDoneBtn.hidden = false;
+  actionBtn.hidden = true;
 }
 
 // ---------- Полноэкранная подпись ----------
@@ -530,6 +597,7 @@ function showRegister(mode) {
   if (fab) fab.hidden = true;
 
   if (mode === 'data') renderDataForm();
+  else if (mode === 'cooldown') renderCooldown();
   else renderSignForm();
 
   el.classList.add('is-opening');
@@ -537,6 +605,11 @@ function showRegister(mode) {
 }
 
 function hideRegister() {
+  // Автосброс после «Данные собраны» (renderDone()) идёт по таймеру, а не по
+  // клику — если водитель уходит с экрана раньше сам (закрыл/назад), таймер
+  // не должен потом сам открыть #/start поверх того, чем он занят в этот момент.
+  clearTimeout(doneResetTimer);
+
   if (el.hidden || el.classList.contains('is-closing')) return;
 
   // is-locked и calc-fab общие с guide/viewer: снимаем/возвращаем только если
@@ -602,9 +675,10 @@ async function firstIncompleteGuideStep() {
 async function syncFromHash() {
   const screen = parseScreen();
 
-  // Этап 1 — данные. Гейтов нет: это точка входа во весь инструктаж.
+  // Этап 1 — данные. Единственный гейт — cooldown после недавней отправки с
+  // этого устройства (защита от спама, см. COOLDOWN_KEY).
   if (screen === 'start') {
-    showRegister('data');
+    showRegister(getCooldownRemaining() > 0 ? 'cooldown' : 'data');
     return;
   }
 
