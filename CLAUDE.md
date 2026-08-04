@@ -46,6 +46,7 @@ node -e "JSON.parse(require('fs').readFileSync('data/guide.json','utf8'))"      
 | `assets/js/register.js` | Регистрация водителя после гида: компания/ФИО/дата рождения/e-mail + подпись. Самодостаточный, см. ниже |
 | `assets/img/logo-head.png`, `logo-hdlg.png` | Логотипы компаний для карточек выбора в `register.js` |
 | `assets/css/styles.css` | Мобильный дизайн, тёмная тема, анимации |
+| `assets/docs/office-contacts.pdf` | **Не редактировать здесь.** Собирается в соседнем репозитории `Driver_Briefing` (`data/briefing.json` → `contacts`, `tools/build_pdf.py`) и копируется сюда автоматически при сборке — живёт на этом домене только затем, чтобы QR-код с контактами при сканировании показывал знакомое водителю имя `Driver_Instructions`, а не внутренний `Driver_Briefing` (04.08.2026) |
 
 Экраны: плитки категорий → список по подтемам → полноэкранная модалка. Hash-навигация (`#/category/tolls`, `#/item/id`) — работает «Назад» и прямые ссылки.
 
