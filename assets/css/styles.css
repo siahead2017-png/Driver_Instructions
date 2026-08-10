@@ -1792,22 +1792,32 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   cursor: pointer;
 }
 
-.bans__row--ban  { border-left-color: var(--danger); }
-.bans__row--soon { border-left-color: #d97706; }
-.bans__row--warn { border-left-color: #ca8a04; }
-.bans__row--ok   { border-left-color: var(--t-sheet); }
+.bans__row--ban    { border-left-color: var(--danger); }
+.bans__row--soon   { border-left-color: #d97706; }
+.bans__row--warn   { border-left-color: #ca8a04; }
+.bans__row--ok     { border-left-color: var(--t-sheet); }
+/* Синий светофор (Фаза 6): запрет есть, но выбранный груз освобождён актом. */
+.bans__row--exempt { border-left-color: var(--accent); }
+.bans__row--exempt .bans__label { color: var(--accent); font-weight: 700; }
 
 .bans__light { font-size: 15px; line-height: 1; }
 .bans__name { flex: 1; font-weight: 600; font-size: 15px; }
 
+/* Подпись состояния справа. Светло-серым её не видно на солнце в кабине —
+   поэтому обычный цвет текста, а не приглушённый, и цвет по строгости. */
 .bans__label {
-  font-size: 12.5px;
-  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
   text-align: right;
   max-width: 46%;
 }
 
-.bans__row--ban .bans__label { color: var(--danger); font-weight: 600; }
+.bans__row--ban  .bans__label { color: var(--danger); font-weight: 700; }
+.bans__row--soon .bans__label { color: #b45309; font-weight: 600; }
+.bans__row--warn .bans__label { color: #a16207; font-weight: 600; }
+/* Зелёное «можно ехать» намеренно НЕ приглушаем: сегодня все страны зелёные,
+   и приглушённая подпись читалась владельцем как пустое место. */
 
 .bans__details {
   margin: 6px 0 10px;
@@ -1857,65 +1867,314 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   color: var(--accent);
 }
 
-/* Полоса на 14 дней: горизонтальная прокрутка внутри своего контейнера,
-   страница по горизонтали не едет. */
-.bans__strip { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-.bans__strip-row {
+/* ---------- Лента обзора календаря ----------
+   Одна узкая клетка на день — не для деталей, а чтобы одним взглядом найти
+   ближайшее чистое окно, не листая длинный список дней руками. Горизонтальная
+   прокрутка внутри своего контейнера, страница по горизонтали не едет. */
+.bans__ribbon {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 3px;
+  margin: 8px 0 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.bans__strip-code {
-  flex: none;
-  width: 62px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-dim);
-}
-
-.bans__strip-cells { display: flex; gap: 3px; }
-
-.bans__cell {
+.bans__ribbon-cell {
   flex: none;
   width: 22px;
-  height: 22px;
+  height: 26px;
+  border: 0;
   border-radius: 5px;
+  font: inherit;
   font-size: 10px;
-  line-height: 22px;
-  text-align: center;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.bans__ribbon-cell--ok      { background: var(--surface-2); }
+.bans__ribbon-cell--warn    { background: color-mix(in srgb, #ca8a04 45%, transparent); }
+.bans__ribbon-cell--soon    { background: color-mix(in srgb, #d97706 50%, transparent); color: #fff; }
+.bans__ribbon-cell--ban     { background: color-mix(in srgb, var(--danger) 55%, transparent); color: #fff; }
+.bans__ribbon-cell--exempt  { background: color-mix(in srgb, var(--accent) 55%, transparent); color: #fff; }
+.bans__ribbon-cell--unknown { background: var(--border); font-style: italic; }
+
+/* ---------- Выбор периода поездки ---------- */
+.bans__period { margin-top: 14px; }
+
+.bans__presets { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.bans__preset {
+  flex: 1 1 auto;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13.5px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.bans__preset.is-on {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ---------- Тумблеры груза (Фаза 6) ----------
+   Тот же приём, что у чипов периода: пилюли, включённая — заливкой акцентом.
+   «Обычный груз» и конкретные виды визуально неотличимы — только состояние
+   is-on показывает, какие сейчас горят. */
+.bans__cargo-section { margin-top: 14px; }
+
+.bans__cargo-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.bans__cargo-toggle {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+
+.bans__cargo-toggle.is-on {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Блок под карточкой запрета — что известно про исключения по грузу,
+   независимо от того, что сейчас выбрано водителем (см. cargoDetailHTML). */
+.bans__cargo-note {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 12.5px;
+  line-height: 1.45;
   color: var(--text-dim);
 }
 
-.bans__cell--ban  { background: color-mix(in srgb, var(--danger) 55%, transparent); color: #fff; }
-.bans__cell--warn { background: color-mix(in srgb, #ca8a04 45%, transparent); }
-.bans__cell--ok   { background: var(--surface-2); }
+.bans__cargo-note--exempt { color: var(--accent); font-weight: 600; }
+.bans__cargo-note--permit { color: #b45309; font-weight: 600; }
+.bans__cargo-note--unchecked { font-style: italic; }
 
-.bans__legend {
+.bans__dates { display: flex; gap: 8px; margin-top: 8px; }
+
+.bans__date {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin: 10px 0 0;
-  font-size: 12px;
-  color: var(--text-dim);
-}
-
-.bans__legend .bans__cell { width: 14px; height: 14px; }
-
-.bans__route { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-
-.bans__route-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 10px;
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.bans__date input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
   font-size: 14px;
+}
+
+.bans__period-sum { margin: 8px 0 0; }
+
+/* ---------- Свёрнутая строка дня ----------
+   Дальняя часть периода. Разворачивать 30 дней × 8 стран сразу нельзя —
+   ни телефон не потянет, ни читать это невозможно. */
+.bans__dayline { margin-bottom: 6px; }
+
+.bans__dayline-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
   cursor: pointer;
+}
+
+.bans__dayline.is-open .bans__dayline-head {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.bans__dayline-date { flex: none; font-weight: 600; font-size: 13.5px; }
+
+.bans__dayline-sum {
+  flex: 1;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  text-align: right;
+}
+
+/* Серый светофор «нет данных на эту дату» — не зелёный и не красный. */
+.bans__row--unknown { border-left-color: var(--text-dim); }
+.bans__row--unknown .bans__label { color: var(--text-dim); font-style: italic; }
+
+.bans__none--unknown { border-left-color: var(--text-dim); }
+
+/* ---------- Флаги ----------
+   Рисованные SVG вместо эмодзи: Windows флаговые эмодзи не показывает вообще
+   (вместо 🇵🇱 видны буквы «PL»). Тонкая рамка обязательна — у польского,
+   французского и голландского флагов есть белые поля, без рамки они сливаются
+   с фоном карточки. Цвета флагов от темы не зависят и токенами не заданы. */
+.bans__flag {
+  display: block;
+  width: 21px;
+  height: 15px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .18);
+}
+
+.bans__flag-wrap { display: flex; flex: 0 0 auto; }
+
+/* Запасной вариант, если кода страны нет в списке флагов. */
+.bans__flag-text {
+  display: inline-block;
+  min-width: 21px;
+  padding: 0 3px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---------- Чипы стран маршрута ----------
+   Компактно: флаг + код из двух букв. Полное название теперь не за отдельной
+   кнопкой «i» на каждом чипе — 18 маленьких кнопок были лишними. Вместо этого
+   один свёрнутый справочник внизу раздела (.bans__legend-*) и подсказка сверху
+   (.bans__tip) при первом знакомстве с экраном. */
+.bans__route { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.bans__chip-country {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.bans__chip-country.is-on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.bans__chip-code { font-size: 13px; font-weight: 700; letter-spacing: .3px; }
+.bans__chip-country.is-on .bans__chip-code { color: var(--accent); }
+
+/* ---------- Подсказка «как это работает» ----------
+   Выплывает один раз наверху раздела «Мой маршрут» — он теперь первый на
+   экране, и без пояснения непонятно, зачем отмечать страны. Закрывается
+   крестиком и больше не появляется (di:bans:tip). */
+.bans__tip {
+  position: relative;
+  margin: 0 0 12px;
+  padding: 12px 34px 12px 14px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.bans__tip p { margin: 0; }
+
+.bans__tip-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--text-dim);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* ---------- Справочник кодов стран ----------
+   Свёрнут по умолчанию, раскрывается тем же приёмом, что «Другие страны»
+   (.bans__more переиспользуется для обеих кнопок). */
+.bans__legend-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.bans__legend-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 12.5px;
+}
+
+/* ---------- «Другие страны» ----------
+   Кнопку намеренно делаем яркой: пунктирная серая полоска не читалась как
+   кнопка — владелец сказал, что непонятно, куда нажимать. */
+.bans__more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bans__more-arrow { transition: transform .2s; }
+.bans__more.is-open .bans__more-arrow { transform: rotate(180deg); }
+
+/* Ответ водителю, когда запретов на этот день нет: карточка раскрывается
+   всегда, пустой она остаться не должна. */
+.bans__none {
+  margin: 0 0 8px;
+  padding: 11px 12px;
+  border-left: 3px solid var(--t-sheet);
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 13.5px;
+  line-height: 1.5;
 }
 
 .bans__hint, .bans__empty {
@@ -1935,3 +2194,9 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   line-height: 1.5;
   color: var(--text-dim);
 }
+
+/* Карточка правила: полоса слева повторяет строгость. Классы --ban/--warning/
+   --info выводились разметкой и раньше, но правил для них не было. */
+.bans__detail--ban     { border-left: 3px solid var(--danger); }
+.bans__detail--warning { border-left: 3px solid #ca8a04; }
+.bans__detail--info    { border-left: 3px solid var(--accent); }
