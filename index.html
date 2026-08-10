@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=18">
+  <link rel="stylesheet" href="assets/css/styles.css?v=19">
 </head>
 <body>
   <header class="app-header">
@@ -120,6 +120,24 @@
       <button class="btn" id="guide-next" type="button">Далее →</button>
     </div>
     <a class="guide__reset" id="guide-reset-link" href="#">Сбросить прогресс</a>
+  </div>
+
+  <!-- Запреты движения грузовиков по Европе (bans.js). Виртуальный экран #/bans:
+       app.js о нём не знает и рисует под ним главную — так же, как с гидом.
+       Данные приходят готовыми из листа CALENDAR таблицы TRUCK_BANS_EU (CSV). -->
+  <div class="bans" id="bans" hidden role="dialog" aria-modal="true" aria-labelledby="bans-title">
+    <div class="bans__bar">
+      <button class="icon-btn" id="bans-close" aria-label="Закрыть запреты движения">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <span class="bans__bar-title" id="bans-title">Запреты движения</span>
+    </div>
+    <p class="bans__meta" id="bans-meta"></p>
+    <div class="bans__tabs" id="bans-tabs">
+      <button type="button" class="bans__tab is-active" data-mode="all">Все страны</button>
+      <button type="button" class="bans__tab" data-mode="route">Мой маршрут</button>
+    </div>
+    <div class="bans__body" id="bans-body"></div>
   </div>
 
   <!-- Регистрация после инструктажа: компания/ФИО/дата рождения/e-mail + подпись (register.js).
@@ -342,9 +360,10 @@
   <!-- classic script (не модуль): UMD, вешает window.SignaturePad. Модули (ниже) всегда
        выполняются после классических скриптов, так что к register.js глобал уже готов. -->
   <script src="assets/js/signature-pad.js?v=1"></script>
-  <script type="module" src="assets/js/app.js?v=10"></script>
+  <script type="module" src="assets/js/app.js?v=11"></script>
   <script type="module" src="assets/js/calc.js?v=7"></script>
   <script type="module" src="assets/js/guide.js?v=6"></script>
   <script type="module" src="assets/js/register.js?v=8"></script>
+  <script type="module" src="assets/js/bans.js?v=1"></script>
 </body>
 </html>

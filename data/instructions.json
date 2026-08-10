@@ -2,15 +2,60 @@
   "version": 1,
   "updated": "2026-08-02",
   "categories": [
-    { "id": "tolls",   "title": "Оплата дорог и боксы",   "icon": "🛣️", "order": 1 },
-    { "id": "dtp",     "title": "ДТП",                     "icon": "🚨", "order": 2 },
-    { "id": "docs",    "title": "Документы и отчёты",      "icon": "📋", "order": 3 },
-    { "id": "fuel",    "title": "Топливо",                 "icon": "⛽", "order": 4 },
-    { "id": "tacho",   "title": "ТАХО и режим труда",      "icon": "⏱️", "order": 5 },
-    { "id": "truck",   "title": "Работа с техникой",       "icon": "🚛", "order": 6 },
-    { "id": "loading", "title": "Погрузка и разгрузка",    "icon": "📦", "order": 7 },
-    { "id": "safety",  "title": "Безопасность",            "icon": "🦺", "order": 8 },
-    { "id": "rules",   "title": "Правила компании",        "icon": "📌", "order": 9 },
+    {
+      "id": "tolls",
+      "title": "Оплата дорог и боксы",
+      "icon": "🛣️",
+      "order": 1
+    },
+    {
+      "id": "dtp",
+      "title": "ДТП",
+      "icon": "🚨",
+      "order": 2
+    },
+    {
+      "id": "docs",
+      "title": "Документы и отчёты",
+      "icon": "📋",
+      "order": 3
+    },
+    {
+      "id": "fuel",
+      "title": "Топливо",
+      "icon": "⛽",
+      "order": 4
+    },
+    {
+      "id": "tacho",
+      "title": "ТАХО и режим труда",
+      "icon": "⏱️",
+      "order": 5
+    },
+    {
+      "id": "truck",
+      "title": "Работа с техникой",
+      "icon": "🚛",
+      "order": 6
+    },
+    {
+      "id": "loading",
+      "title": "Погрузка и разгрузка",
+      "icon": "📦",
+      "order": 7
+    },
+    {
+      "id": "safety",
+      "title": "Безопасность",
+      "icon": "🦺",
+      "order": 8
+    },
+    {
+      "id": "rules",
+      "title": "Правила компании",
+      "icon": "📌",
+      "order": 9
+    },
     {
       "id": "video",
       "title": "Видео инструкции",
@@ -42,6 +87,13 @@
       "type": "link",
       "url": "https://fotohd.lv",
       "image": "assets/img/fotohd-icon-192.png"
+    },
+    {
+      "id": "bans",
+      "title": "Запреты движения",
+      "description": "Где сегодня и завтра нельзя ехать по Европе",
+      "type": "link",
+      "url": "#/bans"
     }
   ],
   "items": [
@@ -53,7 +105,13 @@
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1nBeSalWkDJijDOhowyLo4b2RMA5bVbzN/view?usp=drive_link",
       "updated": "2026-06-25",
-      "tags": ["боксы", "eva", "eurowag", "оплата дорог", "страны"]
+      "tags": [
+        "боксы",
+        "eva",
+        "eurowag",
+        "оплата дорог",
+        "страны"
+      ]
     },
     {
       "id": "tolls-memo",
@@ -63,7 +121,13 @@
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1jVNIU0dfT0Yt0_QE5IMKyzdjUkOCCRoL/view?usp=drive_link",
       "updated": "2025-07-24",
-      "tags": ["памятка", "перед рейсом", "obu", "лицензии", "разрешения"]
+      "tags": [
+        "памятка",
+        "перед рейсом",
+        "obu",
+        "лицензии",
+        "разрешения"
+      ]
     },
     {
       "id": "tolls-eurovignette",
@@ -72,7 +136,11 @@
       "description": "Как купить виньетку EUROVIGNETTE для Люксембурга и Швеции на eurovignettes.eu картой EUROWAG",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1QgcDneKkqF48bE38hbKH0yn1NgfO3ybe/view?usp=drive_link",
-      "tags": ["eurovignette", "виньетка", "оплата дорог"]
+      "tags": [
+        "eurovignette",
+        "виньетка",
+        "оплата дорог"
+      ]
     },
     {
       "id": "tolls-baltics",
@@ -81,9 +149,14 @@
       "description": "Покупка виньеток LV/LT/EST через приложение SMSVinjete: пошагово и частые ошибки",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1Q4bUq-UIn08-7aeYsqSxEwAXV8J3iWXu/view?usp=drive_link",
-      "tags": ["латвия", "литва", "эстония", "балтия", "оплата дорог"]
+      "tags": [
+        "латвия",
+        "литва",
+        "эстония",
+        "балтия",
+        "оплата дорог"
+      ]
     },
-
     {
       "id": "dtp-actions",
       "category": "dtp",
@@ -91,7 +164,11 @@
       "description": "Пошаговый порядок действий на месте ДТП и по оформлению страхового случая",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1rayBuxnNtAWt492XsOgqizdINLzyls5r/view?usp=drive_link",
-      "tags": ["дтп", "авария", "действия"]
+      "tags": [
+        "дтп",
+        "авария",
+        "действия"
+      ]
     },
     {
       "id": "dtp-act-sample",
@@ -100,9 +177,13 @@
       "description": "Заполненный образец «Извещения о ДТП» (европротокол): как вписать данные и нарисовать схему",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1aT71uQ72FDueyUhSCsPJeZMU_HXbAWO-/view?usp=drive_link",
-      "tags": ["дтп", "акт", "образец", "европротокол"]
+      "tags": [
+        "дтп",
+        "акт",
+        "образец",
+        "европротокол"
+      ]
     },
-
     {
       "id": "docs-cmr-work",
       "category": "docs",
@@ -110,7 +191,11 @@
       "description": "Правила оформления CMR: своя накладная на каждую загрузку, подпись получателя, штрафы за ошибки",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1L-Jyf6-0XpQouRgaw2IJWqQBBbcREQZ7/view?usp=drive_link",
-      "tags": ["cmr", "накладная", "документы"]
+      "tags": [
+        "cmr",
+        "накладная",
+        "документы"
+      ]
     },
     {
       "id": "docs-report-main",
@@ -119,7 +204,13 @@
       "description": "Образец заполнения Вашего основного отчёта + дополнительные листы на длинные рейсы",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/13_7FqNYg9CytOD5NrMXEya5kNTGrF0h-/view?usp=drive_link",
-      "tags": ["отчёт", "образец", "заполнение", "основной", "длинные рейсы"]
+      "tags": [
+        "отчёт",
+        "образец",
+        "заполнение",
+        "основной",
+        "длинные рейсы"
+      ]
     },
     {
       "id": "docs-report-dotyazhka",
@@ -128,7 +219,12 @@
       "description": "Образец заполнения отчёта на дотяжку",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1lxuWHRbiq0AGXxd6LKedM7SniA6dvY5_/view?usp=drive_link",
-      "tags": ["отчёт", "образец", "заполнение", "дотяжка"]
+      "tags": [
+        "отчёт",
+        "образец",
+        "заполнение",
+        "дотяжка"
+      ]
     },
     {
       "id": "docs-report-cmr",
@@ -137,7 +233,13 @@
       "description": "Образец заполнения отчёта по загрузкам / выгрузкам — CMR",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1Zl6TcsQQpHFAC--ZBnuaWpj3dlMf54NC/view?usp=drive_link",
-      "tags": ["cmr", "отчёт", "образец", "погрузка", "выгрузка"]
+      "tags": [
+        "cmr",
+        "отчёт",
+        "образец",
+        "погрузка",
+        "выгрузка"
+      ]
     },
     {
       "id": "docs-report-car",
@@ -146,7 +248,13 @@
       "description": "Образец заполнения отчёта по легковой машине, обязателен к заполнению",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1i58x1IVTnsIxkzIrhxTbxz4ujhpRhjXd/view?usp=drive_link",
-      "tags": ["отчёт", "образец", "заполнение", "легковая", "обязательно"]
+      "tags": [
+        "отчёт",
+        "образец",
+        "заполнение",
+        "легковая",
+        "обязательно"
+      ]
     },
     {
       "id": "docs-bank-receipts",
@@ -155,7 +263,12 @@
       "description": "Что делать, если терминал не выдал чек при оплате картой: сообщить в отдел учёта, иначе удержат сумму",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1z8Lt-v-w54hPC1a5xpQ1ay5nr8JMPWQB/view?usp=drive_link",
-      "tags": ["банк", "чеки", "документы", "отчётность"]
+      "tags": [
+        "банк",
+        "чеки",
+        "документы",
+        "отчётность"
+      ]
     },
     {
       "id": "docs-company-details",
@@ -164,9 +277,12 @@
       "description": "Реквизиты SIA HEAD и SIA HD Logistics Group: рег. номера, VAT, адрес, контакты",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1s3mlngKI2B-s2-iZo-gaxZ5gt2k_NUAu/view?usp=drive_link",
-      "tags": ["реквизиты", "компании", "данные"]
+      "tags": [
+        "реквизиты",
+        "компании",
+        "данные"
+      ]
     },
-
     {
       "id": "link-fuel-app",
       "category": "fuel",
@@ -175,7 +291,13 @@
       "type": "link",
       "url": "https://siahead2017-png.github.io/FuelInstruction/",
       "image": "assets/img/fuel-app-icon-192.png",
-      "tags": ["заправки", "приложение", "карта", "топливо", "сеть"]
+      "tags": [
+        "заправки",
+        "приложение",
+        "карта",
+        "топливо",
+        "сеть"
+      ]
     },
     {
       "id": "link-fotohd",
@@ -185,7 +307,12 @@
       "type": "link",
       "url": "https://fotohd.lv",
       "image": "assets/img/fotohd-icon-192.png",
-      "tags": ["фото", "фотофиксация", "техника", "приложение"]
+      "tags": [
+        "фото",
+        "фотофиксация",
+        "техника",
+        "приложение"
+      ]
     },
     {
       "id": "fuel-cards",
@@ -194,7 +321,11 @@
       "description": "Обзор топливных карт (EUROWAG, CRT, Viada, Neste, Circle K, AS24) и заправки AdBlue",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/19SsIu_gGYLod4ITmktlYsqzlWRx1Nb0d/view?usp=drive_link",
-      "tags": ["топливо", "карты", "заправка"]
+      "tags": [
+        "топливо",
+        "карты",
+        "заправка"
+      ]
     },
     {
       "id": "fuel-crt-card",
@@ -203,7 +334,12 @@
       "description": "Топливная карта CRT Partner: как пользоваться и что делать с PIN-кодом",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1yPNgSx1Cadp8FOWYpU6mgkEI2HrHzy2N/view?usp=drive_link",
-      "tags": ["crt", "топливо", "карта", "заправка"]
+      "tags": [
+        "crt",
+        "топливо",
+        "карта",
+        "заправка"
+      ]
     },
     {
       "id": "fuel-norms",
@@ -213,7 +349,11 @@
       "type": "pdf",
       "url": "https://drive.google.com/file/d/111gEQZ7PmjdRg9yZMU4D8nuyBvKnqrZe/view?usp=drive_link",
       "updated": "2026-07-01",
-      "tags": ["нормы", "расход", "топливо"]
+      "tags": [
+        "нормы",
+        "расход",
+        "топливо"
+      ]
     },
     {
       "id": "fuel-tank-daf",
@@ -222,7 +362,13 @@
       "description": "Замер линейкой: отметка 64 см, полный бак — 60 см. Бак 845 л — 1 см = 14,08 л, бак 335 л — 1 см = 5,58 л",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/18UkeILrec-ANa49d50Y5of79h4l0gjPe/view?usp=drive_link",
-      "tags": ["замер", "баки", "daf", "845", "335"]
+      "tags": [
+        "замер",
+        "баки",
+        "daf",
+        "845",
+        "335"
+      ]
     },
     {
       "id": "fuel-tank-man",
@@ -231,7 +377,12 @@
       "description": "Замер линейкой: отметка 70 см, полный бак — 67 см. Бак 580 л — 1 см = 8,65 л",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1cPmUsoqUci1astzBGtbx6k1VB3SOsteB/view?usp=drive_link",
-      "tags": ["замер", "баки", "man", "580"]
+      "tags": [
+        "замер",
+        "баки",
+        "man",
+        "580"
+      ]
     },
     {
       "id": "fuel-tank-volvo",
@@ -240,7 +391,13 @@
       "description": "Замер линейкой: отметка 71 см, полный бак — 65 см. Бак 570 л — 1 см = 8,77 л, бак 650 л — 1 см = 10,00 л",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1ySFcYQkRce2UdwD9PezLewK4bODZd9mz/view?usp=drive_link",
-      "tags": ["замер", "баки", "volvo", "570", "650"]
+      "tags": [
+        "замер",
+        "баки",
+        "volvo",
+        "570",
+        "650"
+      ]
     },
     {
       "id": "fuel-tank-valve",
@@ -249,7 +406,11 @@
       "description": "Запрещено пережимать вентиляционную трубку бака — это ломает бак, штраф 1500 EUR",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1Pjs4bk4SaZetWcIWUoZMpgOm0QIWhJtQ/view?usp=drive_link",
-      "tags": ["бак", "трубка", "перекрытие"]
+      "tags": [
+        "бак",
+        "трубка",
+        "перекрытие"
+      ]
     },
     {
       "id": "fuel-breakdown-consumption",
@@ -258,9 +419,13 @@
       "description": "При поломке с повышенным расходом: сразу сообщить в ACTION и зафиксировать всё документально",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1LVe8CxU3rpYH9CNs9z-Pu38avB63NEcZ/view?usp=drive_link",
-      "tags": ["поломка", "расход", "топливо", "рейс"]
+      "tags": [
+        "поломка",
+        "расход",
+        "топливо",
+        "рейс"
+      ]
     },
-
     {
       "id": "tacho-regime",
       "category": "tacho",
@@ -268,7 +433,12 @@
       "description": "Сводная таблица режима труда и отдыха: лимиты вождения, перерывы и отдых",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1nMg8aucyfHwV2tpwAAGJCFTKASR_m9hw/view?usp=drive_link",
-      "tags": ["режим", "труд", "отдых", "тахограф"]
+      "tags": [
+        "режим",
+        "труд",
+        "отдых",
+        "тахограф"
+      ]
     },
     {
       "id": "tacho-pause-6h",
@@ -277,7 +447,12 @@
       "description": "Перерыв после 6 часов работы: когда 30, а когда 45 минут, с примерами",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1UNm05fLU7eY4Y3rkM_5SUGGjWzeZyLaV/view?usp=drive_link",
-      "tags": ["пауза", "перерыв", "6 часов", "режим"]
+      "tags": [
+        "пауза",
+        "перерыв",
+        "6 часов",
+        "режим"
+      ]
     },
     {
       "id": "tacho-double-crew",
@@ -286,7 +461,12 @@
       "description": "Режим труда и отдыха в двойном экипаже: практические примеры расчёта",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1UczhpY5-OhMhnvJHvnZ24l1-kaX4x1kf/view?usp=drive_link",
-      "tags": ["двойной экипаж", "примеры", "режим", "отдых"]
+      "tags": [
+        "двойной экипаж",
+        "примеры",
+        "режим",
+        "отдых"
+      ]
     },
     {
       "id": "tacho-manual-input",
@@ -295,9 +475,12 @@
       "description": "Пошаговый ручной (мануальный) ввод на тахографе: режим, дата, время и страна",
       "type": "image",
       "url": "https://drive.google.com/file/d/18RmlUP-ptvqfV_R4wLcTRsF08q5TjUZj/view?usp=drive_link",
-      "tags": ["мануальный ввод", "тахограф", "карта водителя"]
+      "tags": [
+        "мануальный ввод",
+        "тахограф",
+        "карта водителя"
+      ]
     },
-
     {
       "id": "docs-oil-report",
       "category": "truck",
@@ -305,7 +488,10 @@
       "description": "Бланк MAN для замера расхода моторного масла (часть 1 заполняет сервис MAN)",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1B0g1wFJoY-ew2kiOdncQxksszjxc5VZf/view?usp=drive_link",
-      "tags": ["масло", "отчёт"]
+      "tags": [
+        "масло",
+        "отчёт"
+      ]
     },
     {
       "id": "truck-photo",
@@ -315,7 +501,13 @@
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1o8rtjdjO_DdkXNEt4Ajho4tUIG5eG0-Z/view?usp=drive_link",
       "updated": "2023-09-01",
-      "tags": ["фотофиксация", "приём техники", "осмотр", "перецепка", "распоряжение"]
+      "tags": [
+        "фотофиксация",
+        "приём техники",
+        "осмотр",
+        "перецепка",
+        "распоряжение"
+      ]
     },
     {
       "id": "truck-inspection-order",
@@ -324,7 +516,11 @@
       "description": "Распоряжение: осматривать тягач и прицеп перед рейсом и отмечать повреждения на бланке",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/12er1J5CJwOvaJ-eT-4Z1DVdpasUqhyG9/view?usp=drive_link",
-      "tags": ["осмотр", "распоряжение", "rikojums"]
+      "tags": [
+        "осмотр",
+        "распоряжение",
+        "rikojums"
+      ]
     },
     {
       "id": "truck-dashcam",
@@ -333,7 +529,11 @@
       "description": "Правила видеорегистратора: рабочая SD-карта, непрерывная запись и сохранение записи при ДТП",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1eUyPQ7k8irGBl-90j2BPEu7nY5RFUrY5/view?usp=drive_link",
-      "tags": ["видеорегистратор", "камера", "инструкция"]
+      "tags": [
+        "видеорегистратор",
+        "камера",
+        "инструкция"
+      ]
     },
     {
       "id": "truck-reefer",
@@ -342,7 +542,12 @@
       "description": "Работа с холодильной установкой рефрижератора и распечатка тикетов на принтере",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1hU_pKyZJrROp4fwKsvrwoB7lPTN_-Tjs/view?usp=drive_link",
-      "tags": ["рефрижератор", "холодильник", "принтер", "температура"]
+      "tags": [
+        "рефрижератор",
+        "холодильник",
+        "принтер",
+        "температура"
+      ]
     },
     {
       "id": "truck-daf-cabin",
@@ -351,9 +556,12 @@
       "description": "Австрийское разъяснение по удлинённым кабинам DAF (Art. 9a 96/53/EC) — держать при себе",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/11ce0vFvjYHBkS-eDMN8e2LMDViDHehh9/view?usp=drive_link",
-      "tags": ["daf", "кабина", "удлинённая"]
+      "tags": [
+        "daf",
+        "кабина",
+        "удлинённая"
+      ]
     },
-
     {
       "id": "loading-during",
       "category": "loading",
@@ -361,7 +569,11 @@
       "description": "Что проверять при погрузке и разгрузке и как действовать при несоответствиях (отметка в CMR)",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1hXgSuGHW30XkfT6HD2YGaJ2JbZH_mQzJ/view?usp=drive_link",
-      "tags": ["погрузка", "разгрузка", "инструкция"]
+      "tags": [
+        "погрузка",
+        "разгрузка",
+        "инструкция"
+      ]
     },
     {
       "id": "loading-weight-control",
@@ -370,9 +582,14 @@
       "description": "Контроль веса и правильной расстановки груза по осям во время загрузки",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1fN-RdL8LhyRwkCbVHtfamz4MasodwJm6/view?usp=drive_link",
-      "tags": ["вес", "оси", "груз", "расстановка", "погрузка"]
+      "tags": [
+        "вес",
+        "оси",
+        "груз",
+        "расстановка",
+        "погрузка"
+      ]
     },
-
     {
       "id": "safety-rules",
       "category": "safety",
@@ -380,7 +597,11 @@
       "description": "Правила безопасности: манёвры на парковке, перестроение, скоростной режим и ответственность",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1o7DVlFdS9WeSj4a-TnApBHZ8dJZx9IEw/view?usp=drive_link",
-      "tags": ["безопасность", "правила", "техника безопасности"]
+      "tags": [
+        "безопасность",
+        "правила",
+        "техника безопасности"
+      ]
     },
     {
       "id": "safety-control-systems",
@@ -389,7 +610,12 @@
       "description": "Приказ: не отключать LDW, пользоваться адаптивным круиз-контролем, держать включённым видеорегистратор",
       "type": "image",
       "url": "https://drive.google.com/file/d/1dMhXpA7jPc_PAMfh7RNahKTuNwldk16u/view?usp=drive_link",
-      "tags": ["контроль", "безопасность", "распоряжение", "системы"]
+      "tags": [
+        "контроль",
+        "безопасность",
+        "распоряжение",
+        "системы"
+      ]
     },
     {
       "id": "safety-instructaz",
@@ -398,7 +624,12 @@
       "description": "Внеплановый инструктаж 2023: случаи травм при входе/выходе из кабины и как их избежать",
       "type": "slide",
       "url": "https://docs.google.com/presentation/d/1E56ShVf3DSPJmnvcYnPpLeN2utvTd3uG/edit?usp=drive_link&rtpof=true&sd=true",
-      "tags": ["инструктаж", "внеплановый", "head", "презентация"]
+      "tags": [
+        "инструктаж",
+        "внеплановый",
+        "head",
+        "презентация"
+      ]
     },
     {
       "id": "safety-photo-radars",
@@ -407,9 +638,13 @@
       "description": "Фоторадары и виньетки: как проверять оплату, сроки действия и избегать штрафов",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1JxmIXQvrDQtWkK0ZWYpCP-MBN-1pCejT/view?usp=drive_link",
-      "tags": ["радары", "скорость", "контроль", "штрафы"]
+      "tags": [
+        "радары",
+        "скорость",
+        "контроль",
+        "штрафы"
+      ]
     },
-
     {
       "id": "rules-bribe",
       "category": "rules",
@@ -417,7 +652,12 @@
       "description": "Запрет взяток инспекторам ЕС: это уголовное преступление — увольнение, депортация, тюрьма",
       "type": "doc",
       "url": "https://docs.google.com/document/d/1XHDbf3ri7xNmlu5Q-ofTWvTkfW5XP0Z8ivlyDlW_cU8/edit?usp=drive_link",
-      "tags": ["взятка", "коррупция", "запрет", "тюрьма"]
+      "tags": [
+        "взятка",
+        "коррупция",
+        "запрет",
+        "тюрьма"
+      ]
     },
     {
       "id": "rules-company-car",
@@ -426,7 +666,11 @@
       "description": "Правила легкового авто компании: лимит 110 км/ч, штраф 50 EUR, не трогать видеорегистратор",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1BpXq59HDRRO8nDLAJ_U5JBPwikvl93BW/view?usp=drive_link",
-      "tags": ["легковое авто", "правила", "компания"]
+      "tags": [
+        "легковое авто",
+        "правила",
+        "компания"
+      ]
     },
     {
       "id": "rules-parking-tunnels-receipts",
@@ -436,7 +680,16 @@
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1q5SXFb2Picji9yiRbNupwKXEiSZoikVW/view?usp=drive_link",
       "updated": "2026-07-24",
-      "tags": ["парковка", "туннель", "чеки", "согласование", "менеджер", "польша", "нидерланды", "расходы"]
+      "tags": [
+        "парковка",
+        "туннель",
+        "чеки",
+        "согласование",
+        "менеджер",
+        "польша",
+        "нидерланды",
+        "расходы"
+      ]
     },
     {
       "id": "rules-wash-poland",
@@ -445,7 +698,10 @@
       "description": "Мойка TORZYM в Польше: координаты, часы работы и правила оплаты",
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1x_BoY58J1vgnPK0sBawf2wNua9bqvywG/view?usp=drive_link",
-      "tags": ["мойка", "польша"]
+      "tags": [
+        "мойка",
+        "польша"
+      ]
     },
     {
       "id": "rules-nl-merwedebrug",
@@ -455,7 +711,15 @@
       "type": "pdf",
       "url": "https://drive.google.com/file/d/1dXxEepfZJxiQboorsFE3tNk8LAN2D67v/view?usp=drive_link",
       "updated": "2026-07-18",
-      "tags": ["нидерланды", "merwedebrug", "мост", "запрет", "объезд", "штраф", "a27"],
+      "tags": [
+        "нидерланды",
+        "merwedebrug",
+        "мост",
+        "запрет",
+        "объезд",
+        "штраф",
+        "a27"
+      ],
       "important": true
     },
     {
@@ -465,7 +729,13 @@
       "description": "В Нидерландах туннель на A24 платный — объезжать по альтернативному маршруту к Европорту",
       "type": "image",
       "url": "https://drive.google.com/file/d/14mxPYBfdrGOWDrDVyuQKXJ-XqEkDgIbD/view?usp=drive_link",
-      "tags": ["нидерланды", "туннель", "a24", "запрет", "маршрут"]
+      "tags": [
+        "нидерланды",
+        "туннель",
+        "a24",
+        "запрет",
+        "маршрут"
+      ]
     },
     {
       "id": "rules-norway-internet",
@@ -474,9 +744,13 @@
       "description": "Если в Норвегии нет интернета: вручную выбрать сеть TELENOR 4G в настройках телефона",
       "type": "doc",
       "url": "https://docs.google.com/document/d/1XmyGeqz-eu5Hqiq7FbG9gRaJkiDz1_zNyu85ycEQRas/edit?usp=drive_link",
-      "tags": ["норвегия", "интернет", "связь", "телефон"]
+      "tags": [
+        "норвегия",
+        "интернет",
+        "связь",
+        "телефон"
+      ]
     },
-
     {
       "id": "video-spain-transaction",
       "category": "video",
@@ -486,7 +760,13 @@
       "type": "video",
       "url": "https://drive.google.com/file/d/1O2UQUojASMDE8Pwe9MQfgVWDHQPVcehi/view?usp=drive_link",
       "updated": "2026-07-01",
-      "tags": ["испания", "транзакция", "бокс", "оплата", "ошибка"]
+      "tags": [
+        "испания",
+        "транзакция",
+        "бокс",
+        "оплата",
+        "ошибка"
+      ]
     },
     {
       "id": "video-eva-countries",
@@ -495,7 +775,12 @@
       "title": "Как проверить, какие страны подключены в EVA",
       "type": "video",
       "url": "https://drive.google.com/file/d/19mkaY_8dAnHG2eBFr2-mxmqqIV7-oKfl/view?usp=drive_link",
-      "tags": ["eva", "страны", "проверка", "бокс"]
+      "tags": [
+        "eva",
+        "страны",
+        "проверка",
+        "бокс"
+      ]
     },
     {
       "id": "video-eva-restart",
@@ -504,7 +789,12 @@
       "title": "Перезагрузка бокса EVA",
       "type": "video",
       "url": "https://drive.google.com/file/d/1COnY0LLKSxtr6OWLi1oGQxCC-XW9NVI9/view?usp=drive_link",
-      "tags": ["eva", "перезагрузка", "restart", "бокс"]
+      "tags": [
+        "eva",
+        "перезагрузка",
+        "restart",
+        "бокс"
+      ]
     },
     {
       "id": "video-eva-restart-fuel",
@@ -513,7 +803,12 @@
       "title": "Как перезагрузить бокс EVA (для заправок)",
       "type": "video",
       "url": "https://drive.google.com/file/d/1KD71-1-rtwVE7XKm_oYOc3GlYGpgpWP0/view?usp=drive_link",
-      "tags": ["eva", "перезагрузка", "заправка", "бокс"]
+      "tags": [
+        "eva",
+        "перезагрузка",
+        "заправка",
+        "бокс"
+      ]
     },
     {
       "id": "video-smsvinjette",
@@ -522,9 +817,13 @@
       "title": "SMS-виньетка: памятка и ошибки",
       "type": "video",
       "url": "https://drive.google.com/file/d/1UC9vOhHJNXfWwNYNj1YXEKXVvZ9Y1dtN/view?usp=drive_link",
-      "tags": ["виньетка", "sms", "ошибки", "памятка"]
+      "tags": [
+        "виньетка",
+        "sms",
+        "ошибки",
+        "памятка"
+      ]
     },
-
     {
       "id": "video-telepass-1",
       "category": "video",
@@ -532,7 +831,11 @@
       "title": "TELEPASS: часть 1",
       "type": "video",
       "url": "https://drive.google.com/file/d/1oNJOO6p_b6ace8vEKLKAuWwK4_UjTY2a/view?usp=drive_link",
-      "tags": ["telepass", "бокс", "италия"]
+      "tags": [
+        "telepass",
+        "бокс",
+        "италия"
+      ]
     },
     {
       "id": "video-telepass-2",
@@ -541,7 +844,11 @@
       "title": "TELEPASS: часть 2",
       "type": "video",
       "url": "https://drive.google.com/file/d/1XRx2Rok6-Iy8sx_leNrSlQX72n-gQ8QS/view?usp=drive_link",
-      "tags": ["telepass", "бокс", "италия"]
+      "tags": [
+        "telepass",
+        "бокс",
+        "италия"
+      ]
     },
     {
       "id": "video-telepass-3",
@@ -550,7 +857,11 @@
       "title": "TELEPASS: часть 3",
       "type": "video",
       "url": "https://drive.google.com/file/d/1cjjFJ0MA6He69GasS65C77YECrHlmGt6/view?usp=drive_link",
-      "tags": ["telepass", "бокс", "италия"]
+      "tags": [
+        "telepass",
+        "бокс",
+        "италия"
+      ]
     },
     {
       "id": "video-telepass-4",
@@ -559,9 +870,12 @@
       "title": "TELEPASS: часть 4",
       "type": "video",
       "url": "https://drive.google.com/file/d/1Xhl5DImyoM6LNHFVcczZXWkaVdM04p6v/view?usp=drive_link",
-      "tags": ["telepass", "бокс", "италия"]
+      "tags": [
+        "telepass",
+        "бокс",
+        "италия"
+      ]
     },
-
     {
       "id": "video-regime-1-day",
       "category": "video",
@@ -569,7 +883,12 @@
       "title": "1. Сутки водителя",
       "type": "video",
       "url": "https://drive.google.com/file/d/10Lpb7RuZaizMSsEsOE3UXFHbDQanL86C/view?usp=drive_link",
-      "tags": ["режим", "сутки", "отдых", "тахограф"]
+      "tags": [
+        "режим",
+        "сутки",
+        "отдых",
+        "тахограф"
+      ]
     },
     {
       "id": "video-regime-2-driving",
@@ -578,7 +897,12 @@
       "title": "2. Ежедневное время вождения",
       "type": "video",
       "url": "https://drive.google.com/file/d/1A_umKLcf7L1eUbixJVy0olwrcOWB9BvX/view?usp=drive_link",
-      "tags": ["режим", "вождение", "9 часов", "10 часов"]
+      "tags": [
+        "режим",
+        "вождение",
+        "9 часов",
+        "10 часов"
+      ]
     },
     {
       "id": "video-regime-3-breaks",
@@ -587,7 +911,11 @@
       "title": "3. Перерывы во время вождения. Суточный отдых",
       "type": "video",
       "url": "https://drive.google.com/file/d/1cnG_L21mIt1NOxD2kp95CdYLoKKT1n_v/view?usp=drive_link",
-      "tags": ["перерыв", "суточный отдых", "режим"]
+      "tags": [
+        "перерыв",
+        "суточный отдых",
+        "режим"
+      ]
     },
     {
       "id": "video-regime-4-ferry",
@@ -596,7 +924,12 @@
       "title": "4. Отдых на паромах и поездах",
       "type": "video",
       "url": "https://drive.google.com/file/d/15hOlXChbkGWhOuYnSkIFxgoU15D233pZ/view?usp=drive_link",
-      "tags": ["паром", "поезд", "отдых", "режим"]
+      "tags": [
+        "паром",
+        "поезд",
+        "отдых",
+        "режим"
+      ]
     },
     {
       "id": "video-regime-5-week",
@@ -605,7 +938,12 @@
       "title": "5. Рабочая неделя: недельный и двухнедельный отдых",
       "type": "video",
       "url": "https://drive.google.com/file/d/1iwJMlrXAZ_NprifTh4h9SGTN0-ZkXYbf/view?usp=drive_link",
-      "tags": ["неделя", "недельный отдых", "двухнедельный", "режим"]
+      "tags": [
+        "неделя",
+        "недельный отдых",
+        "двухнедельный",
+        "режим"
+      ]
     },
     {
       "id": "video-regime-6-weekly-breaks",
@@ -614,9 +952,12 @@
       "title": "6. Перерывы во время работы и еженедельный отдых",
       "type": "video",
       "url": "https://drive.google.com/file/d/1oHgohUTzIRVaWUv5yEXHGsuUq5-fWubq/view?usp=drive_link",
-      "tags": ["перерыв", "еженедельный отдых", "режим"]
+      "tags": [
+        "перерыв",
+        "еженедельный отдых",
+        "режим"
+      ]
     },
-
     {
       "id": "video-norway-operator",
       "category": "video",
@@ -624,7 +965,13 @@
       "title": "Выбор оператора сети в Норвегии",
       "type": "video",
       "url": "https://drive.google.com/file/d/1HfRv_ncl4HZEz0G3CJ8gEItn_Gi18MVF/view?usp=drive_link",
-      "tags": ["норвегия", "оператор", "сеть", "телефон", "связь"]
+      "tags": [
+        "норвегия",
+        "оператор",
+        "сеть",
+        "телефон",
+        "связь"
+      ]
     },
     {
       "id": "video-circlek-login",
@@ -633,7 +980,12 @@
       "title": "Circle K: вход",
       "type": "video",
       "url": "https://drive.google.com/file/d/12mbxlySa2UFLS_vDlY8_ds9pHSvn-NXF/view?usp=drive_link",
-      "tags": ["circle k", "вход", "приложение", "заправка"]
+      "tags": [
+        "circle k",
+        "вход",
+        "приложение",
+        "заправка"
+      ]
     },
     {
       "id": "video-google-play",
@@ -642,9 +994,13 @@
       "title": "Проблема с Google Play",
       "type": "video",
       "url": "https://drive.google.com/file/d/14Ulr3Ult5CHDcR0mcdQXFXtMiit43htS/view?usp=drive_link",
-      "tags": ["google play", "приложение", "телефон", "ошибка"]
+      "tags": [
+        "google play",
+        "приложение",
+        "телефон",
+        "ошибка"
+      ]
     },
-
     {
       "id": "video-trailer-refuel",
       "category": "video",
@@ -654,9 +1010,14 @@
       "type": "video",
       "url": "https://drive.google.com/file/d/1VYbBCiXgpyBrcnt4NKyshRuV942hKuom/view?usp=drive_link",
       "updated": "2026-08-02",
-      "tags": ["заправка", "прицеп", "топливо", "пистолет", "чек"]
+      "tags": [
+        "заправка",
+        "прицеп",
+        "топливо",
+        "пистолет",
+        "чек"
+      ]
     },
-
     {
       "id": "video-cabin-exit",
       "category": "video",
@@ -664,7 +1025,12 @@
       "title": "Как правильно выходить из кабины тягача",
       "type": "video",
       "url": "https://drive.google.com/file/d/1fcwT6ii_2dSa95dv1pZ-L3PuDY9_gAty/view?usp=drive_link",
-      "tags": ["кабина", "выход", "безопасность", "травма"]
+      "tags": [
+        "кабина",
+        "выход",
+        "безопасность",
+        "травма"
+      ]
     },
     {
       "id": "video-cabin-enter",
@@ -673,7 +1039,12 @@
       "title": "Как правильно залезать в кабину тягача",
       "type": "video",
       "url": "https://drive.google.com/file/d/1hv5_zSvqQbe5t9nQtAe6GucMDg8cVoD8/view?usp=drive_link",
-      "tags": ["кабина", "вход", "безопасность", "травма"]
+      "tags": [
+        "кабина",
+        "вход",
+        "безопасность",
+        "травма"
+      ]
     }
   ]
 }

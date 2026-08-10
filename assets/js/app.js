@@ -137,8 +137,12 @@ function cardHTML(item, i = 0, extraClass = '') {
   const classes = `${item.important ? ' card--important' : ''}${extraClass ? ` ${extraClass}` : ''}`;
   // type "link" — не Диск, а внешний сайт/приложение: открываем сразу в новой вкладке,
   // а не через внутренний просмотрщик (там нечего встраивать).
-  const external = item.type === 'link';
-  const href = external ? esc(item.url) : `#/item/${encodeURIComponent(item.id)}`;
+  // Исключение — url, начинающийся с "#": это наш собственный экран внутри
+  // приложения (например #/bans), его нельзя открывать в новой вкладке.
+  const isLink = item.type === 'link';
+  const internalScreen = isLink && String(item.url ?? '').startsWith('#');
+  const external = isLink && !internalScreen;
+  const href = isLink ? esc(item.url) : `#/item/${encodeURIComponent(item.id)}`;
   const extraAttrs = external ? ' target="_blank" rel="noopener"' : '';
   const badge = item.image
     ? `<img class="card__badge card__badge--custom" src="${esc(item.image)}" alt="" aria-hidden="true">`

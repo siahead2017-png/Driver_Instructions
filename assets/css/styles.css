@@ -1686,3 +1686,252 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* ---------- Запреты движения: полноэкранный оверлей ----------
+   Показ/скрытие — через hidden в bans.js, синхронизировано с хешем #/bans.
+   z-index 45 — тот же уровень, что у гида и регистрации: одновременно они
+   никогда не показаны, и все трое обязаны прятаться под карточкой (50). */
+.bans {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  transition: opacity .2s ease;
+}
+
+.bans[hidden] { display: none; }
+.bans.is-opening, .bans.is-closing { opacity: 0; }
+
+.bans__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(env(safe-area-inset-top) + 6px) 10px 6px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.bans__bar-title { font-weight: 650; font-size: 16px; }
+
+.bans__meta {
+  margin: 0;
+  padding: 8px var(--pad) 0;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.bans__offline {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-weight: 600;
+}
+
+.bans__tabs { display: flex; gap: 8px; padding: 10px var(--pad); }
+
+.bans__tab {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.bans__tab.is-active {
+  border-color: transparent;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.bans__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 var(--pad) calc(env(safe-area-inset-bottom) + 24px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.bans__day { margin-top: 18px; }
+
+.bans__day-title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.bans__country { margin-bottom: 6px; }
+
+/* Строка страны — цветная полоса слева и есть весь светофор.
+   Цвет дублируется эмодзи-кружком: на солнце в кабине оттенки не различить,
+   а иконка читается всегда. */
+.bans__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.bans__row--ban  { border-left-color: var(--danger); }
+.bans__row--soon { border-left-color: #d97706; }
+.bans__row--warn { border-left-color: #ca8a04; }
+.bans__row--ok   { border-left-color: var(--t-sheet); }
+
+.bans__light { font-size: 15px; line-height: 1; }
+.bans__name { flex: 1; font-weight: 600; font-size: 15px; }
+
+.bans__label {
+  font-size: 12.5px;
+  color: var(--text-dim);
+  text-align: right;
+  max-width: 46%;
+}
+
+.bans__row--ban .bans__label { color: var(--danger); font-weight: 600; }
+
+.bans__details {
+  margin: 6px 0 10px;
+  padding-left: 8px;
+  border-left: 2px dashed var(--border);
+}
+
+.bans__detail {
+  padding: 10px 12px;
+  margin-top: 6px;
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+
+.bans__detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.bans__window { flex: none; font-size: 13px; color: var(--text-dim); }
+
+.bans__chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+
+.bans__chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.bans__note {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-dim);
+}
+
+.bans__source {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+/* Полоса на 14 дней: горизонтальная прокрутка внутри своего контейнера,
+   страница по горизонтали не едет. */
+.bans__strip { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+.bans__strip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.bans__strip-code {
+  flex: none;
+  width: 62px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.bans__strip-cells { display: flex; gap: 3px; }
+
+.bans__cell {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  font-size: 10px;
+  line-height: 22px;
+  text-align: center;
+  color: var(--text-dim);
+}
+
+.bans__cell--ban  { background: color-mix(in srgb, var(--danger) 55%, transparent); color: #fff; }
+.bans__cell--warn { background: color-mix(in srgb, #ca8a04 45%, transparent); }
+.bans__cell--ok   { background: var(--surface-2); }
+
+.bans__legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.bans__legend .bans__cell { width: 14px; height: 14px; }
+
+.bans__route { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+.bans__route-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.bans__hint, .bans__empty {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.bans__empty { padding: 24px 0; text-align: center; line-height: 1.5; }
+
+.bans__disclaimer {
+  margin: 24px 0 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
