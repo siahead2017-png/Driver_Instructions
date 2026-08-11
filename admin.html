@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1f6feb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
+
+  <!-- Страница служебная: на неё нет ни одной ссылки из приложения, и в поиске
+       её быть не должно. Это не защита (репозиторий публичный, файл виден
+       любому, кто знает адрес) — защита в том, что данные отдаёт сервер и
+       только по паролю. -->
+  <meta name="robots" content="noindex, nofollow">
+
+  <title>Обращения водителей — HEAD, HDLG</title>
+
+  <link rel="icon" href="assets/icons/icon-192.png?v=4" type="image/png">
+  <link rel="stylesheet" href="assets/css/admin.css?v=1">
+</head>
+<body>
+  <!-- Вход -->
+  <div class="login" id="login">
+    <form class="login__card" id="login-form">
+      <h1 class="login__title">Обращения водителей</h1>
+      <p class="login__sub">HEAD, HDLG — служебная страница</p>
+
+      <label class="field">
+        <span class="field__label">Пароль</span>
+        <input class="input" id="login-pass" type="password" autocomplete="current-password"
+          placeholder="Введите пароль" required>
+      </label>
+
+      <p class="error" id="login-error" hidden></p>
+
+      <button class="btn" id="login-btn" type="submit">Войти</button>
+    </form>
+  </div>
+
+  <!-- Рабочий экран -->
+  <div class="app" id="app" hidden>
+    <header class="head">
+      <div class="head__row">
+        <h1 class="head__title">Обращения</h1>
+        <span class="head__count" id="count"></span>
+        <button class="icon-btn" id="refresh" type="button" aria-label="Обновить">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 11a8 8 0 10-2.3 5.7"/><path d="M20 5v6h-6"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="logout" type="button" aria-label="Выйти">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 4h3a1 1 0 011 1v14a1 1 0 01-1 1h-3"/><path d="M10 17l-5-5 5-5M5 12h9"/>
+          </svg>
+        </button>
+      </div>
+
+      <input class="input search" id="search" type="search"
+        placeholder="Поиск по номеру, имени, телефону, тексту…" autocomplete="off">
+
+      <div class="filters" id="filter-status"></div>
+      <div class="filters" id="filter-topic"></div>
+    </header>
+
+    <main class="list" id="list"></main>
+
+    <p class="empty" id="empty" hidden></p>
+  </div>
+
+  <script src="assets/js/admin.js?v=1"></script>
+</body>
+</html>

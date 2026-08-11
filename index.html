@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=22">
+  <link rel="stylesheet" href="assets/css/styles.css?v=23">
 </head>
 <body>
   <header class="app-header">
@@ -175,6 +175,121 @@
     </div>
     <div class="register__nav">
       <button class="btn" id="sig-full-done" type="button">Готово</button>
+    </div>
+  </div>
+
+  <!-- Обратная связь: вопрос / жалоба / предложение в офис (feedback.js).
+       Виртуальный экран #/feedback — как и #/bans, app.js о нём не знает и
+       рисует под ним главную. Бэкенд — отдельный Apps Script Web App
+       (Driver_Feedback_Backend, вне git), он же шлёт всё в Telegram-группу. -->
+  <button class="fb-fab" id="fb-fab" type="button" aria-label="Написать в офис">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M21 11.5a8.4 8.4 0 01-9 8.4 9.1 9.1 0 01-3.3-.6L3 21l1.8-5.3A8.2 8.2 0 013.6 11 8.4 8.4 0 0112 3a8.4 8.4 0 019 8.5z"/>
+      <path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/>
+    </svg>
+  </button>
+
+  <div class="fb" id="feedback" hidden role="dialog" aria-modal="true" aria-labelledby="fb-title">
+    <div class="fb__bar">
+      <button class="icon-btn" id="fb-close" type="button" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <span class="fb__bar-title" id="fb-title">Написать в офис</span>
+      <span class="icon-btn" aria-hidden="true" style="visibility:hidden"></span>
+    </div>
+
+    <div class="fb__body">
+      <!-- Экран 1: форма -->
+      <form class="fb__form" id="fb-form" novalidate autocomplete="on">
+        <p class="fb__intro">Вопрос, пожелание, жалоба или предложение — напишите, приложите фото или запишите голосовое. Ответим в WhatsApp.</p>
+
+        <!-- Honeypot: человек этого поля не видит и не заполнит, робот заполнит.
+             Не display:none — часть ботов сознательно пропускает такие поля. -->
+        <div class="fb__hp" aria-hidden="true">
+          <label>Оставьте это поле пустым
+            <input type="text" id="fb-website" name="website" tabindex="-1" autocomplete="off">
+          </label>
+        </div>
+
+        <label class="calc__field">
+          <span class="calc__field-label">Имя и фамилия</span>
+          <input class="calc__input" id="fb-name" type="text" maxlength="80"
+            autocomplete="name" placeholder="Иван Петров">
+        </label>
+
+        <label class="calc__field">
+          <span class="calc__field-label">Номер WhatsApp</span>
+          <input class="calc__input" id="fb-phone" type="tel" inputmode="tel" maxlength="24"
+            autocomplete="tel" placeholder="+371 20 123 456">
+          <span class="calc__hint">С кодом страны — на этот номер придёт ответ.</span>
+        </label>
+
+        <div class="calc__field">
+          <span class="calc__field-label">Тема обращения</span>
+          <div class="fb__topics" id="fb-topics"></div>
+        </div>
+
+        <label class="calc__field">
+          <span class="calc__field-label">Сообщение</span>
+          <textarea class="calc__input fb__textarea" id="fb-text" rows="6" maxlength="2000"
+            placeholder="Опишите ситуацию: что случилось, где, когда."></textarea>
+          <span class="fb__counter" id="fb-counter">осталось 2000</span>
+        </label>
+
+        <div class="calc__field">
+          <span class="calc__field-label">Голосовое сообщение</span>
+          <div class="fb__rec">
+            <button class="fb__rec-btn" id="fb-rec-btn" type="button" aria-label="Записать голосовое сообщение">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="9" y="3" width="6" height="11" rx="3"/>
+                <path d="M5 11a7 7 0 0014 0M12 18v3"/>
+              </svg>
+            </button>
+            <span class="fb__rec-state" id="fb-rec-state">Нажмите, чтобы записать</span>
+            <button class="fb__rec-del" id="fb-rec-del" type="button" hidden aria-label="Удалить запись">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <audio class="fb__rec-audio" id="fb-rec-audio" controls hidden></audio>
+        </div>
+
+        <div class="calc__field">
+          <span class="calc__field-label">Вложения</span>
+          <button class="fb__attach" id="fb-attach" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 11l-8.5 8.5a5 5 0 01-7-7L14 4a3.5 3.5 0 015 5l-8.5 8.5a2 2 0 01-3-3L15 6"/>
+            </svg>
+            Добавить файлы
+          </button>
+          <input id="fb-file" type="file" multiple hidden
+            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx">
+          <ul class="fb__files" id="fb-files" hidden></ul>
+          <span class="calc__hint" id="fb-files-hint">До 6 файлов, всего не больше 20 МБ. Фото сжимаются автоматически.</span>
+        </div>
+
+        <p class="fb__error" id="fb-error" hidden></p>
+      </form>
+
+      <!-- Экран 2: отправка -->
+      <div class="fb__sending" id="fb-sending" hidden>
+        <div class="spinner" aria-hidden="true"></div>
+        <p id="fb-sending-text">Отправляем обращение…</p>
+        <div class="fb__progress" id="fb-progress" hidden>
+          <span class="fb__progress-fill" id="fb-progress-fill"></span>
+        </div>
+      </div>
+
+      <!-- Экран 3: принято -->
+      <div class="fb__done" id="fb-done" hidden>
+        <div class="fb__done-icon" aria-hidden="true">✅</div>
+        <h2 class="fb__done-title">Обращение принято</h2>
+        <p class="fb__done-num" id="fb-done-num">#TCK-0000</p>
+        <p class="fb__done-text" id="fb-done-text"></p>
+      </div>
+    </div>
+
+    <div class="fb__nav">
+      <button class="btn" id="fb-send" type="button">Отправить</button>
     </div>
   </div>
 
@@ -365,5 +480,6 @@
   <script type="module" src="assets/js/guide.js?v=6"></script>
   <script type="module" src="assets/js/register.js?v=8"></script>
   <script type="module" src="assets/js/bans.js?v=9"></script>
+  <script type="module" src="assets/js/feedback.js?v=1"></script>
 </body>
 </html>

@@ -2245,3 +2245,414 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 .bans__detail--ban     { border-left: 3px solid var(--danger); }
 .bans__detail--warning { border-left: 3px solid #ca8a04; }
 .bans__detail--info    { border-left: 3px solid var(--accent); }
+
+/* ---------- Обратная связь: кнопка и форма ---------- */
+
+/* Круглая кнопка над «пилюлей» калькулятора. Отступ снизу = высота пилюли
+   (~50px) + её собственный отступ (18px) + зазор. Цвет — фирменный синий
+   акцент: с оранжевым калькулятором не спорит и читается как другое действие. */
+.fb-fab {
+  position: fixed;
+  right: calc(env(safe-area-inset-right) + 16px);
+  bottom: calc(env(safe-area-inset-bottom) + 92px);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2b7cff 0%, var(--accent) 55%, #1550c8 100%);
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    0 8px 22px rgba(31, 111, 235, .42),
+    0 2px 6px rgba(10, 45, 110, .3),
+    inset 0 1px 0 rgba(255, 255, 255, .45);
+  transition: transform .16s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease;
+}
+
+/* display:flex специфичнее атрибута [hidden] — без этого правила кнопка
+   осталась бы висеть поверх открытых оверлеев и ловить фокус с клавиатуры.
+   Те же грабли уже были с .calc-fab. */
+.fb-fab[hidden] { display: none; }
+
+/* Глянцевый блик — как у .calc-fab, чтобы две кнопки читались одним набором. */
+.fb-fab::before {
+  content: "";
+  position: absolute;
+  inset: 2px 2px 52% 2px;
+  border-radius: 999px 999px 60% 60% / 999px 999px 100% 100%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.fb-fab svg {
+  width: 25px;
+  height: 25px;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, .6));
+}
+
+@media (hover: hover) {
+  .fb-fab:hover { transform: translateY(-2px) scale(1.05); }
+}
+
+.fb-fab:active { transform: scale(.94); }
+
+/* Оверлей формы. z-index 45 — как у .guide/.register/.bans: одновременно они
+   не показываются. */
+.fb {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.fb[hidden] { display: none; }
+
+.fb__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(env(safe-area-inset-top) + 6px) 10px 6px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.fb__bar .icon-btn { margin-left: 0; }
+
+.fb__bar-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fb__body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px var(--pad) 24px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.fb__form { display: flex; flex-direction: column; gap: 16px; }
+
+/* Обязательно: display:flex специфичнее [hidden], и без этого правила форма
+   осталась бы на экране под экранами «отправляем» и «принято» — setScreen()
+   в feedback.js переключает их именно атрибутом hidden. */
+.fb__form[hidden] { display: none; }
+
+.fb__intro { margin: 0; font-size: 15px; line-height: 1.5; color: var(--text-dim); }
+
+/* Honeypot: уводим за край экрана, а НЕ display:none — часть ботов сознательно
+   пропускает поля, спрятанные display'ем, и ловушка бы не сработала. */
+.fb__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Поля формы переиспользуют .calc__field / .calc__field-label / .calc__input —
+   ровно так же, как это делает форма регистрации в register.js. Здесь только
+   то, чего в тех классах нет. */
+.fb__textarea {
+  height: auto;
+  min-height: 128px;
+  padding: 12px;
+  font-size: 16px; /* < 16px вызывает зум на iOS */
+  font-weight: 400;
+  line-height: 1.45;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.fb__counter {
+  align-self: flex-end;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.fb__counter.is-low { color: var(--danger); font-weight: 600; }
+
+/* Темы обращения. Вид как у .calc__chip, но это <button>, а не <label> с radio
+   внутри — состояние ставит JS классом, без :has(). */
+.fb__topics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.fb__topic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+
+.fb__topic.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.fb__topic:focus-visible { box-shadow: 0 0 0 3px var(--accent-soft); }
+
+/* Запись голосового */
+.fb__rec {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px 8px 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+.fb__rec-btn {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .15s ease;
+}
+
+.fb__rec-btn[hidden] { display: none; }
+.fb__rec-btn:disabled { opacity: .4; cursor: default; }
+.fb__rec-btn.is-recording { background: var(--danger); animation: fb-pulse 1.4s ease-in-out infinite; }
+
+@keyframes fb-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--danger) 55%, transparent); }
+  50%      { box-shadow: 0 0 0 10px color-mix(in srgb, var(--danger) 0%, transparent); }
+}
+
+.fb__rec-state {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.fb__rec-del {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fb__rec-del[hidden] { display: none; }
+.fb__rec-del svg { width: 18px; height: 18px; }
+
+.fb__rec-audio { width: 100%; margin-top: 8px; }
+.fb__rec-audio[hidden] { display: none; }
+
+/* Вложения */
+.fb__attach {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 8px 14px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.fb__attach svg { width: 20px; height: 20px; }
+.fb__attach:disabled { opacity: .45; cursor: default; color: var(--text-dim); }
+
+@media (hover: hover) {
+  .fb__attach:not(:disabled):hover { border-color: var(--accent); background: var(--accent-soft); }
+}
+
+.fb__files {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fb__files[hidden] { display: none; }
+
+.fb__file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 6px 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.fb__file-icon { flex: 0 0 auto; font-size: 18px; line-height: 1; }
+
+.fb__file-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fb__file-size {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.fb__file-del {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fb__file-del svg { width: 16px; height: 16px; }
+
+.fb__error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: pre-line; /* список отклонённых файлов приходит с переносами */
+}
+
+/* Экран отправки */
+.fb__sending {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 56px 0;
+  color: var(--text-dim);
+  font-size: 14px;
+  text-align: center;
+}
+
+.fb__sending[hidden] { display: none; }
+.fb__sending p { margin: 0; }
+
+.fb__progress {
+  width: 100%;
+  max-width: 260px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.fb__progress[hidden] { display: none; }
+
+.fb__progress-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width .3s ease;
+}
+
+/* Экран «принято» */
+.fb__done { text-align: center; padding: 24px 0 8px; }
+.fb__done[hidden] { display: none; }
+.fb__done-icon { font-size: 44px; line-height: 1; }
+.fb__done-title { margin: 12px 0 4px; font-size: 19px; font-weight: 700; }
+
+/* Номер обращения — единственное, что водителю нужно запомнить и назвать
+   в разговоре с офисом, поэтому он крупный и с табличными цифрами. */
+.fb__done-num {
+  margin: 8px 0 14px;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.fb__done-text { margin: 0; color: var(--text-dim); font-size: 14px; line-height: 1.6; }
+
+.fb__nav {
+  display: flex;
+  gap: 10px;
+  padding: 10px var(--pad) calc(env(safe-area-inset-bottom) + 10px);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.fb__nav .btn { flex: 1; margin-top: 0; text-align: center; border: 0; cursor: pointer; font-size: 15px; }
+.fb__nav .btn[hidden] { display: none; }
+
+/* Появление оверлея — как у .register/.calc. */
+.fb { transition: opacity .22s ease; }
+.fb.is-opening, .fb.is-closing { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fb, .fb.is-opening, .fb.is-closing { transition: none; opacity: 1; }
+  .fb-fab { transition: none; }
+  .fb__rec-btn.is-recording { animation: none; }
+  .fb__progress-fill { transition: none; }
+}
