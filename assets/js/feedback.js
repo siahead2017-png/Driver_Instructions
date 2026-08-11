@@ -21,7 +21,13 @@ const COOLDOWN_MS = 60 * 1000;
 
 // Порядок и написание тем должны совпадать с TOPICS в Code.gs: сервер сверяет
 // пришедшее значение со своим списком и незнакомое молча заменяет на «Прочее».
-const TOPICS = ['Вопрос', 'Пожелание', 'Жалоба', 'Предложение', 'Прочее'];
+const TOPICS = ['Вопрос', 'Заявка на ремонт', 'Пожелание', 'Жалоба', 'Предложение', 'Прочее'];
+
+// Единственная тема, для которой номера тягача и прицепа обязательны. Ту же
+// проверку делает и сервер (REPAIR_TOPIC в Code.gs) — строка должна совпадать
+// с точностью до буквы, иначе сервер отобьёт заявку, прошедшую в браузере.
+const REPAIR_TOPIC = 'Заявка на ремонт';
+const PLATE_MIN = 3;
 
 const MAX_FILES = 6;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -45,6 +51,8 @@ const ALLOWED_EXT = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
 const ERRORS = {
   bad_name: 'Укажите имя и фамилию.',
   bad_phone: 'Проверьте номер WhatsApp — нужен международный формат с кодом страны.',
+  bad_truck: 'Для заявки на ремонт укажите номер тягача.',
+  bad_trailer: 'Для заявки на ремонт укажите номер прицепа.',
   empty: 'Напишите сообщение или приложите файл.',
   rate_limited: 'Вы только что отправили обращение. Подождите минуту и попробуйте снова.',
   busy: 'Сервер сейчас занят. Попробуйте ещё раз через несколько секунд.',
@@ -66,6 +74,11 @@ const el = {
   name: document.getElementById('fb-name'),
   phone: document.getElementById('fb-phone'),
   topics: document.getElementById('fb-topics'),
+  truck: document.getElementById('fb-truck'),
+  trailer: document.getElementById('fb-trailer'),
+  truckReq: document.getElementById('fb-truck-req'),
+  trailerReq: document.getElementById('fb-trailer-req'),
+  platesHint: document.getElementById('fb-plates-hint'),
   text: document.getElementById('fb-text'),
   counter: document.getElementById('fb-counter'),
 
@@ -119,6 +132,8 @@ function saveDraft() {
       phone: el.phone.value,
       topic: topic,
       text: el.text.value,
+      truck: el.truck.value,
+      trailer: el.trailer.value,
     }));
   } catch { /* приватный режим — не критично */ }
 }
@@ -181,6 +196,19 @@ function totalBytes() {
 
 function digitsOnly(v) {
   return String(v || '').replace(/\D/g, '');
+}
+
+// Госномер приводим к тому же виду, что и сервер (plate_ в Code.gs): заглавные,
+// одиночные пробелы, любое тире — обычным дефисом. Иначе один прицеп попадёт
+// в Таблицу как «hd 1234», «HD-1234» и «HD—1234», и поиск его не найдёт.
+// Формат не навязываем: машины HEAD/HDLG зарегистрированы в разных странах.
+function plate(v) {
+  return String(v || '')
+    .replace(/[‐-―−]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase()
+    .slice(0, 20);
 }
 
 function showError(msg) {
@@ -257,6 +285,26 @@ function paintTopics() {
     <button type="button" class="fb__topic${t === topic ? ' is-active' : ''}"
       data-topic="${esc(t)}" aria-pressed="${t === topic}">${esc(t)}</button>
   `).join('');
+
+  paintPlates();
+}
+
+/**
+ * Поля номеров не прячем при смене темы, а только помечаем обязательными.
+ *
+ * Спрятать было бы «чище», но водитель, уже вписавший номер и потом сменивший
+ * тему, увидел бы, как введённое исчезает с экрана — и решил бы, что данные
+ * потерялись. Номер машины полезен и в жалобе, и в вопросе: пусть остаётся.
+ */
+function paintPlates() {
+  const need = topic === REPAIR_TOPIC;
+
+  el.truckReq.hidden = !need;
+  el.trailerReq.hidden = !need;
+  el.platesHint.hidden = !need;
+
+  el.truck.required = need;
+  el.trailer.required = need;
 }
 
 // ---------- Вложения ----------
@@ -551,6 +599,13 @@ function validate() {
   const digits = digitsOnly(el.phone.value);
   if (digits.length < 8 || digits.length > 15) return ERRORS.bad_phone;
 
+  // Ровно то же правило стоит на сервере: форму можно обойти, отправив запрос
+  // напрямую, поэтому проверка здесь — про удобство, а не про защиту.
+  if (topic === REPAIR_TOPIC) {
+    if (plate(el.truck.value).length < PLATE_MIN) return ERRORS.bad_truck;
+    if (plate(el.trailer.value).length < PLATE_MIN) return ERRORS.bad_trailer;
+  }
+
   if (!el.text.value.trim() && !attachments.length) return ERRORS.empty;
 
   return '';
@@ -592,6 +647,8 @@ async function send() {
       phone: digitsOnly(el.phone.value),
       topic: topic,
       text: el.text.value.trim().slice(0, MAX_TEXT),
+      truck: plate(el.truck.value),
+      trailer: plate(el.trailer.value),
       filesCount: attachments.length,
     });
   } catch {
@@ -721,6 +778,8 @@ function show() {
   if (!el.name.value) el.name.value = draft.name || nameFromRegister();
   if (!el.phone.value) el.phone.value = draft.phone || '';
   if (!el.text.value) el.text.value = (draft.text || '').slice(0, MAX_TEXT);
+  if (!el.truck.value) el.truck.value = draft.truck || '';
+  if (!el.trailer.value) el.trailer.value = draft.trailer || '';
   if (draft.topic && TOPICS.indexOf(draft.topic) >= 0) topic = draft.topic;
 
   paintTopics();
@@ -777,8 +836,17 @@ if (el.root) {
 
   el.phone.addEventListener('input', maskPhone);
 
-  [el.name, el.phone, el.text].forEach((input) => {
+  [el.name, el.phone, el.text, el.truck, el.trailer].forEach((input) => {
     input.addEventListener('input', saveDraft);
+  });
+
+  // Номер приводим к общему виду не на каждой букве, а когда водитель ушёл из
+  // поля: иначе toUpperCase() посреди набора дёргает курсор на части Android.
+  [el.truck, el.trailer].forEach((input) => {
+    input.addEventListener('blur', () => {
+      const fixed = plate(input.value);
+      if (fixed !== input.value) { input.value = fixed; saveDraft(); }
+    });
   });
 
   el.text.addEventListener('input', paintCounter);

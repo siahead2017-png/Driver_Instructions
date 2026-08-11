@@ -266,6 +266,34 @@ svg {
 
 .wa svg { width: 16px; height: 16px; }
 
+/* Номера машин. Моноширинный шрифт — чтобы «0/O» и «1/I» не путались при
+   сверке с документами, это тот же приём, что в форме водителя. */
+.card__plates { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.plate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.plate b {
+  /* Подпись — обычным шрифтом: моноширинный нужен самому номеру, не ярлыку. */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
 .card__text {
   margin: 0;
   font-size: 14px;

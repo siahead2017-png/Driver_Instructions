@@ -181,7 +181,7 @@ function visible() {
     if (fStatus !== 'все' && t.status !== fStatus) return false;
     if (fTopic !== 'все' && t.topic !== fTopic) return false;
     if (!q) return true;
-    return [t.ticket, t.name, t.phone, t.topic, t.text, t.note]
+    return [t.ticket, t.name, t.phone, t.topic, t.text, t.note, t.truck, t.trailer]
       .join(' ').toLowerCase().indexOf(q) >= 0;
   });
 }
@@ -218,6 +218,13 @@ function cardHTML(t) {
       '<span class="file__size">' + fmtSize(f.size) + '</span></button>';
   }).join('');
 
+  // Номера машин показываем только когда они есть: у вопроса или пожелания их
+  // обычно нет, и пустая строка «Тягач: —» в каждой карточке только мешает.
+  var plateItems = '' +
+    (t.truck ? '<span class="plate"><b>Тягач</b>' + esc(t.truck) + '</span>' : '') +
+    (t.trailer ? '<span class="plate"><b>Прицеп</b>' + esc(t.trailer) + '</span>' : '');
+  var plates = plateItems ? '<div class="card__plates">' + plateItems + '</div>' : '';
+
   var statusBtns = statuses.map(function (s) {
     return '<button type="button" class="status status--' + (STATUS_CLASS[s] || 'new') +
       (s === t.status ? ' is-active' : '') +
@@ -241,6 +248,8 @@ function cardHTML(t) {
             esc(t.phone) + '</a>'
           : '') +
       '</div>' +
+
+      plates +
 
       (t.text ? '<p class="card__text">' + esc(t.text) + '</p>' : '<p class="card__text card__text--none">без текста</p>') +
 

@@ -2423,6 +2423,35 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 
 .fb__topic:focus-visible { box-shadow: 0 0 0 3px var(--accent-soft); }
 
+/* Номера тягача и прицепа. На узком экране — друг под другом, с 420px рядом:
+   номера короткие, растягивать их на всю ширину незачем. */
+.fb__plates {
+  display: grid;
+  gap: 16px;
+}
+
+.fb__plates[hidden] { display: none; }   /* grid специфичнее атрибута hidden */
+
+@media (min-width: 420px) {
+  .fb__plates { grid-template-columns: 1fr 1fr; }
+  .fb__plates .calc__hint { grid-column: 1 / -1; }
+}
+
+/* Номер набирают латиницей вперемешку с цифрами — моноширинный шрифт делает
+   «0/O» и «1/I» различимыми, а разрядка помогает при проверке по документам. */
+.fb__plates .calc__input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.fb__req {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.fb__req[hidden] { display: none; }
+
 /* Запись голосового */
 .fb__rec {
   display: flex;

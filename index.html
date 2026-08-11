@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=23">
+  <link rel="stylesheet" href="assets/css/styles.css?v=24">
 </head>
 <body>
   <header class="app-header">
@@ -201,7 +201,7 @@
     <div class="fb__body">
       <!-- Экран 1: форма -->
       <form class="fb__form" id="fb-form" novalidate autocomplete="on">
-        <p class="fb__intro">Вопрос, пожелание, жалоба или предложение — напишите, приложите фото или запишите голосовое. Ответим в WhatsApp.</p>
+        <p class="fb__intro">Вопрос, заявка на ремонт, жалоба или предложение — напишите, приложите фото или запишите голосовое. Ответим в WhatsApp.</p>
 
         <!-- Honeypot: человек этого поля не видит и не заполнит, робот заполнит.
              Не display:none — часть ботов сознательно пропускает такие поля. -->
@@ -227,6 +227,32 @@
         <div class="calc__field">
           <span class="calc__field-label">Тема обращения</span>
           <div class="fb__topics" id="fb-topics"></div>
+        </div>
+
+        <!-- Номера машин. Показываются всегда, но обязательны только для темы
+             «Заявка на ремонт» — там без них механику нечего чинить. -->
+        <div class="fb__plates" id="fb-plates">
+          <label class="calc__field">
+            <span class="calc__field-label">
+              Номер тягача <span class="fb__req" id="fb-truck-req" hidden>*</span>
+            </span>
+            <input class="calc__input" id="fb-truck" type="text" maxlength="20"
+              autocomplete="off" autocapitalize="characters" spellcheck="false"
+              placeholder="HD-1234">
+          </label>
+
+          <label class="calc__field">
+            <span class="calc__field-label">
+              Номер прицепа <span class="fb__req" id="fb-trailer-req" hidden>*</span>
+            </span>
+            <input class="calc__input" id="fb-trailer" type="text" maxlength="20"
+              autocomplete="off" autocapitalize="characters" spellcheck="false"
+              placeholder="P-5678">
+          </label>
+
+          <span class="calc__hint" id="fb-plates-hint" hidden>
+            Для заявки на ремонт оба номера обязательны — по ним механик найдёт машину.
+          </span>
         </div>
 
         <label class="calc__field">
@@ -480,6 +506,6 @@
   <script type="module" src="assets/js/guide.js?v=6"></script>
   <script type="module" src="assets/js/register.js?v=8"></script>
   <script type="module" src="assets/js/bans.js?v=9"></script>
-  <script type="module" src="assets/js/feedback.js?v=1"></script>
+  <script type="module" src="assets/js/feedback.js?v=2"></script>
 </body>
 </html>
