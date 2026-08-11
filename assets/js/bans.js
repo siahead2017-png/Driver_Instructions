@@ -16,7 +16,7 @@
 // gid=8091914 — это лист CALENDAR; при пересоздании листа gid поменяется.
 const CALENDAR_CSV = 'https://docs.google.com/spreadsheets/d/1VWwlFdhn3wrEUcWoeGOGRK9-Y4gjTU4Xug8z1Sw4fpI/export?format=csv&gid=8091914';
 
-import { FLAGS } from './flags.js?v=2';
+import { FLAGS } from './flags.js?v=3';
 
 const CACHE_KEY = 'di:bans';        // последний удачный ответ — на случай роуминга
 const ROUTE_KEY = 'di:bans:route';  // выбранные водителем страны
@@ -49,7 +49,10 @@ const CARGO_TOGGLES = ['fruit_veg', 'flowers', 'frozen'];
 // Остальные прячутся в блок «Другие страны». Само значение — вопрос вёрстки
 // («сколько строк влезает до сгиба»), поэтому живёт здесь, а не в данных;
 // а вот ПОРЯДОК стран приходит из таблицы колонкой country_rank.
-const PRIMARY_RANK = 8;
+// 11.08.2026: было 8. Люксембург поднят в постоянный блок по просьбе
+// владельца — машины идут через него транзитом часто, а запрет там как раз
+// транзитный. Значение обязано совпадать с PRIMARY_COUNTRIES в config.py.
+const PRIMARY_RANK = 9;
 
 const el = {
   root: document.getElementById('bans'),
@@ -71,6 +74,7 @@ let onlyRoute = false;  // включён фильтр «мой маршрут»
 let openCountry = null; // раскрытая карточка страны, ключ «дата|код»
 let legendOpen = false; // раскрыт справочник «флаг — код — название»
 let othersOpen = false; // раскрыт блок «Другие страны»
+let calendarOpen = false; // раскрыт календарь на дни за пределами периода поездки
 let closeTimer = null;
 let period = null;      // выбранный период поездки, см. readPeriod()
 let openDays = new Set(); // раскрытые дни в «дальней» части периода и в календаре
@@ -174,6 +178,17 @@ function humanDate(iso) {
 function shortDate(iso) {
   const [, m, d] = iso.split('-').map(Number);
   return `${d} ${MONTHS[m - 1]}`;
+}
+
+// Пятница/суббота/воскресенье — в скобках после даты: именно на эти дни чаще
+// всего приходятся запреты, и водителю так проще выцепить их взглядом
+// в свёрнутом списке дней, не открывая каждую строку.
+const WEEKEND_TAG = { 0: 'воскресенье', 5: 'пятница', 6: 'суббота' };
+
+function shortDateWithWeekend(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  const tag = WEEKEND_TAG[new Date(y, m - 1, d).getDay()];
+  return tag ? `${shortDate(iso)} (${tag})` : shortDate(iso);
 }
 
 // ---------- Данные ----------
@@ -638,26 +653,40 @@ function worstLight(iso) {
   }, 'ok');
 }
 
-// Календарь внизу экрана: лента обзора (для «одним взглядом найти чистое
-// окно») + список дней с раскрытием, тот же приём, что и у «Дальше по
+// Календарь сразу под «Когда еду»: лента обзора (для «одним взглядом найти
+// чистое окно») + список дней с раскрытием, тот же приём, что и у «Дальше по
 // маршруту» — переиспользуем daySummaryHTML целиком, не дублируем разметку.
+// Свёрнут по умолчанию: это не первое, что нужно на экране.
 function calendarHTML() {
   const days = calendarDays();
   if (!days.length) return '';
+  const last = days[days.length - 1];
+  const title = `Календарь до ${shortDate(last)}`;
+
+  if (!calendarOpen) {
+    return `<section class="bans__day">
+        <button class="bans__more" type="button" data-act="calendar" aria-expanded="false">
+          <span class="bans__more-arrow" aria-hidden="true">▾</span>
+          ${esc(title)}
+        </button>
+      </section>`;
+  }
 
   const ribbon = days.map((iso) => {
     const level = worstLight(iso);
     const [, , dd] = iso.split('-');
     return `<button class="bans__ribbon-cell bans__ribbon-cell--${level}" type="button"
-               data-act="jump" data-day="${esc(iso)}" aria-label="${esc(shortDate(iso))}"
+               data-act="jump" data-day="${esc(iso)}" aria-label="${esc(shortDateWithWeekend(iso))}"
                >${dd}</button>`;
   }).join('');
 
   const lines = days.map(daySummaryHTML).join('');
-  const last = days[days.length - 1];
 
   return `<section class="bans__day">
-      <h2 class="bans__day-title">Календарь до ${esc(shortDate(last))}</h2>
+      <button class="bans__more is-open" type="button" data-act="calendar" aria-expanded="true">
+        <span class="bans__more-arrow" aria-hidden="true">▾</span>
+        Свернуть календарь
+      </button>
       <p class="bans__hint">Нажмите на клетку в ленте, чтобы сразу открыть этот день.</p>
       <div class="bans__ribbon">${ribbon}</div>
       ${lines}
@@ -745,7 +774,7 @@ function daySummaryHTML(iso) {
   return `<div class="bans__dayline${isOpen ? ' is-open' : ''}">
       <button class="bans__dayline-head" type="button" data-act="day" data-day="${esc(iso)}"
               aria-expanded="${isOpen}">
-        <span class="bans__dayline-date">${esc(shortDate(iso))}</span>
+        <span class="bans__dayline-date">${esc(shortDateWithWeekend(iso))}</span>
         <span class="bans__dayline-sum">${esc(summary)}</span>
       </button>
       ${body}
@@ -884,9 +913,9 @@ function paint() {
     routeHTML(),
     cargoHTML(),
     periodHTML(),
+    calendarHTML(),
     full,
     rest,
-    calendarHTML(),
     routeLegendHTML(),
     `<p class="bans__disclaimer">
        Справочная информация. Правила меняются, а местные и региональные
@@ -943,6 +972,9 @@ el.body.addEventListener('click', (e) => {
     }
     case 'others':
       othersOpen = !othersOpen;
+      break;
+    case 'calendar':
+      calendarOpen = !calendarOpen;
       break;
     case 'cargo': {
       const code = hit.dataset.code;

@@ -93,7 +93,8 @@
       "title": "Запреты движения",
       "description": "Где сегодня и завтра нельзя ехать по Европе",
       "type": "link",
-      "url": "#/bans"
+      "url": "#/bans",
+      "image": "assets/img/bans-icon-192.png"
     }
   ],
   "items": [

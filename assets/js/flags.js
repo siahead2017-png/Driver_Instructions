@@ -106,4 +106,35 @@ export const FLAGS = {
     + '<rect y="6" width="21" height="3" fill="#fff"/>'
     + '<rect x="7" width="1" height="15" fill="#00205b"/>'
     + '<rect y="7" width="21" height="1" fill="#00205b"/></svg>',
+
+  // Добавлены 11.08.2026 вместе с четырьмя новыми странами в роботе.
+  // Люксембург поднят в постоянный блок (частый транзит), остальные три — в
+  // блок «Другие страны». Флаг обязателен: без него чип показывает сдвоенный
+  // текст вроде «NO NO» — на этом уже наступали с Норвегией.
+  LU: '<svg class="bans__flag" viewBox="0 0 21 15" aria-hidden="true" focusable="false">'
+    + '<rect width="21" height="15" fill="#fff"/>'
+    + '<rect width="21" height="5" fill="#ed2939"/>'
+    + '<rect y="10" width="21" height="5" fill="#00a1de"/></svg>',
+
+  HR: '<svg class="bans__flag" viewBox="0 0 21 15" aria-hidden="true" focusable="false">'
+    + '<rect width="21" height="15" fill="#fff"/>'
+    + '<rect width="21" height="5" fill="#ff0000"/>'
+    + '<rect y="10" width="21" height="5" fill="#171796"/></svg>',
+
+  // Греция: девять полос и крыж с крестом. Полоса 15/9 ≈ 1.667, крыж — пять
+  // полос в высоту и столько же в ширину, как на настоящем флаге.
+  GR: '<svg class="bans__flag" viewBox="0 0 21 15" aria-hidden="true" focusable="false">'
+    + '<rect width="21" height="15" fill="#0d5eaf"/>'
+    + '<rect y="1.667" width="21" height="1.667" fill="#fff"/>'
+    + '<rect y="5" width="21" height="1.667" fill="#fff"/>'
+    + '<rect y="8.333" width="21" height="1.667" fill="#fff"/>'
+    + '<rect y="11.667" width="21" height="1.667" fill="#fff"/>'
+    + '<rect width="8.333" height="8.333" fill="#0d5eaf"/>'
+    + '<rect x="3.333" width="1.667" height="8.333" fill="#fff"/>'
+    + '<rect y="3.333" width="8.333" height="1.667" fill="#fff"/></svg>',
+
+  BG: '<svg class="bans__flag" viewBox="0 0 21 15" aria-hidden="true" focusable="false">'
+    + '<rect width="21" height="15" fill="#fff"/>'
+    + '<rect y="5" width="21" height="5" fill="#00966e"/>'
+    + '<rect y="10" width="21" height="5" fill="#d62612"/></svg>',
 };
