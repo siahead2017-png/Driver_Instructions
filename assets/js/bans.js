@@ -74,6 +74,7 @@ let onlyRoute = false;  // включён фильтр «мой маршрут»
 let openCountry = null; // раскрытая карточка страны, ключ «дата|код»
 let legendOpen = false; // раскрыт справочник «флаг — код — название»
 let othersOpen = false; // раскрыт блок «Другие страны»
+let routeOpen = false;  // раскрыт блок выбора стран маршрута (11.08.2026: свёрнут по умолчанию, экономит место)
 let calendarOpen = false; // раскрыт календарь на дни за пределами периода поездки
 let closeTimer = null;
 let period = null;      // выбранный период поездки, см. readPeriod()
@@ -178,6 +179,22 @@ function humanDate(iso) {
 function shortDate(iso) {
   const [, m, d] = iso.split('-').map(Number);
   return `${d} ${MONTHS[m - 1]}`;
+}
+
+// «11.08» — компактный формат без года для кнопок пресетов («3 дня» → реальные
+// даты). Год не нужен: горизонт расчёта — недели, а не через год.
+function dmShort(iso) {
+  const [, m, d] = iso.split('-');
+  return `${d}.${m}`;
+}
+
+// Именительный падеж месяца — для подзаголовков-разделителей в календаре
+// («Сентябрь»), в отличие от MONTHS (родительный, «11 августа»).
+const MONTHS_NOM = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+
+function monthName(iso) {
+  return MONTHS_NOM[Number(iso.split('-')[1]) - 1];
 }
 
 // Пятница/суббота/воскресенье — в скобках после даты: именно на эти дни чаще
@@ -325,7 +342,7 @@ function periodDays() {
     return days;
   }
 
-  const count = p.preset === '3' ? 3 : p.preset === '7' ? 7 : 2;
+  const count = p.preset === '3' ? 3 : 2;
   return Array.from({ length: count }, (_, i) => isoPlus(i));
 }
 
@@ -624,16 +641,23 @@ function dayBlockHTML(iso, heading, isToday) {
     </section>`;
 }
 
-// Дни календаря ПОСЛЕ выбранного периода поездки, вплоть до горизонта
-// расчёта. Не пересекается с periodDays(): период — это «мои даты», календарь
-// внизу — «что там дальше», на случай, если рейс затянется или планы изменятся.
-// Если период уже упирается в горизонт (выбрали «Свои даты» на месяц вперёд),
-// календарь просто пуст — показывать за горизонтом нечего.
+// Дни календаря ПОСЛЕ выбранного периода поездки. Не пересекается с
+// periodDays(): период — это «мои даты», календарь внизу — «что там дальше»,
+// на случай, если рейс затянется или планы изменятся. Если период уже
+// упирается в горизонт (выбрали «Свои даты» на месяц вперёд), календарь
+// просто пуст — показывать за горизонтом нечего.
+//
+// Ограничение 10 дней — намеренно меньше горизонта расчёта робота (30 дней,
+// TRUCK_BANS_EU): владелец 11.08.2026 попросил не перегружать экран — этого
+// достаточно, чтобы прикинуть окно вперёд, а «Свои даты» всё ещё позволяют
+// выбрать любую дату вплоть до полного горизонта через lastPickable().
+const CALENDAR_DAYS = 10;
+
 function calendarDays() {
   const days = periodDays();
   const horizon = lastPickable();
   const result = [];
-  for (let d = nextIso(days[days.length - 1]); d <= horizon && result.length < 40; d = nextIso(d)) {
+  for (let d = nextIso(days[days.length - 1]); d <= horizon && result.length < CALENDAR_DAYS; d = nextIso(d)) {
     result.push(d);
   }
   return result;
@@ -672,23 +696,41 @@ function calendarHTML() {
       </section>`;
   }
 
+  // Метка месяца перед первой клеткой и на каждой границе месяца — иначе
+  // сплошная лента чисел не даёт понять, где заканчивается один месяц и
+  // начинается следующий (11.08.2026, просьба владельца).
+  let ribbonMonth = '';
   const ribbon = days.map((iso) => {
     const level = worstLight(iso);
-    const [, , dd] = iso.split('-');
-    return `<button class="bans__ribbon-cell bans__ribbon-cell--${level}" type="button"
+    const [, m, dd] = iso.split('-');
+    const monthTag = m === ribbonMonth ? '' : `<span class="bans__ribbon-month" aria-hidden="true">${esc(monthName(iso).slice(0, 3).toLowerCase())}</span>`;
+    ribbonMonth = m;
+    return `${monthTag}<button class="bans__ribbon-cell bans__ribbon-cell--${level}" type="button"
                data-act="jump" data-day="${esc(iso)}" aria-label="${esc(shortDateWithWeekend(iso))}"
                >${dd}</button>`;
   }).join('');
 
-  const lines = days.map(daySummaryHTML).join('');
+  let listMonth = '';
+  const lines = days.map((iso) => {
+    const m = iso.split('-')[1];
+    const divider = m === listMonth ? '' : `<h3 class="bans__month-divider">${esc(monthName(iso))}</h3>`;
+    listMonth = m;
+    return divider + daySummaryHTML(iso);
+  }).join('');
 
+  // Лента и кнопка свёртывания зафиксированы (position: sticky) под шапкой
+  // экрана — «заморозка» календаря, чтобы прыгать по дням и не скролить
+  // обратно наверх (11.08.2026, просьба владельца, «для начала» — остальной
+  // экран пока без фриза).
   return `<section class="bans__day">
-      <button class="bans__more is-open" type="button" data-act="calendar" aria-expanded="true">
-        <span class="bans__more-arrow" aria-hidden="true">▾</span>
-        Свернуть календарь
-      </button>
-      <p class="bans__hint">Нажмите на клетку в ленте, чтобы сразу открыть этот день.</p>
-      <div class="bans__ribbon">${ribbon}</div>
+      <div class="bans__calendar-sticky">
+        <button class="bans__more is-open" type="button" data-act="calendar" aria-expanded="true">
+          <span class="bans__more-arrow" aria-hidden="true">▾</span>
+          Свернуть календарь
+        </button>
+        <p class="bans__hint">Нажмите на клетку в ленте, чтобы сразу открыть этот день.</p>
+        <div class="bans__ribbon">${ribbon}</div>
+      </div>
       ${lines}
     </section>`;
 }
@@ -724,12 +766,16 @@ function periodHTML() {
     ? `${days.length} ${plural(days.length, 'день', 'дня', 'дней')}: ${shortDate(first)} — ${shortDate(last)}`
     : shortDate(first);
 
+  // «3 дня» показывает реальные даты, а не абстрактное число (11.08.2026,
+  // просьба владельца) — например «11.08 – 13.08», без года: горизонт
+  // расчёта — недели, год только загромождал бы узкую кнопку.
+  const threeDaysLabel = `${dmShort(isoPlus(0))} – ${dmShort(isoPlus(2))}`;
+
   return `<section class="bans__day bans__period">
-      <h2 class="bans__day-title">Когда еду</h2>
+      <h2 class="bans__day-title">Запреты на:</h2>
       <div class="bans__presets">
         ${chip('default', 'Сегодня и завтра')}
-        ${chip('3', '3 дня')}
-        ${chip('7', 'Неделя')}
+        ${chip('3', esc(threeDaysLabel))}
         ${chip('custom', 'Свои даты')}
       </div>
       ${custom}
@@ -818,6 +864,12 @@ function routeLegendHTML() {
     </section>`;
 }
 
+// Список стран свёрнут за кнопкой по умолчанию (11.08.2026, просьба
+// владельца — 23 флага занимали весь экран). Кнопка сама показывает, сколько
+// стран уже выбрано, поэтому водителю не обязательно раскрывать список,
+// чтобы вспомнить свой выбор. Подсказка «Как это работает» переехала внутрь
+// того же раскрывающегося блока — она объясняет именно выбор стран, отдельно
+// от него не нужна.
 function routeHTML() {
   const route = readRoute();
   const all = countries();
@@ -831,15 +883,26 @@ function routeHTML() {
       </button>`;
   }).join('');
 
+  const toggleLabel = routeOpen
+    ? 'Свернуть'
+    : (route.length ? `Страны маршрута — выбрано ${route.length}` : 'Выберите страны для маршрута');
+
   const picked = route.length
     ? `<p class="bans__hint">Выбрано: ${route.length}. Нажмите «Только мой маршрут» вверху, чтобы оставить на экране только их.</p>`
     : `<p class="bans__hint">Нажмите на страны своей поездки.</p>`;
 
+  const panel = routeOpen
+    ? `${routeTipHTML()}${picked}<div class="bans__route">${list}</div>`
+    : '';
+
   return `<section class="bans__day bans__route-section">
       <h2 class="bans__day-title">Мой маршрут</h2>
-      ${routeTipHTML()}
-      ${picked}
-      <div class="bans__route">${list}</div>
+      <button class="bans__more${routeOpen ? ' is-open' : ''}" type="button"
+              data-act="route-toggle" aria-expanded="${routeOpen}">
+        <span class="bans__more-arrow" aria-hidden="true">▾</span>
+        ${esc(toggleLabel)}
+      </button>
+      ${panel}
     </section>`;
 }
 
@@ -972,6 +1035,9 @@ el.body.addEventListener('click', (e) => {
     }
     case 'others':
       othersOpen = !othersOpen;
+      break;
+    case 'route-toggle':
+      routeOpen = !routeOpen;
       break;
     case 'calendar':
       calendarOpen = !calendarOpen;

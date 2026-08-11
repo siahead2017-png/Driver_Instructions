@@ -1902,6 +1902,47 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 .bans__ribbon-cell--exempt  { background: color-mix(in srgb, var(--accent) 55%, transparent); color: #fff; }
 .bans__ribbon-cell--unknown { background: var(--border); font-style: italic; }
 
+/* Метка месяца внутри ленты — небольшой текст перед первой клеткой месяца,
+   чтобы сплошные числа не терялись без понимания, где граница (11.08.2026). */
+.bans__ribbon-month {
+  flex: none;
+  align-self: center;
+  margin-left: 2px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Заголовок месяца в списке дней ниже ленты — тот же повод, что у метки
+   в ленте, просто на весь список, а не только на клетки. */
+.bans__month-divider {
+  margin: 12px 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ---------- «Заморозка» календаря ----------
+   Лента дней + кнопка свёртывания прилипают к верху скролл-контейнера
+   (.bans__body), пока календарь открыт — не нужно скролить обратно наверх,
+   чтобы прыгнуть на другой день (11.08.2026, просьба владельца, «для
+   начала» — остальной экран пока без фриза). */
+.bans__calendar-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  margin: 0 calc(var(--pad) * -1);
+  padding: 6px var(--pad) 8px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.bans__calendar-sticky .bans__more { margin-top: 0; }
+.bans__calendar-sticky .bans__hint { margin-bottom: 0; }
+
 /* ---------- Выбор периода поездки ---------- */
 .bans__period { margin-top: 14px; }
 
