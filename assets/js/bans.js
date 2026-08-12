@@ -60,6 +60,9 @@ const el = {
   meta: document.getElementById('bans-meta'),
   tabs: document.getElementById('bans-tabs'),
   body: document.getElementById('bans-body'),
+  lightbox: document.getElementById('img-lightbox'),
+  lightboxImg: document.getElementById('img-lightbox-img'),
+  lightboxClose: document.getElementById('img-lightbox-close'),
 };
 
 const esc = (s) =>
@@ -570,6 +573,7 @@ function rowDetailHTML(r) {
       </div>
       <div class="bans__chips">${weight}${roads}</div>
       ${r.note_ru ? `<p class="bans__note">${noteHTML(r.note_ru)}</p>` : ''}
+      ${warsawDetourLinksHTML(r)}
       ${cargoDetailHTML(r)}
       ${link}
     </div>`;
@@ -896,34 +900,33 @@ function routeLegendHTML() {
 // в подсказку, не расчёт запрета).
 const WARSAW_TITLE = 'Транзитный запрет в Варшаве (зона C-16)';
 
-// Две реальные карты объезда (12.08.2026, вторая версия — владельцу не
-// понравилась условная схема-«блоб», попросил настоящую карту с реальными
-// дорогами). Сами SVG — не нарисованы вручную: сгенерированы один раз по
-// геометрии дорог из OpenStreetMap (Overpass API) и границе Варшавы, лежат
-// статичными файлами в assets/img/. Здесь только подписи шагов — сама карта
-// не пересчитывается на лету, это не «живые» данные, а готовая картинка,
-// как и просил владелец («вырезать кусок карты без лишнего мусора»).
+// Две реальные карты объезда (12.08.2026, третья версия — владелец сначала
+// отверг условную схему-«блоб», затем и сгенерированные по OpenStreetMap
+// карты («не очень нравится визуальная часть»), и прислал свои собственные
+// скриншоты Google Maps с реальным маршрутом, которым сам пользуется —
+// сейчас используются они, лежат статичными файлами в assets/img/. Здесь
+// только подписи шагов — картинка не пересчитывается на лету.
 const WARSAW_VARIANTS = [
   {
     id: 'north',
     title: 'Северный объезд — дороги 50 и 62',
-    img: 'assets/img/warsaw-detour-north.svg?v=1',
-    alt: 'Карта: съезд с автомагистрали A2 у Сохачева на дорогу 50 через Вышогруд, дальше по дороге 62 через Новы-Двур-Мазовецки и Сероцк на трассу S8 у Вышкува — в объезд Варшавы с севера',
+    img: 'assets/img/warsaw-detour-north.jpg?v=1',
+    alt: 'Карта Google Maps: съезд с автомагистрали A2 у Вискитки через Сохачев на дорогу 50, дальше через Вышогруд на дорогу 62 через Новы-Двур-Мазовецки и Сероцк, выезд на трассу S8 у Вышкува — в объезд Варшавы с севера',
     steps: [
-      'Съезд с автомагистрали <strong>A2</strong> у Сохачева на дорогу <strong>№50</strong>.',
-      'По дороге 50 через Вышогруд — там разворот на дорогу <strong>№62</strong>.',
+      'Съезд с автомагистрали <strong>A2</strong> (Wiskitki) — едем через Сохачев по дороге <strong>№50</strong>.',
+      'По дороге 50 через Вышогруд — там поворачиваем на дорогу <strong>№62</strong>.',
       'По дороге 62 через Новы-Двур-Мазовецки и Сероцк — выезд на трассу <strong>S8</strong> у Вышкува.',
     ],
   },
   {
     id: 'south',
     title: 'Южный объезд — кольцевая S2',
-    img: 'assets/img/warsaw-detour-south.svg?v=1',
-    alt: 'Карта: южная кольцевая S2 между развязками Opacz и Lubelska в обход Варшавы с юга, без ограничений по времени и массе с 30.12.2022',
+    img: 'assets/img/warsaw-detour-south.jpg?v=1',
+    alt: 'Карта Google Maps: южная кольцевая S2 в обход Варшавы с юга, без ограничений по времени и массе с 30.12.2022, далее трасса A2 до съезда на дорогу 50 в направлении Остроленки/Остроув-Мазовецкой',
     steps: [
-      'Съезд на кольцевую <strong>S2</strong> у развязки <strong>Opacz</strong> (со стороны A2/S8).',
+      'Едем по трассе <strong>S2</strong>, не съезжая с неё.',
       'S2 идёт южнее города, в обход зоны C-16 — без ограничений по времени и бесплатно для любой массы (с 30.12.2022).',
-      'Выезд с S2 на трассу <strong>S17</strong> у развязки <strong>Lubelska</strong>.',
+      'Дальше по <strong>A2</strong> до съезда на дорогу <strong>№50</strong> в направлении Остроув-Мазовецка.',
     ],
   },
 ];
@@ -931,10 +934,28 @@ const WARSAW_VARIANTS = [
 function warsawVariantHTML(v) {
   return `<div class="bans__warsaw-variant">
       <h3 class="bans__warsaw-variant-title">${esc(v.title)}</h3>
-      <img class="bans__warsaw-map" src="${esc(v.img)}" alt="${esc(v.alt)}" loading="lazy"/>
+      <button class="bans__warsaw-map-btn" type="button"
+              data-act="warsaw-zoom" data-src="${esc(v.img)}" data-alt="${esc(v.alt)}">
+        <img class="bans__warsaw-map" src="${esc(v.img)}" alt="${esc(v.alt)}" loading="lazy"/>
+        <span class="bans__warsaw-zoom-hint">Нажмите, чтобы увеличить</span>
+      </button>
       <ol class="bans__warsaw-steps">
         ${v.steps.map((s) => `<li>${s}</li>`).join('')}
       </ol>
+    </div>`;
+}
+
+// Ссылки на те же две карты внутри обычной карточки Польши (не только в
+// закреплённом блоке наверху) — владелец попросил, чтобы они были на виду,
+// даже если водитель не открывал закреплённую карточку. Строка C-16 — та
+// же самая, что рисует warsawPinHTML(), поэтому проверяем по title_ru.
+function warsawDetourLinksHTML(r) {
+  if (r.country !== 'PL' || r.title_ru !== WARSAW_TITLE) return '';
+  return `<div class="bans__warsaw-links">
+      ${WARSAW_VARIANTS.map((v) => `<button class="bans__warsaw-link" type="button"
+            data-act="warsaw-zoom" data-src="${esc(v.img)}" data-alt="${esc(v.alt)}">
+            ${esc(v.title.split(' — ')[0])} ↗
+          </button>`).join('')}
     </div>`;
 }
 
@@ -1147,6 +1168,11 @@ el.body.addEventListener('click', (e) => {
     case 'warsaw-toggle':
       warsawOpen = !warsawOpen;
       break;
+    case 'warsaw-zoom':
+      // Открываем поверх экрана, без перерисовки #bans-body — иначе paint()
+      // сбрасывает/дёргает scrollTop карточек прямо в момент открытия карты.
+      openLightbox(hit.dataset.src, hit.dataset.alt);
+      return;
     case 'calendar':
       calendarOpen = !calendarOpen;
       break;
@@ -1237,8 +1263,32 @@ el.close.addEventListener('click', () => {
   location.hash = '#/';
 });
 
+// ---------- Полноэкранный просмотр карты объезда (12.08.2026) ----------
+// Картинка в карточке узкая — детали съезда не разглядеть на телефоне,
+// поэтому клик открывает её на весь экран отдельным статичным оверлеем
+// (вне #bans-body, чтобы не терялась при перерисовке paint()).
+function openLightbox(src, alt) {
+  el.lightboxImg.src = src;
+  el.lightboxImg.alt = alt || '';
+  el.lightbox.hidden = false;
+}
+
+function closeLightbox() {
+  el.lightbox.hidden = true;
+  el.lightboxImg.src = '';
+}
+
+el.lightboxClose.addEventListener('click', closeLightbox);
+el.lightbox.addEventListener('click', (e) => {
+  if (e.target === el.lightbox) closeLightbox();
+});
+
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && !el.root.hidden) location.hash = '#/';
+  if (e.key !== 'Escape') return;
+  // Открытая карта — верхний слой: Escape сначала закрывает её и не должен
+  // заодно закрывать весь экран запретов под ней.
+  if (!el.lightbox.hidden) { closeLightbox(); return; }
+  if (!el.root.hidden) location.hash = '#/';
 });
 
 // ---------- Показ / скрытие ----------

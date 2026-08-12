@@ -1892,10 +1892,11 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 }
 .bans__warsaw-steps li { margin-bottom: 6px; }
 
-/* Карты — готовые SVG-картинки (реальная геометрия дорог из OpenStreetMap,
-   сгенерированы один раз, не пересчитываются), не тема-зависимая схема:
-   у них свой светлый фон, как у обычной карты, поэтому рамка/тень нужны,
-   чтобы отделить картинку от фона карточки в тёмной теме. */
+/* Карты — скриншоты Google Maps владельца (реальный маршрут, которым сам
+   пользуется), не тема-зависимая картинка: свой светлый фон, как у обычной
+   карты, поэтому рамка нужна, чтобы отделить её от фона карточки в тёмной
+   теме. Кликабельны — открываются в img-lightbox на весь экран, иначе на
+   телефоне подписи съездов не разглядеть. */
 .bans__warsaw-variant + .bans__warsaw-variant { margin-top: 18px; }
 
 .bans__warsaw-variant-title {
@@ -1905,14 +1906,105 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   color: var(--text);
 }
 
+.bans__warsaw-map-btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: zoom-in;
+}
+
 .bans__warsaw-map {
   display: block;
   width: 100%;
   height: auto;
-  margin-bottom: 10px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: #eef3e8;
+}
+
+.bans__warsaw-zoom-hint {
+  position: absolute;
+  right: 8px;
+  bottom: 18px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, .55);
+  border-radius: 6px;
+}
+
+/* Те же две карты — короткими ссылками внутри обычной карточки Польши
+   (rowDetailHTML → warsawDetourLinksHTML), не только в закреплённом блоке
+   наверху: владелец попросил, чтобы объезд был на виду в обоих местах. */
+.bans__warsaw-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.bans__warsaw-link {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+/* ---------- Полноэкранный просмотр карты (img-lightbox) ----------
+   Тот же принцип, что .sig-full: отдельный оверлей вне #bans-body, вставлен
+   статично в index.html, не пересоздаётся при paint(). z-index выше всех
+   остальных оверлеев проекта (max — 65 у .sig-full) — карта может быть
+   открыта поверх чего угодно. */
+.img-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  background: rgba(0, 0, 0, .92);
+}
+
+.img-lightbox[hidden] { display: none; }
+
+.img-lightbox__img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.img-lightbox__close {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 10px);
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .15);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.img-lightbox__close svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
 }
 
 /* ---------- Лента обзора календаря ----------

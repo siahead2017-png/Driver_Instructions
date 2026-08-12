@@ -34,7 +34,7 @@
   <meta name="apple-mobile-web-app-title" content="Инструкции HEAD, HDLG">
   <!-- ?v=... — версия кеша. При изменении css/js меняй число здесь И в импортах app.js,
        иначе браузер (и установленная PWA) покажет старую закешированную версию. -->
-  <link rel="stylesheet" href="assets/css/styles.css?v=26">
+  <link rel="stylesheet" href="assets/css/styles.css?v=27">
 </head>
 <body>
   <header class="app-header">
@@ -138,6 +138,16 @@
       <button type="button" class="bans__tab" data-mode="route">Только мой маршрут</button>
     </div>
     <div class="bans__body" id="bans-body"></div>
+  </div>
+
+  <!-- Полноэкранный просмотр карт объезда Варшавы: скриншоты Google Maps
+       (см. bans.js). Открывается по клику на картинку — сама она в карточке
+       мелкая, детали съездов не разглядеть. -->
+  <div class="img-lightbox" id="img-lightbox" hidden role="dialog" aria-modal="true" aria-label="Просмотр карты объезда">
+    <button class="img-lightbox__close" id="img-lightbox-close" type="button" aria-label="Закрыть">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <img class="img-lightbox__img" id="img-lightbox-img" src="" alt=""/>
   </div>
 
   <!-- Регистрация после инструктажа: компания/ФИО/дата рождения/e-mail + подпись (register.js).
@@ -505,7 +515,7 @@
   <script type="module" src="assets/js/calc.js?v=7"></script>
   <script type="module" src="assets/js/guide.js?v=6"></script>
   <script type="module" src="assets/js/register.js?v=8"></script>
-  <script type="module" src="assets/js/bans.js?v=12"></script>
+  <script type="module" src="assets/js/bans.js?v=13"></script>
   <script type="module" src="assets/js/feedback.js?v=2"></script>
 </body>
 </html>
