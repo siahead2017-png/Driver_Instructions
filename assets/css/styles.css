@@ -1867,6 +1867,43 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   color: var(--accent);
 }
 
+/* ---------- Варшава: закреплённая карточка (12.08.2026) ----------
+   Отдельный блок над «Мой маршрут», см. bans.js::warsawPinHTML(). Рамка
+   акцентного (danger) цвета — единственная карточка на экране с такой
+   рамкой, чтобы взгляд сразу цеплялся за неё среди обычных серых карточек
+   стран. */
+.bans__warsaw-pin {
+  padding: var(--pad);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.bans__warsaw-pin .bans__day-title { color: var(--danger); }
+.bans__warsaw-note { color: var(--text); }
+.bans__warsaw-detour { margin-top: 10px; }
+
+.bans__warsaw-steps {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.bans__warsaw-steps li { margin-bottom: 6px; }
+
+.bans__warsaw-svg { display: block; width: 100%; height: auto; margin-top: 4px; }
+
+.bans__warsaw-svg-through { stroke: var(--danger); stroke-width: 2; opacity: .55; }
+.bans__warsaw-svg-route { stroke: var(--t-sheet); stroke-width: 3; }
+.bans__warsaw-svg-city { fill: var(--surface-2); stroke: var(--danger); stroke-width: 2; }
+.bans__warsaw-svg-point { fill: var(--text-dim); }
+
+.bans__warsaw-svg-label { font-size: 11px; fill: var(--text); font-family: inherit; }
+.bans__warsaw-svg-label--dim { fill: var(--text-dim); font-size: 10px; }
+.bans__warsaw-svg-label--bad { fill: var(--danger); font-weight: 600; }
+.bans__warsaw-svg-label--good { fill: var(--t-sheet); font-weight: 600; }
+
 /* ---------- Лента обзора календаря ----------
    Одна узкая клетка на день — не для деталей, а чтобы одним взглядом найти
    ближайшее чистое окно, не листая длинный список дней руками. Горизонтальная

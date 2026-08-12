@@ -90,6 +90,7 @@ let legendOpen = false; // раскрыт справочник «флаг — к
 let othersOpen = false; // раскрыт блок «Другие страны»
 let routeOpen = false;  // раскрыт блок выбора стран маршрута (11.08.2026: свёрнут по умолчанию, экономит место)
 let calendarOpen = false; // раскрыт календарь на дни за пределами периода поездки
+let warsawOpen = false; // раскрыт блок объезда Варшавы (12.08.2026)
 let closeTimer = null;
 let period = null;      // выбранный период поездки, см. readPeriod()
 let openDays = new Set(); // раскрытые дни в «дальней» части периода и в календаре
@@ -878,6 +879,73 @@ function routeLegendHTML() {
     </section>`;
 }
 
+// ---------- Варшава: закреплённая карточка (12.08.2026) --------------------
+// Отдельный, всегда видимый блок НАД «Мой маршрут» — по прямой просьбе
+// владельца («крайне важное для нас отдельно»). Транзитный запрет в
+// Варшаве (зона C-16) не завязан на выбранную дату или страны маршрута:
+// это ежедневный будничный факт (Пн–Пт, два окна по часам), а не «запрет на
+// сегодня» — поэтому не прячем его внутрь обычной карточки Польши и не
+// гейтим фильтром маршрута (водитель мог забыть отметить Польшу).
+//
+// Юридический факт (порог, часы, ссылка на источник) приходит из той же
+// строки CALENDAR, что и у всех остальных правил (`pl-warsaw-c16` в листе
+// RULES TRUCK_BANS_EU) — найден по стране+заголовку, потому что колонки
+// rule_id в CSV нет. Текст объезда и схема ниже — НЕ юридический факт, а
+// статичная подсказка по вождению, поэтому она захардкожена прямо здесь, а
+// не приходит из таблицы (та же логика, что у CARGO_LABELS — перевод факта
+// в подсказку, не расчёт запрета).
+const WARSAW_TITLE = 'Транзитный запрет в Варшаве (зона C-16)';
+
+// Условная схема, не географическая карта: пятно города, дуга объезда S2 на
+// юге (между развязками Opacz и Lubelska, свободна для любого веса с
+// 30.12.2022), перечёркнутая прямая — маршрут напрямую через центр, которого
+// нужно избегать. Цвета — через currentColor/CSS-переменные, чтобы схема сама
+// подстраивалась под тёмную/светлую тему телефона.
+function warsawDetourSVG() {
+  return `<svg class="bans__warsaw-svg" viewBox="0 0 320 170" role="img"
+      aria-label="Схема: город в центре запрещён в часы пик, объезд по кольцевой S2 южнее">
+    <line x1="18" y1="70" x2="302" y2="70" class="bans__warsaw-svg-through" stroke-dasharray="6 6"/>
+    <text x="160" y="58" class="bans__warsaw-svg-label bans__warsaw-svg-label--bad" text-anchor="middle">Напрямую — нельзя в часы пик</text>
+    <path d="M 18 70 Q 160 155 302 70" class="bans__warsaw-svg-route" fill="none"/>
+    <circle cx="160" cy="85" r="34" class="bans__warsaw-svg-city"/>
+    <text x="160" y="81" class="bans__warsaw-svg-label" text-anchor="middle">Варшава</text>
+    <text x="160" y="96" class="bans__warsaw-svg-label bans__warsaw-svg-label--dim" text-anchor="middle">зона C-16</text>
+    <circle cx="18" cy="70" r="4" class="bans__warsaw-svg-point"/>
+    <text x="18" y="130" class="bans__warsaw-svg-label" text-anchor="start">Opacz (S8)</text>
+    <circle cx="302" cy="70" r="4" class="bans__warsaw-svg-point"/>
+    <text x="302" y="130" class="bans__warsaw-svg-label" text-anchor="end">Lubelska</text>
+    <text x="160" y="150" class="bans__warsaw-svg-label bans__warsaw-svg-label--good" text-anchor="middle">Объезд по S2 — южнее, без ограничений</text>
+  </svg>`;
+}
+
+function warsawPinHTML() {
+  const r = rows && rows.find((row) => row.country === 'PL' && row.title_ru === WARSAW_TITLE);
+  if (!r) return '';
+
+  const link = r.source_url
+    ? `<a class="bans__source" href="${esc(r.source_url)}" target="_blank" rel="noopener">Официальный источник ↗</a>`
+    : '';
+
+  return `<section class="bans__day bans__warsaw-pin">
+      <h2 class="bans__day-title">⚠️ Варшава — транзитный запрет</h2>
+      <p class="bans__note bans__warsaw-note">${noteHTML(r.note_ru)}</p>
+      <button class="bans__more${warsawOpen ? ' is-open' : ''}" type="button"
+              data-act="warsaw-toggle" aria-expanded="${warsawOpen}">
+        <span class="bans__more-arrow" aria-hidden="true">▾</span>
+        ${warsawOpen ? 'Свернуть' : 'Как ехать в объезд'}
+      </button>
+      ${warsawOpen ? `<div class="bans__warsaw-detour">
+        <ol class="bans__warsaw-steps">
+          <li>Основной вариант — южная кольцевая <strong>S2</strong> (между развязками Opacz и Lubelska): без ограничений по времени и бесплатно для грузовиков любой массы.</li>
+          <li>Если маршрут не подходит под S2 — официальный объезд по национальным дорогам <strong>№50</strong>, <strong>№62</strong> и <strong>№60</strong> (тот же объезд, что указан в постановлении о зоне C-16).</li>
+          <li>Идентификатор C-16 для транзита не подходит — он оформляется только для въезда по делам внутри города.</li>
+        </ol>
+        ${warsawDetourSVG()}
+      </div>` : ''}
+      ${link}
+    </section>`;
+}
+
 // Список стран свёрнут за кнопкой по умолчанию (11.08.2026, просьба
 // владельца — 23 флага занимали весь экран). Кнопка сама показывает, сколько
 // стран уже выбрано, поэтому водителю не обязательно раскрывать список,
@@ -992,6 +1060,7 @@ function paint() {
   // груз» — сразу за ним: это тоже «кто я» для этой поездки, до того, как
   // экран начнёт показывать светофоры по дням.
   el.body.innerHTML = [
+    warsawPinHTML(),
     routeHTML(),
     cargoHTML(),
     periodHTML(),
@@ -1057,6 +1126,9 @@ el.body.addEventListener('click', (e) => {
       break;
     case 'route-toggle':
       routeOpen = !routeOpen;
+      break;
+    case 'warsaw-toggle':
+      warsawOpen = !warsawOpen;
       break;
     case 'calendar':
       calendarOpen = !calendarOpen;
