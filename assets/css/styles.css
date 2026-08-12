@@ -1819,9 +1819,9 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 /* Зелёное «можно ехать» намеренно НЕ приглушаем: сегодня все страны зелёные,
    и приглушённая подпись читалась владельцем как пустое место. */
 
-/* Польша на зелёном «можно ехать» — вторая строка-предупреждение про
-   Варшаву (countryRowHTML(), 12.08.2026), см. .bans__warsaw-pin выше про
-   сам запрет. */
+/* Страна с постоянным фактом без даты (Варшава/Польша, цепи/Норвегия) на
+   зелёном «можно ехать» — вторая строка-предупреждение (countryRowHTML(),
+   PERMANENT_WARNING, 12.08.2026). */
 .bans__label--stack {
   display: flex;
   flex-direction: column;
@@ -1829,7 +1829,7 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   gap: 2px;
   max-width: 46%;
 }
-.bans__label-warsaw {
+.bans__label-warn {
   font-size: 11.5px;
   font-weight: 700;
   color: var(--danger);
