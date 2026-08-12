@@ -1892,17 +1892,28 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
 }
 .bans__warsaw-steps li { margin-bottom: 6px; }
 
-.bans__warsaw-svg { display: block; width: 100%; height: auto; margin-top: 4px; }
+/* Карты — готовые SVG-картинки (реальная геометрия дорог из OpenStreetMap,
+   сгенерированы один раз, не пересчитываются), не тема-зависимая схема:
+   у них свой светлый фон, как у обычной карты, поэтому рамка/тень нужны,
+   чтобы отделить картинку от фона карточки в тёмной теме. */
+.bans__warsaw-variant + .bans__warsaw-variant { margin-top: 18px; }
 
-.bans__warsaw-svg-through { stroke: var(--danger); stroke-width: 2; opacity: .55; }
-.bans__warsaw-svg-route { stroke: var(--t-sheet); stroke-width: 3; }
-.bans__warsaw-svg-city { fill: var(--surface-2); stroke: var(--danger); stroke-width: 2; }
-.bans__warsaw-svg-point { fill: var(--text-dim); }
+.bans__warsaw-variant-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
 
-.bans__warsaw-svg-label { font-size: 11px; fill: var(--text); font-family: inherit; }
-.bans__warsaw-svg-label--dim { fill: var(--text-dim); font-size: 10px; }
-.bans__warsaw-svg-label--bad { fill: var(--danger); font-weight: 600; }
-.bans__warsaw-svg-label--good { fill: var(--t-sheet); font-weight: 600; }
+.bans__warsaw-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #eef3e8;
+}
 
 /* ---------- Лента обзора календаря ----------
    Одна узкая клетка на день — не для деталей, а чтобы одним взглядом найти

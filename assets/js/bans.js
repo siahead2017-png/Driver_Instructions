@@ -896,26 +896,46 @@ function routeLegendHTML() {
 // в подсказку, не расчёт запрета).
 const WARSAW_TITLE = 'Транзитный запрет в Варшаве (зона C-16)';
 
-// Условная схема, не географическая карта: пятно города, дуга объезда S2 на
-// юге (между развязками Opacz и Lubelska, свободна для любого веса с
-// 30.12.2022), перечёркнутая прямая — маршрут напрямую через центр, которого
-// нужно избегать. Цвета — через currentColor/CSS-переменные, чтобы схема сама
-// подстраивалась под тёмную/светлую тему телефона.
-function warsawDetourSVG() {
-  return `<svg class="bans__warsaw-svg" viewBox="0 0 320 170" role="img"
-      aria-label="Схема: город в центре запрещён в часы пик, объезд по кольцевой S2 южнее">
-    <line x1="18" y1="70" x2="302" y2="70" class="bans__warsaw-svg-through" stroke-dasharray="6 6"/>
-    <text x="160" y="58" class="bans__warsaw-svg-label bans__warsaw-svg-label--bad" text-anchor="middle">Напрямую — нельзя в часы пик</text>
-    <path d="M 18 70 Q 160 155 302 70" class="bans__warsaw-svg-route" fill="none"/>
-    <circle cx="160" cy="85" r="34" class="bans__warsaw-svg-city"/>
-    <text x="160" y="81" class="bans__warsaw-svg-label" text-anchor="middle">Варшава</text>
-    <text x="160" y="96" class="bans__warsaw-svg-label bans__warsaw-svg-label--dim" text-anchor="middle">зона C-16</text>
-    <circle cx="18" cy="70" r="4" class="bans__warsaw-svg-point"/>
-    <text x="18" y="130" class="bans__warsaw-svg-label" text-anchor="start">Opacz (S8)</text>
-    <circle cx="302" cy="70" r="4" class="bans__warsaw-svg-point"/>
-    <text x="302" y="130" class="bans__warsaw-svg-label" text-anchor="end">Lubelska</text>
-    <text x="160" y="150" class="bans__warsaw-svg-label bans__warsaw-svg-label--good" text-anchor="middle">Объезд по S2 — южнее, без ограничений</text>
-  </svg>`;
+// Две реальные карты объезда (12.08.2026, вторая версия — владельцу не
+// понравилась условная схема-«блоб», попросил настоящую карту с реальными
+// дорогами). Сами SVG — не нарисованы вручную: сгенерированы один раз по
+// геометрии дорог из OpenStreetMap (Overpass API) и границе Варшавы, лежат
+// статичными файлами в assets/img/. Здесь только подписи шагов — сама карта
+// не пересчитывается на лету, это не «живые» данные, а готовая картинка,
+// как и просил владелец («вырезать кусок карты без лишнего мусора»).
+const WARSAW_VARIANTS = [
+  {
+    id: 'north',
+    title: 'Северный объезд — дороги 50 и 62',
+    img: 'assets/img/warsaw-detour-north.svg?v=1',
+    alt: 'Карта: съезд с автомагистрали A2 у Сохачева на дорогу 50 через Вышогруд, дальше по дороге 62 через Новы-Двур-Мазовецки и Сероцк на трассу S8 у Вышкува — в объезд Варшавы с севера',
+    steps: [
+      'Съезд с автомагистрали <strong>A2</strong> у Сохачева на дорогу <strong>№50</strong>.',
+      'По дороге 50 через Вышогруд — там разворот на дорогу <strong>№62</strong>.',
+      'По дороге 62 через Новы-Двур-Мазовецки и Сероцк — выезд на трассу <strong>S8</strong> у Вышкува.',
+    ],
+  },
+  {
+    id: 'south',
+    title: 'Южный объезд — кольцевая S2',
+    img: 'assets/img/warsaw-detour-south.svg?v=1',
+    alt: 'Карта: южная кольцевая S2 между развязками Opacz и Lubelska в обход Варшавы с юга, без ограничений по времени и массе с 30.12.2022',
+    steps: [
+      'Съезд на кольцевую <strong>S2</strong> у развязки <strong>Opacz</strong> (со стороны A2/S8).',
+      'S2 идёт южнее города, в обход зоны C-16 — без ограничений по времени и бесплатно для любой массы (с 30.12.2022).',
+      'Выезд с S2 на трассу <strong>S17</strong> у развязки <strong>Lubelska</strong>.',
+    ],
+  },
+];
+
+function warsawVariantHTML(v) {
+  return `<div class="bans__warsaw-variant">
+      <h3 class="bans__warsaw-variant-title">${esc(v.title)}</h3>
+      <img class="bans__warsaw-map" src="${esc(v.img)}" alt="${esc(v.alt)}" loading="lazy"/>
+      <ol class="bans__warsaw-steps">
+        ${v.steps.map((s) => `<li>${s}</li>`).join('')}
+      </ol>
+    </div>`;
 }
 
 function warsawPinHTML() {
@@ -935,12 +955,9 @@ function warsawPinHTML() {
         ${warsawOpen ? 'Свернуть' : 'Как ехать в объезд'}
       </button>
       ${warsawOpen ? `<div class="bans__warsaw-detour">
-        <ol class="bans__warsaw-steps">
-          <li>Основной вариант — южная кольцевая <strong>S2</strong> (между развязками Opacz и Lubelska): без ограничений по времени и бесплатно для грузовиков любой массы.</li>
-          <li>Если маршрут не подходит под S2 — официальный объезд по национальным дорогам <strong>№50</strong>, <strong>№62</strong> и <strong>№60</strong> (тот же объезд, что указан в постановлении о зоне C-16).</li>
-          <li>Идентификатор C-16 для транзита не подходит — он оформляется только для въезда по делам внутри города.</li>
-        </ol>
-        ${warsawDetourSVG()}
+        <p class="bans__hint">Идентификатор C-16 для транзита не подходит — он только для въезда по делам
+          внутри города. Два проверенных варианта объезда — какой ближе к вашему маршруту:</p>
+        ${WARSAW_VARIANTS.map(warsawVariantHTML).join('')}
       </div>` : ''}
       ${link}
     </section>`;
