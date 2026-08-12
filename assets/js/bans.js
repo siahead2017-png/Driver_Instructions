@@ -628,13 +628,27 @@ function countryRowHTML(country, iso, isToday) {
 
   const details = isOpen ? `<div class="bans__details">${inner}</div>` : '';
 
+  // Варшава: транзитный запрет не входит в дневной светофор (severity
+  // 'info', см. WARSAW_TITLE) — Польша с ним всё равно светится зелёным
+  // «можно ехать». Владелец опасается, что водитель увидит зелёный и
+  // поедет транзитом через Варшаву не глядя дальше (12.08.2026) — поэтому
+  // именно на зелёном «можно ехать» подпись получает вторую строку с
+  // красным предупреждением, чтобы зацепить взгляд и заставить открыть
+  // карточку (закреплённая карточка выше на экране объясняет остальное).
+  const label = country.code === 'PL' && state.light === 'ok'
+    ? `<span class="bans__label bans__label--stack">
+        <span>${esc(state.label)}</span>
+        <span class="bans__label-warsaw">⚠ Варшава</span>
+      </span>`
+    : `<span class="bans__label">${esc(state.label)}</span>`;
+
   return `<div class="bans__country">
       <button class="bans__row bans__row--${state.light}" type="button"
               data-act="country" data-key="${esc(key)}" aria-expanded="${isOpen}">
         <span class="bans__light">${LIGHT_ICON[state.light]}</span>
         <span class="bans__flag-wrap">${flagSVG(country.code)}</span>
         <span class="bans__name">${esc(country.name)}</span>
-        <span class="bans__label">${esc(state.label)}</span>
+        ${label}
       </button>
       ${details}
     </div>`;
@@ -900,6 +914,22 @@ function routeLegendHTML() {
 // в подсказку, не расчёт запрета).
 const WARSAW_TITLE = 'Транзитный запрет в Варшаве (зона C-16)';
 
+// note_ru одной строкой из таблицы: «Нельзя: ... до 20:00. Идентификатор
+// C-16 транзит НЕ разрешает — ... (акт)». Первое предложение — сам запрет,
+// должно быть видно сразу. Остальное (что C-16 не спасает, официальный
+// объезд, акт) — владелец попросил спрятать за раскрытие «Как ехать в
+// объезд» (12.08.2026), чтобы закреплённая карточка не выглядела длинной
+// стеной текста. Делим по фиксированному маркеру — тот же приём, что и
+// поиск строки по title_ru, не идеально устойчиво к правке текста в
+// таблице, но эта карточка достаточно особенная (единственная такая),
+// чтобы не городить отдельную колонку ради одного случая.
+const WARSAW_DETAIL_MARKER = 'Идентификатор C-16';
+function splitWarsawNote(note) {
+  const idx = note.indexOf(WARSAW_DETAIL_MARKER);
+  if (idx === -1) return { intro: note, detail: '' };
+  return { intro: note.slice(0, idx).trim(), detail: note.slice(idx).trim() };
+}
+
 // Две реальные карты объезда (12.08.2026, третья версия — владелец сначала
 // отверг условную схему-«блоб», затем и сгенерированные по OpenStreetMap
 // карты («не очень нравится визуальная часть»), и прислал свои собственные
@@ -963,21 +993,23 @@ function warsawPinHTML() {
   const r = rows && rows.find((row) => row.country === 'PL' && row.title_ru === WARSAW_TITLE);
   if (!r) return '';
 
+  const { intro, detail } = splitWarsawNote(r.note_ru || '');
+
   const link = r.source_url
     ? `<a class="bans__source" href="${esc(r.source_url)}" target="_blank" rel="noopener">Официальный источник ↗</a>`
     : '';
 
   return `<section class="bans__day bans__warsaw-pin">
       <h2 class="bans__day-title">⚠️ Варшава — транзитный запрет</h2>
-      <p class="bans__note bans__warsaw-note">${noteHTML(r.note_ru)}</p>
+      <p class="bans__note bans__warsaw-note">${noteHTML(intro)}</p>
       <button class="bans__more${warsawOpen ? ' is-open' : ''}" type="button"
               data-act="warsaw-toggle" aria-expanded="${warsawOpen}">
         <span class="bans__more-arrow" aria-hidden="true">▾</span>
         ${warsawOpen ? 'Свернуть' : 'Как ехать в объезд'}
       </button>
       ${warsawOpen ? `<div class="bans__warsaw-detour">
-        <p class="bans__hint">Идентификатор C-16 для транзита не подходит — он только для въезда по делам
-          внутри города. Два проверенных варианта объезда — какой ближе к вашему маршруту:</p>
+        ${detail ? `<p class="bans__note bans__warsaw-note">${noteHTML(detail)}</p>` : ''}
+        <p class="bans__hint">Два проверенных варианта объезда — какой ближе к вашему маршруту:</p>
         ${WARSAW_VARIANTS.map(warsawVariantHTML).join('')}
       </div>` : ''}
       ${link}
