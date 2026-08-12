@@ -67,6 +67,20 @@ const esc = (s) =>
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
   ));
 
+// Жирным — ключевые слова в начале строки текста запрета («Нельзя:»,
+// «Можно без разрешения:» и т.п.), чтобы водитель считывал суть без
+// перечитывания всего абзаца. Длинные варианты проверяются раньше коротких,
+// иначе «Можно без разрешения:» никогда не дойдёт до своего правила.
+const NOTE_LABELS = ['Можно без разрешения:', 'Можно по разрешению:', 'Нельзя:', 'Можно:'];
+function noteHTML(note) {
+  let html = esc(note);
+  for (const label of NOTE_LABELS) {
+    const escLabel = esc(label);
+    html = html.replace(new RegExp(`(^|\\n)${escLabel}`, 'g'), (_, p1) => `${p1}<strong>${escLabel}</strong>`);
+  }
+  return html.replace(/\n/g, '<br>');
+}
+
 let rows = null;        // все строки CSV
 let fetchedAt = null;   // когда данные реально скачались
 let fromCache = false;
@@ -554,7 +568,7 @@ function rowDetailHTML(r) {
         <span class="bans__window">${esc(window)}</span>
       </div>
       <div class="bans__chips">${weight}${roads}</div>
-      ${r.note_ru ? `<p class="bans__note">${esc(r.note_ru).replace(/\n/g, '<br>')}</p>` : ''}
+      ${r.note_ru ? `<p class="bans__note">${noteHTML(r.note_ru)}</p>` : ''}
       ${cargoDetailHTML(r)}
       ${link}
     </div>`;
