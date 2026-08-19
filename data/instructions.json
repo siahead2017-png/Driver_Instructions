@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-02",
+  "updated": "2026-08-19",
   "categories": [
     {
       "id": "tolls",
@@ -196,6 +196,21 @@
         "cmr",
         "накладная",
         "документы"
+      ]
+    },
+    {
+      "id": "docs-cmr-fill-guide",
+      "category": "docs",
+      "title": "Бланк CMR — как заполнять по пунктам",
+      "description": "Образец заполненного бланка CMR + построчная инструкция по всем 24 пунктам формы: что писать и кто заполняет",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1GbqEq3KZyrMF8Ortc5QL-DQnk_m3VdFq/view?usp=drive_link",
+      "tags": [
+        "cmr",
+        "бланк",
+        "накладная",
+        "образец",
+        "заполнение"
       ]
     },
     {
