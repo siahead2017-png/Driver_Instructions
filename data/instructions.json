@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-08-19",
+  "updated": "2026-09-17",
   "categories": [
     {
       "id": "tolls",
@@ -69,6 +69,12 @@
         "Лайфхаки с телефоном",
         "Техника безопасности"
       ]
+    },
+    {
+      "id": "other",
+      "title": "Прочие инструкции",
+      "icon": "🗂️",
+      "order": 11
     }
   ],
   "apps": [
@@ -741,8 +747,8 @@
     {
       "id": "rules-nl-tunnel",
       "category": "rules",
-      "title": "Нидерланды: запрет на туннель A24",
-      "description": "В Нидерландах туннель на A24 платный — объезжать по альтернативному маршруту к Европорту",
+      "title": "Нидерланды: запрет движения через туннель A24",
+      "description": "Проезд через туннель на A24 в Нидерландах платный, ответственность за оплату несёт водитель — объезжать по альтернативному маршруту к Европорту",
       "type": "image",
       "url": "https://drive.google.com/file/d/14mxPYBfdrGOWDrDVyuQKXJ-XqEkDgIbD/view?usp=drive_link",
       "tags": [
@@ -750,8 +756,11 @@
         "туннель",
         "a24",
         "запрет",
-        "маршрут"
-      ]
+        "маршрут",
+        "платный",
+        "ответственность водителя"
+      ],
+      "important": true
     },
     {
       "id": "rules-norway-internet",
@@ -1060,6 +1069,34 @@
         "вход",
         "безопасность",
         "травма"
+      ]
+    },
+    {
+      "id": "other-digitoll-ru",
+      "category": "other",
+      "title": "Digitoll (Норвегия): инструкция",
+      "description": "Инструкция по системе платных дорог Digitoll в Норвегии на русском языке",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1wZqclzwb5PV741U73zhjPyCNU_7q2K88/view?usp=drive_link",
+      "tags": [
+        "digitoll",
+        "норвегия",
+        "оплата дорог",
+        "инструкция"
+      ]
+    },
+    {
+      "id": "other-digitoll-en",
+      "category": "other",
+      "title": "Digitoll (Норвегия): брошюра (EN)",
+      "description": "Брошюра по системе платных дорог Digitoll в Норвегии на английском языке",
+      "type": "pdf",
+      "url": "https://drive.google.com/file/d/1yj-SVznZV06iGZ6NHSLi7iqV0sY2dzQ-/view?usp=drive_link",
+      "tags": [
+        "digitoll",
+        "норвегия",
+        "оплата дорог",
+        "брошюра"
       ]
     }
   ]
