@@ -91,7 +91,7 @@
       "title": "Фотофиксация",
       "description": "Приложение для загрузки фотографий техники",
       "type": "link",
-      "url": "https://fotohd.lv/?k=tHBNHVI96BGQ",
+      "url": "https://fotohd.lv",
       "image": "assets/img/fotohd-icon-192.png"
     },
     {
@@ -327,7 +327,7 @@
       "title": "Фотофиксация (fotohd.lv)",
       "description": "Приложение для загрузки фотографий техники при выезде, перецепке и возврате",
       "type": "link",
-      "url": "https://fotohd.lv/?k=tHBNHVI96BGQ",
+      "url": "https://fotohd.lv",
       "image": "assets/img/fotohd-icon-192.png",
       "tags": [
         "фото",
