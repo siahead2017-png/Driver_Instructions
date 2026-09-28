@@ -25,6 +25,19 @@ const byId = (id) => data.items.find((i) => i.id === id);
 const catById = (id) => data.categories.find((c) => c.id === id);
 const itemsOf = (catId) => data.items.filter((i) => i.category === catId);
 
+// Закреп в «❗ Важно» с таймером: important_until — последний день закрепа
+// (включительно, по календарю телефона). После него карточка остаётся на своём
+// месте в категории, только уходит из красного блока. Без даты или с кривой
+// датой — закреплена бессрочно: лучше лишний день в «Важно», чем тихо пропасть.
+function isImportant(item) {
+  if (!item.important) return false;
+  const until = String(item.important_until ?? '');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(until)) return true;
+  const d = new Date();
+  const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return today <= until;
+}
+
 function fmtDate(iso) {
   if (!iso) return '';
   const d = new Date(iso);
@@ -134,7 +147,7 @@ view.addEventListener('click', (e) => {
 
 function cardHTML(item, i = 0, extraClass = '') {
   const t = typeMeta(item.type);
-  const classes = `${item.important ? ' card--important' : ''}${extraClass ? ` ${extraClass}` : ''}`;
+  const classes = `${isImportant(item) ? ' card--important' : ''}${extraClass ? ` ${extraClass}` : ''}`;
   // type "link" — не Диск, а внешний сайт/приложение: открываем сразу в новой вкладке,
   // а не через внутренний просмотрщик (там нечего встраивать).
   // Исключение — url, начинающийся с "#": это наш собственный экран внутри
@@ -176,7 +189,7 @@ function renderHome() {
     : '';
 
   // Важные инструкции — всегда первым блоком, чтобы не потерялись внутри категорий.
-  const important = data.items.filter((it) => it.important);
+  const important = data.items.filter(isImportant);
   const importantHTML = important.length
     ? `<section class="section section--important">
          <h2 class="section__title">❗ Важно</h2>

@@ -55,7 +55,7 @@ node -e "JSON.parse(require('fs').readFileSync('data/guide.json','utf8'))"      
 
 ## Модель данных
 
-Плоские `items` + `categories` (намеренно — проще искать и дописывать). `category` → `categories[].id`; `subtopic` — необязательная группа; `categories[].subtopics` задаёт порядок групп; `type`: `pdf|doc|sheet|slide|image|video|link`. `important: true` — рендерится в отдельной секции «❗ Важно» первым блоком на главной и подсвечивается красным (`.card--important`) везде, где карточка встречается. Справочник полей — в [README.md](README.md).
+Плоские `items` + `categories` (намеренно — проще искать и дописывать). `category` → `categories[].id`; `subtopic` — необязательная группа; `categories[].subtopics` задаёт порядок групп; `type`: `pdf|doc|sheet|slide|image|video|link`. `important: true` — рендерится в отдельной секции «❗ Важно» первым блоком на главной и подсвечивается красным (`.card--important`) везде, где карточка встречается. `important_until: "ГГГГ-ММ-ДД"` — таймер закрепа (последний день включительно, по календарю телефона); решает `isImportant()` в `app.js`, после даты карточка уходит из «Важно» и теряет красную подсветку, но остаётся в категории. Кривая дата = бессрочно (осознанно: лучше лишний день в «Важно», чем тихо пропасть). Справочник полей — в [README.md](README.md).
 
 ## Просмотр файлов
 

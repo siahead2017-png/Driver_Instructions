@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-09-17",
+  "updated": "2026-09-28",
   "categories": [
     {
       "id": "tolls",
@@ -366,16 +366,24 @@
     {
       "id": "fuel-norms",
       "category": "fuel",
-      "title": "Нормы расхода",
-      "description": "Нормы расхода топлива по маршрутам и тягачам, зимняя надбавка и учёт догрузки",
+      "title": "Нормы расхода (новые, с 01.10.2026)",
+      "description": "Нормы расхода топлива по маршрутам для MAN и DAF/VOLVO, зимняя надбавка, перегруз и поломка в рейсе",
       "type": "pdf",
-      "url": "https://drive.google.com/file/d/111gEQZ7PmjdRg9yZMU4D8nuyBvKnqrZe/view?usp=drive_link",
-      "updated": "2026-07-01",
+      "url": "https://drive.google.com/file/d/17BS2piHTn3tB78LVawcfW1VkRRKULRN-/view?usp=sharing",
+      "updated": "2026-09-28",
       "tags": [
         "нормы",
         "расход",
-        "топливо"
-      ]
+        "топливо",
+        "man",
+        "daf",
+        "volvo",
+        "перегруз",
+        "взвешивание",
+        "зима"
+      ],
+      "important": true,
+      "important_until": "2026-10-04"
     },
     {
       "id": "fuel-tank-daf",
