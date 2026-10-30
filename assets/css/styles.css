@@ -2601,13 +2601,6 @@ svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width:
   text-transform: uppercase;
 }
 
-.fb__req {
-  color: var(--danger);
-  font-weight: 700;
-}
-
-.fb__req[hidden] { display: none; }
-
 /* Запись голосового */
 .fb__rec {
   display: flex;

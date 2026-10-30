@@ -19,15 +19,10 @@ const DRAFT_KEY = 'di:feedback:draft';
 const COOLDOWN_KEY = 'di:feedback:cooldownUntil';
 const COOLDOWN_MS = 60 * 1000;
 
-// Порядок и написание тем должны совпадать с TOPICS в Code.gs: сервер сверяет
-// пришедшее значение со своим списком и незнакомое молча заменяет на «Прочее».
-const TOPICS = ['Вопрос', 'Заявка на ремонт', 'Пожелание', 'Жалоба', 'Предложение', 'Прочее'];
-
-// Единственная тема, для которой номера тягача и прицепа обязательны. Ту же
-// проверку делает и сервер (REPAIR_TOPIC в Code.gs) — строка должна совпадать
-// с точностью до буквы, иначе сервер отобьёт заявку, прошедшую в браузере.
-const REPAIR_TOPIC = 'Заявка на ремонт';
-const PLATE_MIN = 3;
+// Написание тем должно совпадать с TOPICS в Code.gs: сервер сверяет пришедшее
+// значение со своим списком и незнакомое молча заменяет на «Прочее».
+// «Заявки на ремонт» здесь нет с 30.10.2026 — они ушли в проект fotohd.
+const TOPICS = ['Вопрос', 'Пожелание', 'Жалоба', 'Предложение', 'Прочее'];
 
 const MAX_FILES = 6;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -51,8 +46,6 @@ const ALLOWED_EXT = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
 const ERRORS = {
   bad_name: 'Укажите имя и фамилию.',
   bad_phone: 'Проверьте номер WhatsApp — нужен международный формат с кодом страны.',
-  bad_truck: 'Для заявки на ремонт укажите номер тягача.',
-  bad_trailer: 'Для заявки на ремонт укажите номер прицепа.',
   empty: 'Напишите сообщение или приложите файл.',
   rate_limited: 'Вы только что отправили обращение. Подождите минуту и попробуйте снова.',
   busy: 'Сервер сейчас занят. Попробуйте ещё раз через несколько секунд.',
@@ -76,9 +69,6 @@ const el = {
   topics: document.getElementById('fb-topics'),
   truck: document.getElementById('fb-truck'),
   trailer: document.getElementById('fb-trailer'),
-  truckReq: document.getElementById('fb-truck-req'),
-  trailerReq: document.getElementById('fb-trailer-req'),
-  platesHint: document.getElementById('fb-plates-hint'),
   text: document.getElementById('fb-text'),
   counter: document.getElementById('fb-counter'),
 
@@ -285,26 +275,6 @@ function paintTopics() {
     <button type="button" class="fb__topic${t === topic ? ' is-active' : ''}"
       data-topic="${esc(t)}" aria-pressed="${t === topic}">${esc(t)}</button>
   `).join('');
-
-  paintPlates();
-}
-
-/**
- * Поля номеров не прячем при смене темы, а только помечаем обязательными.
- *
- * Спрятать было бы «чище», но водитель, уже вписавший номер и потом сменивший
- * тему, увидел бы, как введённое исчезает с экрана — и решил бы, что данные
- * потерялись. Номер машины полезен и в жалобе, и в вопросе: пусть остаётся.
- */
-function paintPlates() {
-  const need = topic === REPAIR_TOPIC;
-
-  el.truckReq.hidden = !need;
-  el.trailerReq.hidden = !need;
-  el.platesHint.hidden = !need;
-
-  el.truck.required = need;
-  el.trailer.required = need;
 }
 
 // ---------- Вложения ----------
@@ -598,13 +568,6 @@ function validate() {
 
   const digits = digitsOnly(el.phone.value);
   if (digits.length < 8 || digits.length > 15) return ERRORS.bad_phone;
-
-  // Ровно то же правило стоит на сервере: форму можно обойти, отправив запрос
-  // напрямую, поэтому проверка здесь — про удобство, а не про защиту.
-  if (topic === REPAIR_TOPIC) {
-    if (plate(el.truck.value).length < PLATE_MIN) return ERRORS.bad_truck;
-    if (plate(el.trailer.value).length < PLATE_MIN) return ERRORS.bad_trailer;
-  }
 
   if (!el.text.value.trim() && !attachments.length) return ERRORS.empty;
 
